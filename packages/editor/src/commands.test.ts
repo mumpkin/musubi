@@ -53,6 +53,14 @@ describe('editing', () => {
 		expect(editor.selections).toEqual([[4, 5]]);
 	});
 
+	it('sends deleted and changed text to the clipboard', () => {
+		const editor = new TestEditor('one two', 0, 4);
+		editor.run('delete');
+		expect(editor.clipboardText).toBe('one ');
+		editor.run('change');
+		expect(editor.clipboardText).toBe('t');
+	});
+
 	it('changes the selection with c', () => {
 		const editor = new TestEditor('one two', 0);
 		editor.run('moveNextWordStart', 'change');

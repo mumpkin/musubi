@@ -16,8 +16,8 @@ selection-first editing well.
 | `mode.ts`         | Modes (`normal`, `insert`, `select`) stored in a state field.           |
 | `text.ts`         | Word motions `w`, `e`, `b` on plain text, with Helix's word boundaries. |
 | `motions.ts`      | Motion commands: `h j k l`, words, `x`, `gh`, `gl`, `gs`.               |
-| `editing.ts`      | `d`, `c`, `y`, `p`, `u`, `U`, `C`, `s`.                                 |
-| `modes.ts`        | `i`, `a`, `v`, `Escape`, `;`, command line, `:w`, `:q`.                 |
+| `editing.ts`      | `d`, `c`, `y`, `p`, `P`, `u`, `U`, `C`, `s`.                            |
+| `modes.ts`        | `i`, `a`, `o`, `O`, `v`, `Escape`, `;`, command line, `:w`, `:q`.       |
 | `commands.ts`     | The single command registry.                                            |
 | `keymap.ts`       | Keys of each mode, mapped to command names only.                        |
 | `command-line.ts` | Typed commands: `:w`, `:q`, `:wq`, `:x`.                                |
@@ -41,7 +41,7 @@ To add a case: add it to `helix-cases.ts`, run
 `node tools/helix/record-helix-reference.ts` (Helix and `script` from
 util-linux required), and commit the new reference.
 
-**Result: the 76 recorded cases match Helix exactly** (text, selections and
+**Result: the 95 recorded cases match Helix exactly** (text, selections and
 cursors). The comparison caught differences that manual testing missed:
 
 - `i` and `a` keep the selection, which moves or grows with the typed text;
@@ -67,6 +67,9 @@ cursors). The comparison caught differences that manual testing missed:
 4. **System clipboard**: the Linux webview refuses
    `navigator.clipboard.readText()`. The editor goes through Tauri's
    clipboard plugin, which reads and writes the system clipboard from Rust.
+   Unlike Helix, which keeps them in a register, `y`, `d` and `c` all put the
+   text in the system clipboard, and `p` / `P` paste from it: the author's
+   choice, so that text moves freely between Musubi and other applications.
 5. Moving through a shorter line (`llllllljj`) matches Helix on the
    recorded case, but Helix's sticky column is not implemented in general;
    to add with the full scope.
