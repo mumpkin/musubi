@@ -7,16 +7,21 @@ interface libraries before building the real screens.
 
 `apps/desktop/src/lib/shell/`:
 
-| Component               | Role                                                                                           |
-| ----------------------- | ---------------------------------------------------------------------------------------------- |
-| `Shell.svelte`          | Layout: explorer, two panes side by side, backlinks, status bar; `Ctrl+P`, `Ctrl+B`, `Ctrl+L`. |
-| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                     |
-| `ReadingPane.svelte`    | A pane in reading mode (`LEC`): the note rendered by the Rust core, block cursor `j` / `k`.    |
-| Editor pane             | The Helix editor on the note's source.                                                         |
-| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                             |
-| `StatusBar.svelte`      | Mode of the focused pane (`LEC`, `NOR`, `INS`, `SEL`) and its note.                            |
-| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                          |
-| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                              |
+| Component               | Role                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| `Shell.svelte`          | Layout: title bar, explorer, one or two panes, backlinks, status bar; `Ctrl+P`, `Ctrl+B`, `Ctrl+L`. |
+| `TitleBar.svelte`       | Title bar in the app's style, replacing the system one: drag, double click, window buttons.         |
+| `NotePane.svelte`       | A pane: any note, in reading or editing mode, switched from its header.                             |
+| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                          |
+| `ReadingPane.svelte`    | A pane in reading mode (`LEC`): the note rendered by the Rust core, block cursor `j` / `k`.         |
+| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                                  |
+| `StatusBar.svelte`      | Mode of the focused pane (`LEC`, `NOR`, `INS`, `SEL`) and its note.                                 |
+| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                               |
+| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                                   |
+
+The main area shows **one pane by default**; splitting it gives two panes
+side by side. Each pane shows any note, in reading or editing mode, and
+switches between them from its header or the palette.
 
 The data is fake (`mock-vault.ts`), except the notes of the demo vault, which
 are rendered for real. Opening a note from the explorer, the palette or the
@@ -49,7 +54,10 @@ Both support Svelte 5 runes and need no Tailwind.
 2. The mode indicator moved to the status bar and the pane header; the editor
    keeps only its command line, shown while typing a command.
 3. Long lines wrap in the editor: notes are prose.
-4. Checked in the real Tauri window through `tauri-driver`: layout, palette,
+4. The window has no system decorations (`decorations: false`); the title
+   bar uses `data-tauri-drag-region` and the window API, allowed in the
+   capabilities (`start-dragging`, `minimize`, `toggle-maximize`, `close`).
+5. Checked in the real Tauri window through `tauri-driver`: layout, palette,
    folding, resizing, focus and modes.
 
 ## Next steps (J1)

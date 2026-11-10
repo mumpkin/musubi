@@ -1,51 +1,66 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- Interface mockup: explorer, two panes side by side (reading and
-     editing), backlinks, status bar and command palette. Panes resize and
-     fold with PaneForge. -->
+<!-- Interface mockup: title bar, explorer, one or two panes (each reading or
+     editing any note), backlinks, status bar and command palette. Panes
+     resize and fold with PaneForge. -->
 <script lang="ts">
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 	import { Tooltip } from 'bits-ui';
 	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
 
-	import HelixEditor from '../editor/HelixEditor.svelte';
-	import type { PaletteCommand } from './actions.ts';
+	import type { PaletteCommand, PaneAction } from './actions.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
 	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
-	import { FOLDERS, ROOT_NOTES, sourceOf, titleOf } from './mock-vault.ts';
-	import PaneHeader from './PaneHeader.svelte';
-	import ReadingPane from './ReadingPane.svelte';
+	import { FOLDERS, ROOT_NOTES, titleOf } from './mock-vault.ts';
+	import NotePane from './NotePane.svelte';
+	import { MAX_PANES, otherMode, type PaneState } from './panes.ts';
 	import StatusBar from './StatusBar.svelte';
+	import TitleBar from './TitleBar.svelte';
 
-	type Side = 'reading' | 'editing';
-
-	let readingPath = $state('Demo.typ');
-	let editingPath = $state('Demo.typ');
-	let focused = $state<Side>('reading');
+	let panes = $state<PaneState[]>([{ path: 'Demo.typ', mode: 'reading' }]);
+	let focusedIndex = $state(0);
 	let editorMode = $state<EditorMode>('normal');
 	let isPaletteOpen = $state(false);
 	let message = $state('');
 	let explorer = $state<PaneAPI>();
 	let backlinks = $state<PaneAPI>();
 
-	const currentPath = $derived(
-		focused === 'reading' ? readingPath : editingPath,
-	);
+	const focusedPane = $derived(panes[focusedIndex] ?? panes[0]);
+	const currentPath = $derived(focusedPane?.path ?? '');
 	const statusMode = $derived(
-		focused === 'reading' ? 'LEC' : modeIndicator(editorMode),
+		focusedPane?.mode === 'editing' ? modeIndicator(editorMode) : 'LEC',
 	);
 
 	function open(path: string): void {
-		if (focused === 'reading') {
-			readingPath = path;
-		} else {
-			editingPath = path;
+		const pane = panes[focusedIndex];
+		if (pane) {
+			pane.path = path;
 		}
 	}
 
-	function setEditorMode(mode: EditorMode): void {
-		editorMode = mode;
+	function toggleMode(index: number): void {
+		const pane = panes[index];
+		if (pane) {
+			pane.mode = otherMode(pane.mode);
+			editorMode = 'normal';
+		}
+	}
+
+	// A second pane, on the same note in the other mode.
+	function split(): void {
+		const pane = panes[focusedIndex];
+		if (pane && panes.length < MAX_PANES) {
+			panes.push({ path: pane.path, mode: otherMode(pane.mode) });
+			focusedIndex = panes.length - 1;
+		}
+	}
+
+	function close(index: number): void {
+		if (panes.length > 1) {
+			panes.splice(index, 1);
+			focusedIndex = 0;
+		}
 	}
 
 	function toggle(pane: PaneAPI | undefined): void {
@@ -56,9 +71,54 @@
 		}
 	}
 
+	function setEditorMode(mode: EditorMode): void {
+		editorMode = mode;
+	}
+
+	function setMessage(text: string): void {
+		message = text;
+	}
+
+	function actionsOf(index: number, pane: PaneState): PaneAction[] {
+		const actions: PaneAction[] = [{
+			label: pane.mode === 'reading' ? 'Edit this note' : 'Read this note',
+			icon: pane.mode === 'reading' ? '✎' : '◧',
+			run: () => {
+				toggleMode(index);
+			},
+		}];
+		if (panes.length < MAX_PANES) {
+			actions.push({ label: 'Split the pane', icon: '⊞', run: split });
+		} else {
+			actions.push({
+				label: 'Close this pane',
+				icon: '✕',
+				run: () => {
+					close(index);
+				},
+			});
+		}
+		return actions;
+	}
+
 	const notes = [...ROOT_NOTES, ...FOLDERS.flatMap((folder) => folder.notes)];
 
 	const commands: PaletteCommand[] = [
+		{
+			label: 'Switch between reading and editing',
+			group: 'Pane',
+			run: () => {
+				toggleMode(focusedIndex);
+			},
+		},
+		{ label: 'Split the pane', group: 'Pane', run: split },
+		{
+			label: 'Close the pane',
+			group: 'Pane',
+			run: () => {
+				close(focusedIndex);
+			},
+		},
 		{
 			label: 'Toggle the note explorer',
 			group: 'View',
@@ -73,13 +133,6 @@
 			shortcut: 'Ctrl+L',
 			run: () => {
 				toggle(backlinks);
-			},
-		},
-		{
-			label: 'Edit the note being read',
-			group: 'Note',
-			run: () => {
-				editingPath = readingPath;
 			},
 		},
 		...notes.map((note) => ({
@@ -116,6 +169,7 @@
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">
+		<TitleBar title={titleOf(currentPath)} />
 		<PaneGroup
 			direction="horizontal"
 			autoSaveId="musubi-shell"
@@ -137,71 +191,23 @@
 				defaultSize={PANE_SIZES.main.default}
 				minSize={PANE_SIZES.main.min}
 			>
-				<PaneGroup
-					direction="horizontal"
-					autoSaveId="musubi-panes"
-				>
-					<Pane
-						defaultSize={PANE_SIZES.half.default}
-						minSize={PANE_SIZES.half.min}
-					>
-						<section
-							class="pane"
-							class:focused={focused === 'reading'}
-							onfocusin={() => (focused = 'reading')}
-						>
-							<PaneHeader
-								title={titleOf(readingPath)}
-								mode="LEC"
-								actions={[{
-									label: 'Edit this note in the other pane',
-									icon: '✎',
-									run: () => {
-										editingPath = readingPath;
-									},
-								}]}
-							/>
-							<ReadingPane
-								path={readingPath}
+				<PaneGroup direction="horizontal">
+					{#each panes as pane, index (index)}
+						{#if index > 0}
+							<PaneResizer class="resizer" />
+						{/if}
+						<Pane minSize={PANE_SIZES.half.min}>
+							<NotePane
+								{pane}
+								isFocused={index === focusedIndex}
+								actions={actionsOf(index, pane)}
+								onFocus={() => (focusedIndex = index)}
 								onOpen={open}
+								onMessage={setMessage}
+								onEditorMode={setEditorMode}
 							/>
-						</section>
-					</Pane>
-					<PaneResizer class="resizer" />
-					<Pane
-						defaultSize={PANE_SIZES.half.default}
-						minSize={PANE_SIZES.half.min}
-					>
-						<section
-							class="pane"
-							class:focused={focused === 'editing'}
-							onfocusin={() => (focused = 'editing')}
-						>
-							<PaneHeader
-								title={titleOf(editingPath)}
-								mode={modeIndicator(editorMode)}
-								actions={[{
-									label: 'Read this note in the other pane',
-									icon: '◧',
-									run: () => {
-										readingPath = editingPath;
-									},
-								}]}
-							/>
-							{#key editingPath}
-								<HelixEditor
-									text={sourceOf(editingPath)}
-									onWrite={() => {
-										message = ':w — saving comes with the vault';
-									}}
-									onQuit={() => {
-										message = ':q — closing panes comes later';
-									}}
-									onModeChange={setEditorMode}
-								/>
-							{/key}
-						</section>
-					</Pane>
+						</Pane>
+					{/each}
 				</PaneGroup>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -234,20 +240,8 @@
 <style>
 	.shell {
 		display: grid;
-		grid-template-rows: 1fr auto;
+		grid-template-rows: auto 1fr auto;
 		height: 100vh;
-	}
-
-	.pane {
-		display: grid;
-		grid-template-rows: auto 1fr;
-		height: 100%;
-		min-height: 0;
-		border-top: 2px solid transparent;
-	}
-
-	.pane.focused {
-		border-top-color: var(--accent);
 	}
 
 	/* A 5-pixel handle, easy to grab, drawn as a 1-pixel line. */
