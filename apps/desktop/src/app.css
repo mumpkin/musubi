@@ -1,5 +1,7 @@
 :root {
-	color-scheme: light dark;
+	/* Light only for now: the dark theme comes later (J2). The variables
+	   already hold both. */
+	color-scheme: light;
 	font-family: system-ui, sans-serif;
 	--background: light-dark(#fafafa, #1e1f22);
 	--foreground: light-dark(#1e1f22, #d4d4d4);
@@ -8,6 +10,7 @@
 	--border: light-dark(#dcdde0, #3a3c42);
 	--accent: light-dark(#2f6fde, #6ea8ff);
 	--selection: light-dark(#d6e4fb, #2c3e5c);
+	--hover: light-dark(#e6e7ea, #34363c);
 	--error: light-dark(#c62828, #ff6b6b);
 	--warning: light-dark(#a15c00, #f0b45a);
 }
