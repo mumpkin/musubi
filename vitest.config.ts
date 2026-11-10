@@ -20,7 +20,7 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			include: ['apps/*/src/**/*.ts', 'packages/*/src/**/*.ts', 'tools/**/*.ts'],
-			exclude: ['**/*.test.ts', '**/bindings/**', 'tools/check-*.ts', 'apps/desktop/src/main.ts'],
+			exclude: ['**/*.test.ts', '**/bindings/**', 'tools/**/check-*.ts', 'apps/desktop/src/main.ts'],
 		},
 	},
 });

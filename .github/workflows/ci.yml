@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+    # labeled/unlabeled: the changelog check depends on the no-changelog label
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -13,6 +15,48 @@ permissions:
   contents: read
 
 jobs:
+  conventions:
+    name: Conventions
+    if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Check the branch name
+        run: node tools/git/check-branch-name.ts "$HEAD_REF"
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+
+      - name: Check the commit messages
+        run: |
+          status=0
+          for commit in $(git rev-list "$BASE_SHA..$HEAD_SHA"); do
+            git log -1 --format=%B "$commit" > "$RUNNER_TEMP/message"
+            node tools/git/check-commit-message.ts "$RUNNER_TEMP/message" || status=1
+          done
+          exit $status
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check the changelog
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-changelog') }}
+        run: |
+          if ! git diff --name-only "$BASE_SHA...$HEAD_SHA" | grep -qx CHANGELOG.md; then
+            echo "::error::Update CHANGELOG.md or add the no-changelog label"
+            exit 1
+          fi
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
