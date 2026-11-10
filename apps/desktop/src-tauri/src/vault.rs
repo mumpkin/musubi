@@ -1,0 +1,137 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+//! Commands of the vault: open it, list, read and create notes.
+
+use std::path::{Path, PathBuf};
+
+use musubi_core::VaultTree;
+use serde::Serialize;
+use tauri::{AppHandle, Manager, State};
+use ts_rs::TS;
+
+use crate::state::{AppState, DeviceSettings, OpenVault};
+
+/// The open vault, as the interface sees it.
+#[derive(Serialize, TS)]
+#[serde(rename_all = "camelCase")]
+#[ts(export)]
+pub struct VaultInfo {
+	pub root: String,
+	pub name: String,
+	pub read_only: bool,
+	pub tree: VaultTree,
+}
+
+const NO_VAULT: &str = "no vault is open";
+
+fn info(open: &OpenVault) -> Result<VaultInfo, String> {
+	let root = open.vault.root();
+	Ok(VaultInfo {
+		root: root.to_string_lossy().into_owned(),
+		name: root
+			.file_name()
+			.map(|name| name.to_string_lossy().into_owned())
+			.unwrap_or_default(),
+		read_only: open.vault.read_only,
+		tree: open.vault.tree().map_err(|error| error.to_string())?,
+	})
+}
+
+fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {
+	app.path()
+		.app_config_dir()
+		.map_err(|error| error.to_string())
+}
+
+/// Opens the vault at `root` and remembers it for the next launch.
+#[tauri::command(async)]
+pub fn open_vault(
+	root: &Path,
+	app: AppHandle,
+	state: State<'_, AppState>,
+) -> Result<VaultInfo, String> {
+	let open = OpenVault::open(root)?;
+	let vault_info = info(&open)?;
+	let config = config_dir(&app)?;
+	let mut settings = DeviceSettings::load(&config);
+	settings.last_vault = Some(open.vault.root().to_path_buf());
+	settings.save(&config)?;
+	*state.lock() = Some(open);
+	Ok(vault_info)
+}
+
+/// The vault already open, or the one of the last session if it still
+/// exists.
+#[tauri::command(async)]
+pub fn current_vault(
+	app: AppHandle,
+	state: State<'_, AppState>,
+) -> Result<Option<VaultInfo>, String> {
+	let mut open = state.lock();
+	if open.is_none() {
+		let last = DeviceSettings::load(&config_dir(&app)?).last_vault;
+		*open = last
+			.filter(|root| root.is_dir())
+			.and_then(|root| OpenVault::open(&root).ok());
+	}
+	open.as_ref().map(info).transpose()
+}
+
+/// Folders and notes of the open vault.
+#[tauri::command(async)]
+pub fn vault_tree(state: State<'_, AppState>) -> Result<VaultTree, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault.tree().map_err(|error| error.to_string())
+}
+
+#[tauri::command(async)]
+pub fn read_note(
+	path: &str,
+	state: State<'_, AppState>,
+) -> Result<String, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault
+		.read_note(path)
+		.map_err(|error| error.to_string())
+}
+
+/// Creates a note in `folder`; returns its path.
+#[tauri::command(async)]
+pub fn create_note(
+	folder: &str,
+	title: &str,
+	state: State<'_, AppState>,
+) -> Result<String, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault
+		.create_note(folder, title)
+		.map_err(|error| error.to_string())
+}
+
+/// Creates a folder in `parent`; returns its path.
+#[tauri::command(async)]
+pub fn create_folder(
+	parent: &str,
+	name: &str,
+	state: State<'_, AppState>,
+) -> Result<String, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault
+		.create_folder(parent, name)
+		.map_err(|error| error.to_string())
+}
+
+/// The demo vault of the repository, for development builds.
+#[tauri::command]
+#[must_use]
+pub fn demo_vault_path() -> Option<String> {
+	cfg!(debug_assertions).then(|| {
+		PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+			.join("../../../examples/demo-vault")
+			.to_string_lossy()
+			.into_owned()
+	})
+}

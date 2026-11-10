@@ -1,28 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Commands of the reading view: compiling a note to HTML.
 
-use std::path::PathBuf;
-use std::sync::Mutex;
 use std::time::Instant;
 
-use musubi_typst::{NoteCompiler, RenderedNote};
+use musubi_typst::RenderedNote;
 use serde::Serialize;
 use tauri::State;
 use ts_rs::TS;
 
-/// Compiler of the demo vault. Kept in the Tauri state so that Typst reuses
-/// its caches between compilations.
-pub struct DemoVault(Mutex<NoteCompiler>);
-
-impl DemoVault {
-	/// Opens `examples/demo-vault` from the repository. Prototype only: the
-	/// interface cannot choose a vault yet.
-	pub fn open() -> Self {
-		let vault = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-			.join("../../../examples/demo-vault");
-		Self(Mutex::new(NoteCompiler::new(vault)))
-	}
-}
+use crate::state::AppState;
 
 const MILLISECONDS_PER_SECOND: f64 = 1000.0;
 
@@ -38,16 +24,17 @@ pub struct NoteView {
 /// Compiles the note at `path` (from the vault root, with extension) to
 /// HTML. Runs outside the main thread so that the window stays responsive.
 #[tauri::command(async)]
-pub fn render_note(path: &str, vault: State<'_, DemoVault>) -> NoteView {
+pub fn render_note(
+	path: &str,
+	state: State<'_, AppState>,
+) -> Result<NoteView, String> {
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or("no vault is open")?;
 	let start = Instant::now();
-	let note = vault
-		.0
-		.lock()
-		.unwrap_or_else(std::sync::PoisonError::into_inner)
-		.render(path);
-	NoteView {
+	let note = open.compiler.render(path);
+	Ok(NoteView {
 		note,
 		compile_milliseconds: start.elapsed().as_secs_f64()
 			* MILLISECONDS_PER_SECOND,
-	}
+	})
 }

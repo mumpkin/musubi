@@ -3,6 +3,8 @@
 
 mod commands;
 mod reading;
+mod state;
+mod vault;
 
 /// Starts the desktop application.
 ///
@@ -12,10 +14,18 @@ mod reading;
 pub fn run() {
 	tauri::Builder::default()
 		.plugin(tauri_plugin_clipboard_manager::init())
-		.manage(reading::DemoVault::open())
+		.plugin(tauri_plugin_dialog::init())
+		.manage(state::AppState::default())
 		.invoke_handler(tauri::generate_handler![
 			commands::app_info,
 			reading::render_note,
+			vault::open_vault,
+			vault::current_vault,
+			vault::vault_tree,
+			vault::read_note,
+			vault::create_note,
+			vault::create_folder,
+			vault::demo_vault_path,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");
