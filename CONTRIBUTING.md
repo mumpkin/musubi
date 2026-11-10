@@ -6,7 +6,7 @@ messages, branch names, issues, pull requests, changelog and documentation.
 ## Development setup
 
 Requirements: Node.js 24 or later, pnpm (version pinned in `package.json`),
-Rust 1.90 or later, the [Typst CLI](https://github.com/typst/typst) 0.15, and
+Rust 1.92 or later, the [Typst CLI](https://github.com/typst/typst) 0.15, and
 the [Tauri system dependencies](https://v2.tauri.app/start/prerequisites/).
 
 ```sh

@@ -16,6 +16,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 musubi-core.workspace = true
+musubi-typst.workspace = true
 serde.workspace = true
 tauri = { version = "2", features = [] }
 ts-rs.workspace = true

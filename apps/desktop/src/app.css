@@ -4,6 +4,11 @@
 	--background: light-dark(#fafafa, #1e1f22);
 	--foreground: light-dark(#1e1f22, #d4d4d4);
 	--muted: light-dark(#6b6f76, #8b8f96);
+	--surface: light-dark(#f0f0f2, #2b2d31);
+	--border: light-dark(#dcdde0, #3a3c42);
+	--accent: light-dark(#2f6fde, #6ea8ff);
+	--error: light-dark(#c62828, #ff6b6b);
+	--warning: light-dark(#a15c00, #f0b45a);
 }
 
 body {

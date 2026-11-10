@@ -14,6 +14,7 @@ export default defineConfig({
 				test: {
 					name: 'desktop',
 					include: ['apps/desktop/src/**/*.test.ts'],
+					environment: 'happy-dom',
 				},
 			},
 		],
