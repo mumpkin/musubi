@@ -1,0 +1,12 @@
+{
+	"extends": ["../../tsconfig.base.json", "@tsconfig/svelte/tsconfig.json"],
+	"compilerOptions": {
+		"target": "ES2024",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"],
+		"types": ["svelte", "vite/client"],
+		"noEmit": true,
+		"allowJs": true,
+		"checkJs": true
+	},
+	"include": ["src/**/*.ts", "src/**/*.svelte", "vite.config.ts", "svelte.config.js"]
+}

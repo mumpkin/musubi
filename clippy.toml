@@ -1,0 +1,7 @@
+# Clean Code limits, same values as the ESLint configuration
+cognitive-complexity-threshold = 10
+too-many-arguments-threshold = 3
+too-many-lines-threshold = 40
+# Single-letter identifiers are forbidden, loop counters included
+min-ident-chars-threshold = 1
+allowed-idents-below-min-chars = []
