@@ -606,5 +606,157 @@
 		"starts": "[one two\nthree four\n\nfive.six seven\n",
 		"ends": "one two\n]three four\n\nfive.six seven\n",
 		"cursors": "one two|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "oX\u001b",
+		"text": "one two\nX\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nX[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nX\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\nX|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "OX\u001b",
+		"text": "X\none two\nthree four\n\nfive.six seven\n",
+		"starts": "X[\none two\nthree four\n\nfive.six seven\n",
+		"ends": "X\n]one two\nthree four\n\nfive.six seven\n",
+		"cursors": "X|\none two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "joX\u001b",
+		"text": "one two\nthree four\nX\n\nfive.six seven\n",
+		"starts": "one two\nthree four\nX[\n\nfive.six seven\n",
+		"ends": "one two\nthree four\nX\n]\nfive.six seven\n",
+		"cursors": "one two\nthree four\nX|\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jOX\u001b",
+		"text": "one two\nX\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nX[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nX\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\nX|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wwoX\u001b",
+		"text": "one two\nX\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nX[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nX\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\nX|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "o\u001b",
+		"text": "one two\n\nthree four\n\nfive.six seven\n",
+		"starts": "one two\n[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\n\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\n|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "GoX\u001b",
+		"text": "one two\nX\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nX[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nX\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\nX|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "joX\u001b",
+		"text": "start\n    indented line\n    X\n\t\ttabs\n",
+		"starts": "start\n    indented line\n    X[\n\t\ttabs\n",
+		"ends": "start\n    indented line\n    X\n]\t\ttabs\n",
+		"cursors": "start\n    indented line\n    X|\n\t\ttabs\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "jOX\u001b",
+		"text": "start\n    X\n    indented line\n\t\ttabs\n",
+		"starts": "start\n    X[\n    indented line\n\t\ttabs\n",
+		"ends": "start\n    X\n]    indented line\n\t\ttabs\n",
+		"cursors": "start\n    X|\n    indented line\n\t\ttabs\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xoX\u001b",
+		"text": "one two\nX\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nX[\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nX\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\nX|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wyP",
+		"text": "one one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one one two\nthree four\n\nfive.six seven\n",
+		"ends": "one ]one two\nthree four\n\nfive.six seven\n",
+		"cursors": "one| one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xyP",
+		"text": "one two\none two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\none two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\n]one two\nthree four\n\nfive.six seven\n",
+		"cursors": "one two|\none two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xyjP",
+		"text": "one two\none two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\n[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\none two\n]three four\n\nfive.six seven\n",
+		"cursors": "one two\none two|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wdp",
+		"text": "tone wo\nthree four\n\nfive.six seven\n",
+		"starts": "t[one wo\nthree four\n\nfive.six seven\n",
+		"ends": "tone ]wo\nthree four\n\nfive.six seven\n",
+		"cursors": "tone| wo\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wdP",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one ]two\nthree four\n\nfive.six seven\n",
+		"cursors": "one| two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xdp",
+		"text": "three four\none two\n\nfive.six seven\n",
+		"starts": "three four\n[one two\n\nfive.six seven\n",
+		"ends": "three four\none two\n]\nfive.six seven\n",
+		"cursors": "three four\none two|\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xdP",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\n]three four\n\nfive.six seven\n",
+		"cursors": "one two|\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wcX\u001bp",
+		"text": "Xtone wo\nthree four\n\nfive.six seven\n",
+		"starts": "Xt[one wo\nthree four\n\nfive.six seven\n",
+		"ends": "Xtone ]wo\nthree four\n\nfive.six seven\n",
+		"cursors": "Xtone| wo\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wwyjp",
+		"text": "one two\nthree ftwoour\n\nfive.six seven\n",
+		"starts": "one two\nthree f[twoour\n\nfive.six seven\n",
+		"ends": "one two\nthree ftwo]our\n\nfive.six seven\n",
+		"cursors": "one two\nthree ftw|oour\n\nfive.six seven\n"
 	}
 ]

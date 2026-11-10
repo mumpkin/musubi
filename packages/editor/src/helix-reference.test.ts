@@ -13,7 +13,7 @@ describe('behaves like Helix', () => {
 			const editor = new TestEditor(helixCase.initialText);
 			replayKeys(editor, helixCase.keys);
 			// Pasting reads the clipboard asynchronously.
-			if (helixCase.keys.includes('p')) {
+			if (helixCase.keys.toLowerCase().includes('p')) {
 				await new Promise((resolve) => setTimeout(resolve));
 			}
 			expect({ text: editor.text, ...markSelections(editor) }).toEqual({
