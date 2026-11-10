@@ -3,6 +3,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 
+import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 import type { VaultInfo } from '../bindings/VaultInfo.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 
@@ -20,6 +21,14 @@ export async function vaultTree(): Promise<VaultTree> {
 
 export async function readNote(path: string): Promise<string> {
 	return invoke<string>('read_note', { path });
+}
+
+export async function writeNote(path: string, content: string) {
+	await invoke('write_note', { path, content });
+}
+
+export async function deviceSettings(): Promise<DeviceSettings> {
+	return invoke<DeviceSettings>('device_settings');
 }
 
 export async function createNote(folder: string, title: string) {

@@ -8,6 +8,7 @@ use std::sync::{Mutex, MutexGuard, PoisonError};
 use musubi_core::Vault;
 use musubi_typst::NoteCompiler;
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 /// A vault and its Typst compiler, which keeps its caches between
 /// compilations.
@@ -35,11 +36,29 @@ impl AppState {
 	}
 }
 
-/// Settings of this device, in the app config directory.
-#[derive(Default, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+/// Settings of this device, in the app config directory. Unknown or
+/// missing fields take their default value.
+#[derive(Serialize, Deserialize, TS)]
+#[serde(rename_all = "camelCase", default)]
+#[ts(export)]
 pub struct DeviceSettings {
+	#[ts(type = "string | null")]
 	pub last_vault: Option<PathBuf>,
+	/// Save notes automatically after a pause in typing.
+	pub autosave: bool,
+	pub autosave_delay_seconds: u32,
+}
+
+const DEFAULT_AUTOSAVE_DELAY_SECONDS: u32 = 2;
+
+impl Default for DeviceSettings {
+	fn default() -> Self {
+		Self {
+			last_vault: None,
+			autosave: false,
+			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
+		}
+	}
 }
 
 const SETTINGS_FILE: &str = "settings.json";

@@ -3,14 +3,14 @@
      editing any note), backlinks, status bar and command palette. Panes
      resize and fold with PaneForge. -->
 <script lang="ts">
-	import { type EditorMode, modeIndicator } from '@musubi/editor';
 	import { Tooltip } from 'bits-ui';
 	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
-	import { tick } from 'svelte';
 
+	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
 	import { buildTree, parentOf, titleIn } from '../vault/tree.ts';
+	import { deviceSettings, vaultTree } from '../vault/vault.ts';
 	import type { PaletteCommand, PaneAction } from './actions.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
@@ -18,12 +18,8 @@
 	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
 	import NewEntryDialog from './NewEntryDialog.svelte';
 	import NotePane from './NotePane.svelte';
-	import {
-		MAX_PANES,
-		otherMode,
-		paneActions,
-		type PaneState,
-	} from './panes.ts';
+	import { PaneManager } from './pane-manager.svelte.ts';
+	import { paneActions, type PaneState } from './panes.ts';
 	import {
 		ACTION_LABELS,
 		keyName,
@@ -43,57 +39,45 @@
 	// svelte-ignore state_referenced_locally
 	let tree = $state(vault.tree);
 	const root = $derived(buildTree(tree));
-	let panes = $state<PaneState[]>([{
-		// svelte-ignore state_referenced_locally
-		path: vault.tree.notes[0]?.path ?? '',
-		mode: 'reading',
-	}]);
+	// svelte-ignore state_referenced_locally
+	const manager = new PaneManager(vault.tree.notes[0]?.path ?? '');
 	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
 	let isCreating = $state(false);
-	let focusedIndex = $state(0);
-	let editorMode = $state<EditorMode>('normal');
 	let isPaletteOpen = $state(false);
-	let message = $state('');
 	let explorer = $state<PaneAPI>();
 	let backlinks = $state<PaneAPI>();
+	let settings = $state<DeviceSettings>();
 
-	const focusedPane = $derived(panes[focusedIndex] ?? panes[0]);
-	const currentPath = $derived(focusedPane?.path ?? '');
-	const statusMode = $derived(
-		focusedPane?.mode === 'editing' ? modeIndicator(editorMode) : 'LEC',
+	deviceSettings()
+		.then((loaded) => {
+			settings = loaded;
+		})
+		.catch(() => undefined);
+
+	const autosaveDelay = $derived(
+		settings?.autosave ? settings.autosaveDelaySeconds : undefined,
 	);
 
-	function open(path: string): void {
-		const pane = panes[focusedIndex];
-		if (pane) {
-			pane.path = path;
-		}
+	function loadTree(): void {
+		vaultTree()
+			.then((loaded) => {
+				tree = loaded;
+			})
+			.catch(() => undefined);
 	}
 
-	function toggleMode(index: number): void {
-		const pane = panes[index];
-		if (pane) {
-			pane.mode = otherMode(pane.mode);
-			editorMode = 'normal';
-			focusAfterRender(index);
-		}
+	// Back in the window: notes and titles may have changed on disk.
+	function refresh(): void {
+		manager.reload();
+		loadTree();
 	}
 
-	// A second pane, on the same note in the other mode.
-	function split(): void {
-		const pane = panes[focusedIndex];
-		if (pane && panes.length < MAX_PANES) {
-			panes.push({ path: pane.path, mode: otherMode(pane.mode) });
-			focusAfterRender(panes.length - 1);
+	// A save may change the title of a note.
+	$effect(() => {
+		if (manager.saves > 0) {
+			loadTree();
 		}
-	}
-
-	function close(index: number): void {
-		if (panes.length > 1) {
-			panes.splice(index, 1);
-			focusAfterRender(0);
-		}
-	}
+	});
 
 	function toggle(pane: PaneAPI | undefined): void {
 		if (pane?.isCollapsed()) {
@@ -111,47 +95,31 @@
 	function created(newTree: VaultTree, note: string | undefined): void {
 		tree = newTree;
 		if (note !== undefined) {
-			open(note);
+			manager.open(note);
 		}
 	}
 
-	function setEditorMode(mode: EditorMode): void {
-		editorMode = mode;
+	function showMessage(text: string): void {
+		manager.message = text;
 	}
 
-	function setMessage(text: string): void {
-		message = text;
+	function openNote(path: string): void {
+		manager.open(path);
 	}
 
 	function actionsOf(index: number, pane: PaneState): PaneAction[] {
 		return paneActions(pane, {
-			canSplit: panes.length < MAX_PANES,
+			canSplit: manager.canSplit,
 			toggleMode: () => {
-				toggleMode(index);
+				manager.toggleMode(index);
 			},
-			split,
+			split: () => {
+				manager.split();
+			},
 			close: () => {
-				close(index);
+				manager.close(index);
 			},
 		});
-	}
-
-	// The keyboard focus follows the pane, once its content is on screen.
-	function focusAfterRender(index: number): void {
-		focusedIndex = index;
-		tick()
-			.then(() => {
-				focusPane(index);
-			})
-			.catch(() => undefined);
-	}
-
-	function focusPane(index: number): void {
-		focusedIndex = (index + panes.length) % panes.length;
-		const element = document.querySelectorAll<HTMLElement>('.pane')
-			.item(focusedIndex);
-		element.querySelector<HTMLElement>('.reading-view, .cm-content')
-			?.focus();
 	}
 
 	const ACTIONS: Record<ShellAction, () => void> = {
@@ -159,7 +127,7 @@
 			isPaletteOpen = true;
 		},
 		newNote: () => {
-			startCreation('note', parentOf(currentPath));
+			startCreation('note', parentOf(manager.currentPath));
 		},
 		toggleExplorer: () => {
 			toggle(explorer);
@@ -168,20 +136,22 @@
 			toggle(backlinks);
 		},
 		toggleMode: () => {
-			toggleMode(focusedIndex);
+			manager.toggleMode(manager.focusedIndex);
 		},
-		split,
+		split: () => {
+			manager.split();
+		},
 		closePane: () => {
-			close(focusedIndex);
+			manager.close(manager.focusedIndex);
 		},
 		nextPane: () => {
-			focusPane(focusedIndex + 1);
+			manager.focusPane(manager.focusedIndex + 1);
 		},
 		leftPane: () => {
-			focusPane(focusedIndex - 1);
+			manager.focusPane(manager.focusedIndex - 1);
 		},
 		rightPane: () => {
-			focusPane(focusedIndex + 1);
+			manager.focusPane(manager.focusedIndex + 1);
 		},
 	};
 
@@ -198,7 +168,7 @@
 			label: note.title,
 			group: 'Open a note',
 			run: () => {
-				open(note.path);
+				manager.open(note.path);
 			},
 		})),
 	]);
@@ -208,8 +178,8 @@
 	// Shortcuts are read before the panes see the keys, except while typing
 	// text: in insert mode, the command line or the palette.
 	function isTyping(event: KeyboardEvent): boolean {
-		const isInsert = focusedPane?.mode === 'editing'
-			&& editorMode === 'insert';
+		const isInsert = manager.focused?.mode === 'editing'
+			&& manager.editorMode === 'insert';
 		const isInput = event.target instanceof HTMLInputElement;
 		return isPaletteOpen || isInsert || isInput;
 	}
@@ -218,7 +188,7 @@
 		if (isTyping(event)) {
 			return;
 		}
-		const isReadingEdit = focusedPane?.mode === 'reading'
+		const isReadingEdit = manager.focused?.mode === 'reading'
 			&& pendingKeys === '' && event.key === 'i';
 		const resolution = isReadingEdit
 			? { action: 'toggleMode' as const, pending: '', isUsed: true }
@@ -234,11 +204,14 @@
 	}
 </script>
 
-<svelte:window onkeydowncapture={handleShortcut} />
+<svelte:window
+	onkeydowncapture={handleShortcut}
+	onfocus={refresh}
+/>
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">
-		<TitleBar title={titleIn(tree, currentPath)} />
+		<TitleBar title={titleIn(tree, manager.currentPath)} />
 		<PaneGroup
 			direction="horizontal"
 			autoSaveId="musubi-shell"
@@ -253,8 +226,8 @@
 				<Explorer
 					vaultName={vault.name}
 					{root}
-					current={currentPath}
-					onOpen={open}
+					current={manager.currentPath}
+					onOpen={openNote}
 					onCreate={startCreation}
 				/>
 			</Pane>
@@ -264,7 +237,7 @@
 				minSize={PANE_SIZES.main.min}
 			>
 				<PaneGroup direction="horizontal">
-					{#each panes as pane, index (index)}
+					{#each manager.panes as pane, index (index)}
 						{#if index > 0}
 							<PaneResizer class="resizer" />
 						{/if}
@@ -272,12 +245,11 @@
 							<NotePane
 								{pane}
 								title={titleIn(tree, pane.path)}
-								isFocused={index === focusedIndex}
+								isFocused={index === manager.focusedIndex}
 								actions={actionsOf(index, pane)}
-								onFocus={() => (focusedIndex = index)}
-								onOpen={open}
-								onMessage={setMessage}
-								onEditorMode={setEditorMode}
+								revision={manager.revisions.get(pane.path) ?? 0}
+								{autosaveDelay}
+								events={manager.events(index)}
 							/>
 						</Pane>
 					{/each}
@@ -295,9 +267,9 @@
 			</Pane>
 		</PaneGroup>
 		<StatusBar
-			mode={statusMode}
-			path={currentPath}
-			{message}
+			mode={manager.statusMode}
+			path={manager.currentPath}
+			message={manager.message}
 		/>
 	</div>
 </Tooltip.Provider>
@@ -313,7 +285,7 @@
 		kind={creation.kind}
 		folder={creation.folder}
 		onCreated={created}
-		onError={setMessage}
+		onError={showMessage}
 	/>
 {/if}
 

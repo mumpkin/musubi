@@ -20,13 +20,52 @@
 	import { runPrompt } from './prompt.ts';
 
 	interface Props {
+		// Text to edit: the saved note, or unsaved changes kept by the pane.
 		text: string;
-		onWrite: (text: string) => void;
-		onQuit: () => void;
+		// The note as saved on disk, to tell unsaved changes.
+		savedText: string;
+		onWrite: (text: string) => Promise<void>;
+		onQuit: (force: boolean) => void;
+		// The unsaved text, or `undefined` once saved.
+		onDraft: (text: string | undefined) => void;
+		onMessage: (message: string) => void;
 		onModeChange?: (mode: EditorMode) => void;
+		// Seconds of pause before saving, or `undefined` without autosave.
+		autosaveDelay?: number | undefined;
+		// Takes the keyboard focus once on screen.
+		autofocus?: boolean;
 	}
 
-	const { text, onWrite, onQuit, onModeChange }: Props = $props();
+	const {
+		text,
+		savedText,
+		onWrite,
+		onQuit,
+		onDraft,
+		onMessage,
+		onModeChange,
+		autosaveDelay,
+		autofocus = false,
+	}: Props = $props();
+
+	const MILLISECONDS_PER_SECOND = 1000;
+	let autosaveTimer: ReturnType<typeof setTimeout> | undefined;
+
+	// Saves after a pause in typing, when autosave is on.
+	function scheduleAutosave(): void {
+		clearTimeout(autosaveTimer);
+		if (autosaveDelay === undefined) {
+			return;
+		}
+		autosaveTimer = setTimeout(() => {
+			host.write().catch((error: unknown) => {
+				onMessage(String(error));
+			});
+		}, autosaveDelay * MILLISECONDS_PER_SECOND);
+	}
+
+	// svelte-ignore state_referenced_locally
+	let saved = savedText;
 
 	let parent = $state<HTMLElement>();
 	let promptInput = $state<HTMLInputElement>();
@@ -35,11 +74,14 @@
 	let promptText = $state('');
 
 	const host: EditorHost = {
-		write: () => {
-			onWrite(view?.state.doc.toString() ?? '');
+		write: async () => {
+			const current = view?.state.doc.toString() ?? '';
+			await onWrite(current);
+			saved = current;
+			onDraft(undefined);
 		},
-		quit: () => {
-			onQuit();
+		quit: (force) => {
+			onQuit(force);
 		},
 		openPrompt: (kind) => {
 			prompt = kind;
@@ -64,6 +106,13 @@
 					history(),
 					drawSelection(),
 					typstLanguage(),
+					EditorView.updateListener.of((update) => {
+						if (update.docChanged) {
+							const current = update.state.doc.toString();
+							onDraft(current === saved ? undefined : current);
+							scheduleAutosave();
+						}
+					}),
 					helix({
 						host,
 						onModeChange: (next) => {
@@ -74,7 +123,13 @@
 			}),
 		});
 		view.dispatch({ selection: { anchor: 0, head: 1 } });
-		return () => view?.destroy();
+		if (autofocus) {
+			view.focus();
+		}
+		return () => {
+			clearTimeout(autosaveTimer);
+			view?.destroy();
+		};
 	});
 
 	$effect(() => {
@@ -96,7 +151,15 @@
 			event.preventDefault();
 			const kind = prompt;
 			closePrompt();
-			runPrompt({ view, host, kind, line: promptText });
+			runPrompt({ view, host, kind, line: promptText })
+				.then((failure) => {
+					if (failure !== undefined) {
+						onMessage(failure);
+					}
+				})
+				.catch((error: unknown) => {
+					onMessage(String(error));
+				});
 		}
 	}
 </script>

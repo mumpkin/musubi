@@ -96,6 +96,25 @@ pub fn read_note(
 		.map_err(|error| error.to_string())
 }
 
+#[tauri::command(async)]
+pub fn write_note(
+	path: &str,
+	content: &str,
+	state: State<'_, AppState>,
+) -> Result<(), String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault
+		.write_note(path, content)
+		.map_err(|error| error.to_string())
+}
+
+/// Settings of this device that the interface needs.
+#[tauri::command(async)]
+pub fn device_settings(app: AppHandle) -> Result<DeviceSettings, String> {
+	Ok(DeviceSettings::load(&config_dir(&app)?))
+}
+
 /// Creates a note in `folder`; returns its path.
 #[tauri::command(async)]
 pub fn create_note(

@@ -143,6 +143,32 @@ impl Vault {
 		Ok(fs::read_to_string(path)?)
 	}
 
+	/// Saves `content` as the note at `note`. The text goes to a temporary
+	/// file first, renamed over the note: a crash or a sync tool never sees
+	/// a half-written note.
+	///
+	/// # Errors
+	///
+	/// [`VaultError::OutsideVault`], [`VaultError::NotANote`], a read-only
+	/// vault, or an I/O error.
+	pub fn write_note(
+		&self,
+		note: &str,
+		content: &str,
+	) -> Result<(), VaultError> {
+		if self.read_only {
+			return Err(VaultError::NewerFormat(FORMAT + 1));
+		}
+		let path = paths::resolve(&self.root, note)?;
+		if !is_note(&path) {
+			return Err(VaultError::NotANote(note.to_owned()));
+		}
+		let temporary = path.with_extension("typ.musubi-tmp");
+		fs::write(&temporary, content)?;
+		fs::rename(&temporary, &path)?;
+		Ok(())
+	}
+
 	/// Creates a note titled `title` in `folder` (`""` for the root), named
 	/// from the title. Returns its path.
 	///

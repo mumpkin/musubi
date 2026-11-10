@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import type { EditorMode } from '@musubi/editor';
+
 import type { PaneAction } from './actions.ts';
 import { shortcutLabel } from './shortcuts.ts';
 
@@ -10,6 +12,21 @@ export type PaneMode = 'reading' | 'editing';
 export interface PaneState {
 	path: string;
 	mode: PaneMode;
+	// Unsaved text of the editor, kept while the pane shows the reading view.
+	draft?: string | undefined;
+	// Bumped to load the note from disk again (changed by another program).
+	loads: number;
+}
+
+// What a pane reports to the shell.
+export interface PaneEvents {
+	focus: () => void;
+	open: (path: string) => void;
+	message: (text: string) => void;
+	editorMode: (mode: EditorMode) => void;
+	draft: (text: string | undefined) => void;
+	saved: (path: string) => void;
+	quit: (force: boolean) => void;
 }
 
 export const MAX_PANES = 2;

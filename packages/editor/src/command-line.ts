@@ -7,6 +7,8 @@ const typedCommands = new Map<string, CommandName[]>([
 	['write', ['write']],
 	['q', ['quit']],
 	['quit', ['quit']],
+	['q!', ['forceQuit']],
+	['quit!', ['forceQuit']],
 	['wq', ['write', 'quit']],
 	['x', ['write', 'quit']],
 ]);
