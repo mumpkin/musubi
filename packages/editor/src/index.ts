@@ -1,17 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// CodeMirror 6 editor and Helix mode. The first implementation comes with
-// the Helix mode prototype.
+// CodeMirror 6 editor with the Helix editing profile.
 
-export const editorModes = ['normal', 'insert', 'select'] as const;
-
-export type EditorMode = (typeof editorModes)[number];
-
-const modeIndicators: Record<EditorMode, string> = {
-	normal: 'NOR',
-	insert: 'INS',
-	select: 'SEL',
-};
-
-export function modeIndicator(mode: EditorMode): string {
-	return modeIndicators[mode];
-}
+export { parseCommandLine } from './command-line.ts';
+export { type CommandName, runCommand } from './commands.ts';
+export type {
+	Clipboard,
+	CommandContext,
+	CommandTarget,
+	EditorHost,
+	PromptKind,
+} from './context.ts';
+export { selectMatches } from './editing.ts';
+export { helix, type HelixOptions } from './helix.ts';
+export { keymaps } from './keymap.ts';
+export { type EditorMode, editorModes, modeField, modeIndicator } from './mode.ts';
