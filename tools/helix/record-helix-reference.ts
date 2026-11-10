@@ -24,6 +24,7 @@ const OUTPUT = resolve(
 const STARTUP_MILLISECONDS = 800;
 const KEY_MILLISECONDS = 40;
 const COMMAND_MILLISECONDS = 250;
+const EXIT_TIMEOUT_MILLISECONDS = 5000;
 
 // Typed commands that write markers around what Helix selected.
 const MARKERS = {
@@ -68,7 +69,11 @@ async function replay(
 		helix.stdin.write(part);
 		await pause(COMMAND_MILLISECONDS);
 	}
+	// A sequence that leaves Helix in insert mode would type the commands
+	// as text and never quit: give up after a while.
+	const timeout = setTimeout(() => helix.kill(), EXIT_TIMEOUT_MILLISECONDS);
 	await exited;
+	clearTimeout(timeout);
 	return readFileSync(file, 'utf8');
 }
 

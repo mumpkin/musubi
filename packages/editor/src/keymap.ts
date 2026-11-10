@@ -34,6 +34,8 @@ const shared: [string, CommandName][] = [
 	['gh', 'gotoLineStart'],
 	['gl', 'gotoLineEnd'],
 	['gs', 'gotoFirstNonWhitespace'],
+	['gw', 'showJumpLabels'],
+	['mm', 'matchBrackets'],
 ];
 
 export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
@@ -46,28 +48,68 @@ export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
 	insert: new Map([['Escape', 'normalMode']]),
 };
 
-// Keys that start a sequence: `g` waits for the next key, as in Helix.
-const PREFIXES = new Set(['g']);
+// Sequences followed by characters typed as the command's argument: the
+// object of `mi`, the delimiter of `ms`, the two delimiters of `mr`.
+interface ArgumentCommand {
+	command: CommandName;
+	length: number;
+}
+
+const WITH_ARGUMENT = new Map<string, ArgumentCommand>([
+	['mi', { command: 'selectInside', length: 1 }],
+	['ma', { command: 'selectAround', length: 1 }],
+	['ms', { command: 'surroundAdd', length: 1 }],
+	['md', { command: 'surroundDelete', length: 1 }],
+	['mr', { command: 'surroundReplace', length: 2 }],
+]);
 
 export interface KeyResolution {
 	command?: CommandName;
+	argument?: string;
 	// Keys typed so far when a sequence is not complete yet.
 	pending?: string;
 }
 
+function withArgument(sequence: string): KeyResolution | undefined {
+	for (const [prefix, { command, length }] of WITH_ARGUMENT) {
+		if (!sequence.startsWith(prefix)) {
+			continue;
+		}
+		const argument = sequence.slice(prefix.length);
+		return argument.length === length
+			? { command, argument }
+			: { pending: sequence };
+	}
+	return undefined;
+}
+
+function startsSequence(mode: EditorMode, sequence: string): boolean {
+	const prefixes = [...keymaps[mode].keys(), ...WITH_ARGUMENT.keys()];
+	return prefixes.some((keys) =>
+		keys.length > sequence.length && keys.startsWith(sequence));
+}
+
 // What a key does in `mode`, after the keys `pending` of a sequence.
+// `Escape` cancels a sequence; an unknown sequence does nothing.
 export function resolveKey(
 	mode: EditorMode,
 	pending: string,
 	key: string,
 ): KeyResolution {
+	if (pending !== '' && key === 'Escape') {
+		return {};
+	}
 	const sequence = pending + key;
 	const command = keymaps[mode].get(sequence);
 	if (command !== undefined) {
 		return { command };
 	}
-	if (pending === '' && PREFIXES.has(key) && mode !== 'insert') {
-		return { pending: key };
+	if (mode === 'insert') {
+		return {};
 	}
-	return {};
+	const argumentResolution = withArgument(sequence);
+	if (argumentResolution) {
+		return argumentResolution;
+	}
+	return startsSequence(mode, sequence) ? { pending: sequence } : {};
 }

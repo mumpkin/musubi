@@ -37,7 +37,8 @@ export interface CommandContext {
 	register: { text: string };
 }
 
-export type Command = (context: CommandContext) => void;
+// `argument` holds the characters typed after keys such as `mi` or `ms`.
+export type Command = (context: CommandContext, argument?: string) => void;
 
 export function currentMode(state: EditorState): EditorMode {
 	return state.field(modeField);

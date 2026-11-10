@@ -8,8 +8,18 @@ import {
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
 
 import { runCommand } from './commands.ts';
-import type { CommandContext, EditorHost } from './context.ts';
+import type {
+	CommandContext,
+	CommandTarget,
+	EditorHost,
+} from './context.ts';
 import { insertOrigins } from './insert.ts';
+import {
+	jumpLabelDecorations,
+	jumpLabelsField,
+	pressJumpLabel,
+	type VisibleText,
+} from './jump-labels.ts';
 import { resolveKey } from './keymap.ts';
 import { type EditorMode, modeField } from './mode.ts';
 import { cursorOf } from './selection.ts';
@@ -73,10 +83,24 @@ const theme = EditorView.baseTheme({
 		display: 'none',
 	},
 	'.helix-cursor': { outline: '1px solid currentColor' },
+	'.helix-jump-label': { color: '#d4380d', fontWeight: 'bold' },
 });
 
 function hasModifier(event: KeyboardEvent): boolean {
 	return event.ctrlKey || event.altKey || event.metaKey || event.isComposing;
+}
+
+// The view, with the part of the text on screen for `gw`.
+function viewTarget(view: EditorView): CommandTarget & VisibleText {
+	return {
+		get state() {
+			return view.state;
+		},
+		dispatch: (...specs) => {
+			view.dispatch(...specs);
+		},
+		visibleRange: () => view.viewport,
+	};
 }
 
 const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta']);
@@ -96,12 +120,20 @@ function handleKey(
 	if (hasModifier(event) || MODIFIER_KEYS.has(event.key)) {
 		return false;
 	}
+	if (pressJumpLabel(view, event.key)) {
+		event.preventDefault();
+		return true;
+	}
 	const mode = view.state.field(modeField);
 	const resolution = resolveKey(mode, pending.keys, event.key);
 	pending.keys = resolution.pending ?? '';
 	if (resolution.command !== undefined) {
-		runCommand(resolution.command, { ...context, target: view });
-	} else if (resolution.pending === undefined) {
+		runCommand(
+			resolution.command,
+			{ ...context, target: viewTarget(view) },
+			resolution.argument,
+		);
+	} else if (resolution.pending === undefined && mode === 'insert') {
 		return false;
 	}
 	event.preventDefault();
@@ -140,6 +172,8 @@ export function helix({ host, onModeChange }: HelixOptions): Extension {
 	return [
 		modeField,
 		insertOrigins,
+		jumpLabelsField,
+		jumpLabelDecorations,
 		EditorState.allowMultipleSelections.of(true),
 		keyHandler(host, register),
 		blockCursors,
