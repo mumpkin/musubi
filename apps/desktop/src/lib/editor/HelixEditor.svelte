@@ -8,7 +8,6 @@
 		type EditorHost,
 		type EditorMode,
 		helix,
-		modeIndicator,
 		type PromptKind,
 	} from '@musubi/editor';
 	import {
@@ -24,14 +23,14 @@
 		text: string;
 		onWrite: (text: string) => void;
 		onQuit: () => void;
+		onModeChange?: (mode: EditorMode) => void;
 	}
 
-	const { text, onWrite, onQuit }: Props = $props();
+	const { text, onWrite, onQuit, onModeChange }: Props = $props();
 
 	let parent = $state<HTMLElement>();
 	let promptInput = $state<HTMLInputElement>();
 	let view: EditorView | undefined;
-	let mode = $state<EditorMode>('normal');
 	let prompt = $state<PromptKind>();
 	let promptText = $state('');
 
@@ -60,20 +59,21 @@
 				doc: text,
 				extensions: [
 					lineNumbers(),
+					// Notes are prose: long lines wrap.
+					EditorView.lineWrapping,
 					history(),
 					drawSelection(),
 					typstLanguage(),
 					helix({
 						host,
 						onModeChange: (next) => {
-							mode = next;
+							onModeChange?.(next);
 						},
 					}),
 				],
 			}),
 		});
 		view.dispatch({ selection: { anchor: 0, head: 1 } });
-		view.focus();
 		return () => view?.destroy();
 	});
 
@@ -106,9 +106,9 @@
 		bind:this={parent}
 		class="editor"
 	></div>
-	<footer>
-		<span class="mode {mode}">{modeIndicator(mode)}</span>
-		{#if prompt}
+	<!-- The mode shows in the status bar; this line is the command line. -->
+	{#if prompt}
+		<footer>
 			<label>
 				<span>{prompt === 'command' ? ':' : 'select:'}</span>
 				<input
@@ -118,8 +118,8 @@
 					spellcheck="false"
 				/>
 			</label>
-		{/if}
-	</footer>
+		</footer>
+	{/if}
 </div>
 
 <style>
@@ -175,18 +175,6 @@
 		border-top: 1px solid var(--border);
 		font-family: ui-monospace, monospace;
 		font-size: 0.85rem;
-	}
-
-	.mode {
-		padding: 0 0.4rem;
-		border-radius: 3px;
-		background: var(--surface);
-		font-weight: 600;
-	}
-
-	.mode.insert {
-		background: var(--accent);
-		color: var(--background);
 	}
 
 	label {

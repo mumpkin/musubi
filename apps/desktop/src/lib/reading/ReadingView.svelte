@@ -72,22 +72,26 @@
 	{@html `<style>${markup.styles}</style>`}
 </svelte:head>
 
-<svelte:window onkeydown={handleKeydown} />
-
-<!-- Clicks are delegated from the container; the keyboard equivalent is the
-     block cursor, handled on the window. -->
-<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- Focusable so that keys only reach the pane that has the focus; clicks
+     are delegated from the container. -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <article
 	bind:this={container}
 	class="reading-view"
+	tabindex="0"
 	onclick={handleClick}
+	onkeydown={handleKeydown}
 >
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitized -->
 	{@html markup.body}
 </article>
 
 <style>
+	.reading-view:focus {
+		outline: none;
+	}
+
 	.reading-view {
 		max-width: 46rem;
 		margin: 0 auto;

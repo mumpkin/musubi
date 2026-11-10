@@ -10,3 +10,5 @@ Specifications and architecture decisions.
   rendered blocks to the source.
 - [Prototype: Helix mode](./prototypes/helix-mode.md): CodeMirror 6, checked
   against the real Helix.
+- [Interface mockup](./prototypes/ui-mockup.md): layout, PaneForge and Bits
+  UI.
