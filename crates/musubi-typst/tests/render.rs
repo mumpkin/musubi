@@ -22,11 +22,11 @@ fn link(target: &str, section: Option<&str>) -> NoteLink {
 fn renders_the_demo_note_to_html() {
 	let note = NoteCompiler::new(demo_vault()).render("Demo.typ");
 	let html = note.html.expect("the demo note compiles");
-	assert!(html.contains("<h2>Demo note</h2>"));
+	assert!(html.contains(">Demo note</h2>"));
 	assert!(html.contains("<math"), "math is exported as MathML");
 	assert!(html.contains(r#"class="musubi-link""#));
 	assert!(html.contains(r#"class="musubi-card""#));
-	assert!(html.contains("<table>"));
+	assert!(html.contains("<table"));
 }
 
 #[test]
@@ -109,4 +109,37 @@ fn points_errors_to_the_main_note() {
 
 fn tests_vault() -> PathBuf {
 	PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/vault")
+}
+
+#[test]
+fn marks_rendered_elements_with_their_source_block() {
+	let note = NoteCompiler::new(tests_vault()).render("Blocks.typ");
+	let html = note.html.expect("the note compiles");
+	for expected in [
+		r#"<h2 data-block="1">"#,
+		r#"<p data-block="2">"#,
+		r#"<li data-block="3">"#,
+		r#"<li data-block="4">"#,
+		r#"<math display="block" data-block="7">"#,
+		r#"<div class="musubi-card" data-block="8">"#,
+		r#"<pre data-block="9">"#,
+		r#"<p data-block="12">"#,
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
+	assert_eq!(note.blocks.len(), 13);
+}
+
+#[test]
+fn maps_generated_content_to_its_call() {
+	let note = NoteCompiler::new(tests_vault()).render("Edge.typ");
+	let html = note.html.expect("the note compiles");
+	for expected in [
+		r#"<p data-block="1">Lorem"#,
+		r#"<strong data-block="4">Replaced heading"#,
+		r#"<ul data-block="5">"#,
+		"<p>Included paragraph.</p>",
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
 }

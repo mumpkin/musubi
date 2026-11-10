@@ -1,15 +1,51 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- Native reading view: the HTML export of a note, styled by the app. -->
 <script lang="ts">
+	import {
+		blockAt,
+		highlightBlock,
+		moveCursor,
+		renderedBlocks,
+	} from './block-cursor.ts';
 	import type { NoteMarkup } from './note-html.ts';
 	import { linkedNotePath } from './note-html.ts';
 
 	interface Props {
 		markup: NoteMarkup;
+		// Index of the block under the cursor, in the source blocks.
+		selectedBlock: number | undefined;
 		onNavigate: (path: string) => void;
+		onSelect: (block: number | undefined) => void;
 	}
 
-	const { markup, onNavigate }: Props = $props();
+	const { markup, selectedBlock, onNavigate, onSelect }: Props = $props();
+
+	const CURSOR_STEPS = new Map([
+		['j', 1],
+		['k', -1],
+	]);
+
+	let container = $state<HTMLElement>();
+
+	$effect(() => {
+		if (container) {
+			highlightBlock(container, selectedBlock);
+		}
+	});
+
+	// `j` / `k` move the block cursor, `Escape` hides it.
+	function handleKeydown(event: KeyboardEvent): void {
+		if (!container || event.ctrlKey || event.altKey || event.metaKey) {
+			return;
+		}
+		const step = CURSOR_STEPS.get(event.key);
+		if (step !== undefined) {
+			const blocks = renderedBlocks(container);
+			onSelect(moveCursor(blocks, selectedBlock, step));
+		} else if (event.key === 'Escape') {
+			onSelect(undefined);
+		}
+	}
 
 	function handleClick(event: MouseEvent): void {
 		if (!(event.target instanceof Element)) {
@@ -17,6 +53,7 @@
 		}
 		const anchor = event.target.closest('a');
 		if (!anchor) {
+			onSelect(blockAt(event.target));
 			return;
 		}
 		// Links never open inside the window; web links will open in the
@@ -35,11 +72,14 @@
 	{@html `<style>${markup.styles}</style>`}
 </svelte:head>
 
-<!-- Clicks are delegated from the container; keyboard navigation of the
-     reading view comes with the block cursor. -->
+<svelte:window onkeydown={handleKeydown} />
+
+<!-- Clicks are delegated from the container; the keyboard equivalent is the
+     block cursor, handled on the window. -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <article
+	bind:this={container}
 	class="reading-view"
 	onclick={handleClick}
 >
@@ -99,6 +139,12 @@
 	.reading-view :global(td) {
 		padding: 0.3rem 0.8rem;
 		border: 1px solid var(--border);
+	}
+
+	.reading-view :global(.selected-block) {
+		border-radius: 4px;
+		outline: 2px solid var(--accent);
+		outline-offset: 4px;
 	}
 
 	.reading-view :global(a.musubi-link) {

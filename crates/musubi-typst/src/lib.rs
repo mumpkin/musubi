@@ -2,22 +2,27 @@
 //! Typst compilation for Musubi: a note compiled to HTML for the reading
 //! view, with its diagnostics and the links, cards and tasks it contains.
 
+mod blocks;
 mod diagnostics;
 mod files;
 mod index;
 mod package;
+mod source_map;
 mod world;
 
 use std::path::PathBuf;
 
 use serde::Serialize;
 use ts_rs::TS;
+use typst::World;
 use typst::diag::SourceDiagnostic;
 use typst::syntax::VirtualPath;
-use typst_html::{HtmlDocument, HtmlOptions};
+use typst_html::{HtmlDocument, HtmlNode, HtmlOptions, tag};
 
+pub use crate::blocks::{BlockKind, SourceBlock};
 pub use crate::diagnostics::{Diagnostic, DiagnosticSeverity, SourcePosition};
 pub use crate::index::{Card, NoteIndex, NoteLink, Task};
+use crate::source_map::SourceMap;
 use crate::world::VaultWorld;
 
 /// A note compiled for the reading view.
@@ -28,6 +33,9 @@ pub struct RenderedNote {
 	pub html: Option<String>,
 	pub diagnostics: Vec<Diagnostic>,
 	pub index: NoteIndex,
+	/// Top-level blocks of the note. Rendered elements carry the index of
+	/// their block in a `data-block` attribute.
+	pub blocks: Vec<SourceBlock>,
 }
 
 /// Compiles the notes of one vault. Keep it alive between compilations:
@@ -54,7 +62,7 @@ impl NoteCompiler {
 		self.world.prepare(&note);
 		let compiled = typst::compile::<HtmlDocument>(&self.world);
 		let mut diagnostics = self.diagnostics(&compiled.warnings);
-		let document = match compiled.output {
+		let mut document = match compiled.output {
 			Ok(document) => document,
 			Err(errors) => {
 				diagnostics.extend(self.diagnostics(&errors));
@@ -62,9 +70,11 @@ impl NoteCompiler {
 					html: None,
 					diagnostics,
 					index: NoteIndex::default(),
+					blocks: Vec::new(),
 				};
 			}
 		};
+		let blocks = self.annotate_blocks(&mut document);
 		let html = match typst_html::html(&document, &HtmlOptions::default()) {
 			Ok(html) => Some(html),
 			Err(errors) => {
@@ -78,7 +88,29 @@ impl NoteCompiler {
 			index: NoteIndex::from_introspector(
 				document.introspector().as_ref(),
 			),
+			blocks,
 		}
+	}
+
+	/// Finds the blocks of the main note and marks the rendered elements
+	/// with them.
+	fn annotate_blocks(&self, document: &mut HtmlDocument) -> Vec<SourceBlock> {
+		let Ok(source) = self.world.source(self.world.main()) else {
+			return Vec::new();
+		};
+		let blocks = blocks::source_blocks(&source);
+		let source_map = SourceMap {
+			world: &self.world,
+			blocks: &blocks,
+		};
+		for node in document.root_mut().children.make_mut() {
+			if let HtmlNode::Element(element) = node
+				&& element.tag == tag::body
+			{
+				source_map.annotate(element);
+			}
+		}
+		blocks
 	}
 
 	fn diagnostics(
@@ -112,6 +144,7 @@ impl RenderedNote {
 				position: None,
 			}],
 			index: NoteIndex::default(),
+			blocks: Vec::new(),
 		}
 	}
 }

@@ -6,3 +6,5 @@ Specifications and architecture decisions.
   review log are stored on disk.
 - [Prototype: Typst to HTML in Rust](./prototypes/typst-to-html.md): compiling a note
   for the reading view, timings and findings.
+- [Prototype: source positions](./prototypes/source-positions.md): mapping
+  rendered blocks to the source.

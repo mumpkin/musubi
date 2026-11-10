@@ -16,11 +16,13 @@
 	let path = $state('Demo.typ');
 	let view = $state<NoteView>();
 	let failure = $state<string>();
+	let selectedBlock = $state<number>();
 
 	$effect(() => {
 		renderNote(path)
 			.then((result) => {
 				view = result;
+				selectedBlock = undefined;
 				failure = undefined;
 			})
 			.catch((error: unknown) => {
@@ -31,6 +33,16 @@
 	function openNote(note: string): void {
 		path = note;
 	}
+
+	function selectBlock(block: number | undefined): void {
+		selectedBlock = block;
+	}
+
+	const block = $derived(
+		selectedBlock === undefined
+			? undefined
+			: view?.note.blocks[selectedBlock],
+	);
 
 	const markup = $derived(
 		view?.note.html ? toNoteMarkup(view.note.html) : undefined,
@@ -73,10 +85,22 @@
 	</ul>
 {/if}
 
+<p class="cursor muted">
+	{#if block}
+		Block {selectedBlock}: {block.kind},
+		lines {block.startLine + 1}–{block.endLine + 1},
+		bytes {block.start}–{block.end}
+	{:else}
+		Press j / k or click a block to see its source range
+	{/if}
+</p>
+
 {#if markup}
 	<ReadingView
 		{markup}
+		{selectedBlock}
 		onNavigate={openNote}
+		onSelect={selectBlock}
 	/>
 {/if}
 
@@ -114,6 +138,12 @@
 	.muted {
 		color: var(--muted);
 		font-size: 0.85rem;
+	}
+
+	.cursor {
+		margin: 0;
+		padding: 0.4rem 1rem;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.diagnostics,
