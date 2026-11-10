@@ -8,3 +8,5 @@ Specifications and architecture decisions.
   for the reading view, timings and findings.
 - [Prototype: source positions](./prototypes/source-positions.md): mapping
   rendered blocks to the source.
+- [Prototype: Helix mode](./prototypes/helix-mode.md): CodeMirror 6, checked
+  against the real Helix.

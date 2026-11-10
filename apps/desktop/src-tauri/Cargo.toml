@@ -19,6 +19,7 @@ musubi-core.workspace = true
 musubi-typst.workspace = true
 serde.workspace = true
 tauri = { version = "2", features = [] }
+tauri-plugin-clipboard-manager = "2"
 ts-rs.workspace = true
 
 [lints]
