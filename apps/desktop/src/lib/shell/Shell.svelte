@@ -6,6 +6,7 @@
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 	import { Tooltip } from 'bits-ui';
 	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
+	import { tick } from 'svelte';
 
 	import type { PaletteCommand, PaneAction } from './actions.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
@@ -15,6 +16,13 @@
 	import { FOLDERS, ROOT_NOTES, titleOf } from './mock-vault.ts';
 	import NotePane from './NotePane.svelte';
 	import { MAX_PANES, otherMode, type PaneState } from './panes.ts';
+	import {
+		ACTION_LABELS,
+		keyName,
+		resolveShortcut,
+		type ShellAction,
+		shortcutLabel,
+	} from './shortcuts.ts';
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 
@@ -44,6 +52,7 @@
 		if (pane) {
 			pane.mode = otherMode(pane.mode);
 			editorMode = 'normal';
+			focusAfterRender(index);
 		}
 	}
 
@@ -52,14 +61,14 @@
 		const pane = panes[focusedIndex];
 		if (pane && panes.length < MAX_PANES) {
 			panes.push({ path: pane.path, mode: otherMode(pane.mode) });
-			focusedIndex = panes.length - 1;
+			focusAfterRender(panes.length - 1);
 		}
 	}
 
 	function close(index: number): void {
 		if (panes.length > 1) {
 			panes.splice(index, 1);
-			focusedIndex = 0;
+			focusAfterRender(0);
 		}
 	}
 
@@ -80,61 +89,90 @@
 	}
 
 	function actionsOf(index: number, pane: PaneState): PaneAction[] {
-		const actions: PaneAction[] = [{
-			label: pane.mode === 'reading' ? 'Edit this note' : 'Read this note',
-			icon: pane.mode === 'reading' ? '✎' : '◧',
+		const isReading = pane.mode === 'reading';
+		const modeAction: PaneAction = {
+			label: isReading ? 'Edit this note' : 'Read this note',
+			icon: isReading ? 'edit' : 'read',
+			shortcut: isReading ? 'i' : shortcutLabel('toggleMode'),
 			run: () => {
 				toggleMode(index);
 			},
-		}];
-		if (panes.length < MAX_PANES) {
-			actions.push({ label: 'Split the pane', icon: '⊞', run: split });
-		} else {
-			actions.push({
+		};
+		const paneAction: PaneAction = panes.length < MAX_PANES
+			? {
+				label: 'Split the pane',
+				icon: 'split',
+				shortcut: shortcutLabel('split'),
+				run: split,
+			}
+			: {
 				label: 'Close this pane',
-				icon: '✕',
+				icon: 'close',
+				shortcut: shortcutLabel('closePane'),
 				run: () => {
 					close(index);
 				},
-			});
-		}
-		return actions;
+			};
+		return [modeAction, paneAction];
+	}
+
+	// The keyboard focus follows the pane, once its content is on screen.
+	function focusAfterRender(index: number): void {
+		focusedIndex = index;
+		tick()
+			.then(() => {
+				focusPane(index);
+			})
+			.catch(() => undefined);
+	}
+
+	function focusPane(index: number): void {
+		focusedIndex = (index + panes.length) % panes.length;
+		const element = document.querySelectorAll<HTMLElement>('.pane')
+			.item(focusedIndex);
+		element.querySelector<HTMLElement>('.reading-view, .cm-content')
+			?.focus();
 	}
 
 	const notes = [...ROOT_NOTES, ...FOLDERS.flatMap((folder) => folder.notes)];
 
+	const ACTIONS: Record<ShellAction, () => void> = {
+		palette: () => {
+			isPaletteOpen = true;
+		},
+		toggleExplorer: () => {
+			toggle(explorer);
+		},
+		toggleBacklinks: () => {
+			toggle(backlinks);
+		},
+		toggleMode: () => {
+			toggleMode(focusedIndex);
+		},
+		split,
+		closePane: () => {
+			close(focusedIndex);
+		},
+		nextPane: () => {
+			focusPane(focusedIndex + 1);
+		},
+		leftPane: () => {
+			focusPane(focusedIndex - 1);
+		},
+		rightPane: () => {
+			focusPane(focusedIndex + 1);
+		},
+	};
+
 	const commands: PaletteCommand[] = [
-		{
-			label: 'Switch between reading and editing',
-			group: 'Pane',
-			run: () => {
-				toggleMode(focusedIndex);
-			},
-		},
-		{ label: 'Split the pane', group: 'Pane', run: split },
-		{
-			label: 'Close the pane',
-			group: 'Pane',
-			run: () => {
-				close(focusedIndex);
-			},
-		},
-		{
-			label: 'Toggle the note explorer',
-			group: 'View',
-			shortcut: 'Ctrl+B',
-			run: () => {
-				toggle(explorer);
-			},
-		},
-		{
-			label: 'Toggle backlinks',
-			group: 'View',
-			shortcut: 'Ctrl+L',
-			run: () => {
-				toggle(backlinks);
-			},
-		},
+		...Object.entries(ACTION_LABELS)
+			.filter(([action]) => action !== 'palette')
+			.map(([action, { label, group }]) => ({
+				label,
+				group,
+				shortcut: shortcutLabel(action as ShellAction),
+				run: ACTIONS[action as ShellAction],
+			})),
 		...notes.map((note) => ({
 			label: note.title,
 			group: 'Open a note',
@@ -144,28 +182,38 @@
 		})),
 	];
 
-	const SHORTCUTS = new Map<string, () => void>([
-		['p', () => {
-			isPaletteOpen = true;
-		}],
-		['b', () => {
-			toggle(explorer);
-		}],
-		['l', () => {
-			toggle(backlinks);
-		}],
-	]);
+	let pendingKeys = '';
+
+	// Shortcuts are read before the panes see the keys, except while typing
+	// text: in insert mode, the command line or the palette.
+	function isTyping(event: KeyboardEvent): boolean {
+		const isInsert = focusedPane?.mode === 'editing'
+			&& editorMode === 'insert';
+		const isInput = event.target instanceof HTMLInputElement;
+		return isPaletteOpen || isInsert || isInput;
+	}
 
 	function handleShortcut(event: KeyboardEvent): void {
-		const action = event.ctrlKey ? SHORTCUTS.get(event.key) : undefined;
-		if (action) {
+		if (isTyping(event)) {
+			return;
+		}
+		const isReadingEdit = focusedPane?.mode === 'reading'
+			&& pendingKeys === '' && event.key === 'i';
+		const resolution = isReadingEdit
+			? { action: 'toggleMode' as const, pending: '', isUsed: true }
+			: resolveShortcut(pendingKeys, keyName(event));
+		pendingKeys = resolution.pending;
+		if (resolution.isUsed) {
 			event.preventDefault();
-			action();
+			event.stopPropagation();
+		}
+		if (resolution.action) {
+			ACTIONS[resolution.action]();
 		}
 	}
 </script>
 
-<svelte:window onkeydown={handleShortcut} />
+<svelte:window onkeydowncapture={handleShortcut} />
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">

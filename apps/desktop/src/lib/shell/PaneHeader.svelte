@@ -4,6 +4,7 @@
 	import { Tooltip } from 'bits-ui';
 
 	import type { PaneAction } from './actions.ts';
+	import Icon from './Icon.svelte';
 	import { TOOLTIP_OFFSET_PIXELS } from './layout.ts';
 
 	interface Props {
@@ -24,13 +25,14 @@
 				class="pane-action"
 				aria-label={action.label}
 				onclick={action.run}
-			>{action.icon}</Tooltip.Trigger>
+			><Icon name={action.icon} /></Tooltip.Trigger>
 			<Tooltip.Portal>
 				<Tooltip.Content
 					class="tooltip"
 					sideOffset={TOOLTIP_OFFSET_PIXELS}
 				>
 					{action.label}
+					<kbd>{action.shortcut}</kbd>
 				</Tooltip.Content>
 			</Tooltip.Portal>
 		</Tooltip.Root>
@@ -71,6 +73,12 @@
 	:global(.pane-action:hover) {
 		background: var(--hover);
 		color: inherit;
+	}
+
+	:global(.tooltip kbd) {
+		margin-left: 0.5rem;
+		opacity: 0.7;
+		font-family: ui-monospace, monospace;
 	}
 
 	:global(.tooltip) {
