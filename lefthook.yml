@@ -7,6 +7,10 @@ pre-commit:
       glob: "*.{js,ts,svelte}"
       run: pnpm exec eslint --no-warn-ignored {staged_files}
 
+    - name: prettier
+      glob: "*.{json,jsonc,yml,yaml,md}"
+      run: pnpm exec prettier --check {staged_files}
+
     - name: rustfmt
       glob: "*.rs"
       run: cargo fmt --all --check
