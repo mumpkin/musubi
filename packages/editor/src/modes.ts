@@ -101,9 +101,12 @@ export const modeCommands = {
 		host.openPrompt('select');
 	},
 	write: ({ host }) => {
-		host.write();
+		host.write().catch(() => undefined);
 	},
 	quit: ({ host }) => {
-		host.quit();
+		host.quit(false);
+	},
+	forceQuit: ({ host }) => {
+		host.quit(true);
 	},
 } satisfies Record<string, Command>;

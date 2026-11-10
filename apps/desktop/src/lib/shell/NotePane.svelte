@@ -4,10 +4,10 @@
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
 	import HelixEditor from '../editor/HelixEditor.svelte';
-	import { readNote } from '../vault/vault.ts';
+	import { readNote, writeNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
 	import PaneHeader from './PaneHeader.svelte';
-	import type { PaneState } from './panes.ts';
+	import type { PaneEvents, PaneState } from './panes.ts';
 	import ReadingPane from './ReadingPane.svelte';
 
 	interface Props {
@@ -15,10 +15,11 @@
 		title: string;
 		isFocused: boolean;
 		actions: PaneAction[];
-		onFocus: () => void;
-		onOpen: (path: string) => void;
-		onMessage: (message: string) => void;
-		onEditorMode: (mode: EditorMode) => void;
+		// Bumped when the note is saved, to render it again.
+		revision: number;
+		// Seconds of pause before saving, or `undefined` without autosave.
+		autosaveDelay: number | undefined;
+		events: PaneEvents;
 	}
 
 	const {
@@ -26,48 +27,56 @@
 		title,
 		isFocused,
 		actions,
-		onFocus,
-		onOpen,
-		onMessage,
-		onEditorMode,
+		revision,
+		autosaveDelay,
+		events,
 	}: Props = $props();
 
 	let editorMode = $state<EditorMode>('normal');
 
+	const isModified = $derived(pane.draft !== undefined);
+
 	function setEditorMode(mode: EditorMode): void {
 		editorMode = mode;
-		onEditorMode(mode);
+		events.editorMode(mode);
+	}
+
+	async function write(text: string): Promise<void> {
+		await writeNote(pane.path, text);
+		events.saved(pane.path);
 	}
 </script>
 
 <section
 	class="pane"
 	class:focused={isFocused}
-	onfocusin={onFocus}
+	onfocusin={events.focus}
 >
 	<PaneHeader
-		{title}
+		title={isModified ? `${title} ●` : title}
 		mode={pane.mode === 'reading' ? 'LEC' : modeIndicator(editorMode)}
 		{actions}
 	/>
 	{#if pane.mode === 'reading'}
 		<ReadingPane
 			path={pane.path}
-			{onOpen}
+			{revision}
+			onOpen={events.open}
 		/>
 	{:else}
-		{#key pane.path}
+		{#key `${pane.path}:${String(pane.loads)}`}
 			{#await readNote(pane.path)}
 				<p class="message">Loading…</p>
-			{:then text}
+			{:then saved}
 				<HelixEditor
-					{text}
-					onWrite={() => {
-						onMessage(':w — saving comes with the next ticket');
-					}}
-					onQuit={() => {
-						onMessage(':q — closing panes from the editor comes later');
-					}}
+					text={pane.draft ?? saved}
+					savedText={saved}
+					{autosaveDelay}
+					autofocus={isFocused}
+					onWrite={write}
+					onQuit={events.quit}
+					onDraft={events.draft}
+					onMessage={events.message}
 					onModeChange={setEditorMode}
 				/>
 			{:catch error}

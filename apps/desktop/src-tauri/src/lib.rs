@@ -23,6 +23,8 @@ pub fn run() {
 			vault::current_vault,
 			vault::vault_tree,
 			vault::read_note,
+			vault::write_note,
+			vault::device_settings,
 			vault::create_note,
 			vault::create_folder,
 			vault::demo_vault_path,

@@ -13,6 +13,10 @@ and this project adheres to
 - Open a folder as a vault; the last vault reopens at launch.
 - Note explorer listing notes by title, with folders that fold.
 - Create notes and folders (`Space n`), named from their title.
+- Save notes with `:w`; `:q` closes the pane and refuses unsaved changes
+  (`:q!` discards them), `:wq` and `:x` save then close. Reading panes
+  render the note again on save; notes changed by another program reload
+  when the window gets the focus back.
 - Reading and editing panes, side by side, with Helix-style shortcuts
   (`Space ?`, `Space e`, `Ctrl-w v`…).
 

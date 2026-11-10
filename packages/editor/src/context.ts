@@ -23,8 +23,10 @@ export interface Clipboard {
 
 // Services of the application around the editor.
 export interface EditorHost {
-	write: () => void;
-	quit: () => void;
+	// Saves the note; resolves once it is on disk.
+	write: () => Promise<void>;
+	// Closes the pane; refuses unsaved changes unless `force`.
+	quit: (force: boolean) => void;
 	openPrompt: (kind: PromptKind) => void;
 	clipboard: Clipboard;
 }

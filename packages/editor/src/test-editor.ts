@@ -73,8 +73,13 @@ export class TestEditor implements CommandTarget {
 
 	private context(): CommandContext {
 		const host: EditorHost = {
-			write: () => this.calls.push('write'),
-			quit: () => this.calls.push('quit'),
+			write: async () => {
+				this.calls.push('write');
+				await Promise.resolve();
+			},
+			quit: (force) => {
+				this.calls.push(force ? 'quit!' : 'quit');
+			},
 			openPrompt: (kind) => this.calls.push(`prompt:${kind}`),
 			clipboard: {
 				write: async (text) => {

@@ -1,3 +1,4 @@
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -11,6 +12,9 @@ export default defineConfig({
 				},
 			},
 			{
+				// Compiles the runes of `.svelte.ts` modules.
+				plugins: [svelte()],
+				resolve: { conditions: ['browser'] },
 				test: {
 					name: 'desktop',
 					include: ['apps/desktop/src/**/*.test.ts'],

@@ -137,11 +137,12 @@ describe('keymaps and command line', () => {
 		expect(keymaps.insert.get('Escape')).toBe('normalMode');
 	});
 
-	it('knows :w, :q, :wq and :x', () => {
+	it('knows :w, :q, :q!, :wq and :x', () => {
 		expect(parseCommandLine('w')).toEqual(['write']);
 		expect(parseCommandLine(' q ')).toEqual(['quit']);
 		expect(parseCommandLine('wq')).toEqual(['write', 'quit']);
 		expect(parseCommandLine('x')).toEqual(['write', 'quit']);
+		expect(parseCommandLine('q!')).toEqual(['forceQuit']);
 		expect(parseCommandLine('unknown')).toBeUndefined();
 	});
 });

@@ -95,3 +95,19 @@ fn opens_newer_vaults_read_only() {
 	assert!(vault.read_only);
 	assert!(vault.create_note("", "New").is_err());
 }
+
+#[test]
+fn saves_notes_in_place() {
+	let directory = vault_with(&[("Note.typ", "= Note\n")]);
+	let vault = open(directory.path());
+	vault
+		.write_note("Note.typ", "= Note\n\nMore.\n")
+		.expect("saved");
+	assert_eq!(
+		vault.read_note("Note.typ").expect("read"),
+		"= Note\n\nMore.\n"
+	);
+	assert!(!directory.path().join("Note.typ.musubi-tmp").exists());
+	assert!(vault.write_note("../Note.typ", "x").is_err());
+	assert!(vault.write_note("Missing.typ", "x").is_err());
+}
