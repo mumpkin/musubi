@@ -19,7 +19,9 @@
 	{#if message}
 		<span class="message">{message}</span>
 	{/if}
-	<span class="hint">Ctrl+P commands · Ctrl+B notes · Ctrl+L backlinks</span>
+	<span class="hint">
+		Space ? commands · Space e notes · Space l backlinks · Ctrl-w v split
+	</span>
 </footer>
 
 <style>

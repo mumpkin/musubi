@@ -7,17 +7,17 @@ interface libraries before building the real screens.
 
 `apps/desktop/src/lib/shell/`:
 
-| Component               | Role                                                                                                |
-| ----------------------- | --------------------------------------------------------------------------------------------------- |
-| `Shell.svelte`          | Layout: title bar, explorer, one or two panes, backlinks, status bar; `Ctrl+P`, `Ctrl+B`, `Ctrl+L`. |
-| `TitleBar.svelte`       | Title bar in the app's style, replacing the system one: drag, double click, window buttons.         |
-| `NotePane.svelte`       | A pane: any note, in reading or editing mode, switched from its header.                             |
-| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                          |
-| `ReadingPane.svelte`    | A pane in reading mode (`LEC`): the note rendered by the Rust core, block cursor `j` / `k`.         |
-| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                                  |
-| `StatusBar.svelte`      | Mode of the focused pane (`LEC`, `NOR`, `INS`, `SEL`) and its note.                                 |
-| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                               |
-| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                                   |
+| Component               | Role                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------- |
+| `Shell.svelte`          | Layout: title bar, explorer, one or two panes, backlinks, status bar; shortcuts below.      |
+| `TitleBar.svelte`       | Title bar in the app's style, replacing the system one: drag, double click, window buttons. |
+| `NotePane.svelte`       | A pane: any note, in reading or editing mode, switched from its header.                     |
+| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                  |
+| `ReadingPane.svelte`    | A pane in reading mode (`LEC`): the note rendered by the Rust core, block cursor `j` / `k`. |
+| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                          |
+| `StatusBar.svelte`      | Mode of the focused pane (`LEC`, `NOR`, `INS`, `SEL`) and its note.                         |
+| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                       |
+| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                           |
 
 The main area shows **one pane by default**; splitting it gives two panes
 side by side. Each pane shows any note, in reading or editing mode, and
@@ -29,6 +29,23 @@ backlinks opens it in the focused pane. Pane sizes are kept between sessions.
 
 The interface is light only: the dark theme waits for milestone J2, but every
 color is already a CSS variable holding both values (`light-dark()`).
+
+## Shortcuts
+
+In the Helix style, so that the same habits work everywhere. They are read
+before the panes, except while typing (insert mode, command line, palette).
+
+| Action                   | Keys                               |
+| ------------------------ | ---------------------------------- |
+| Command palette          | `Space ?`, `Ctrl-p`                |
+| Note explorer            | `Space e`                          |
+| Backlinks                | `Space l`                          |
+| Switch reading / editing | `Space r`; `i` while reading       |
+| Split, close the pane    | `Ctrl-w v`, `Ctrl-w q`             |
+| Next pane, left, right   | `Ctrl-w w`, `Ctrl-w h`, `Ctrl-w l` |
+
+`Ctrl-b` and `Ctrl-l` are left free: `Ctrl-b` scrolls a page up in Helix.
+Every pane button shows its shortcut in its tooltip.
 
 ## Decision on the interface libraries
 
