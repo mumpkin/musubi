@@ -8,14 +8,22 @@
 	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
 	import { tick } from 'svelte';
 
+	import type { VaultInfo } from '../bindings/VaultInfo.ts';
+	import type { VaultTree } from '../bindings/VaultTree.ts';
+	import { buildTree, parentOf, titleIn } from '../vault/tree.ts';
 	import type { PaletteCommand, PaneAction } from './actions.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
 	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
-	import { FOLDERS, ROOT_NOTES, titleOf } from './mock-vault.ts';
+	import NewEntryDialog from './NewEntryDialog.svelte';
 	import NotePane from './NotePane.svelte';
-	import { MAX_PANES, otherMode, type PaneState } from './panes.ts';
+	import {
+		MAX_PANES,
+		otherMode,
+		paneActions,
+		type PaneState,
+	} from './panes.ts';
 	import {
 		ACTION_LABELS,
 		keyName,
@@ -26,7 +34,22 @@
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 
-	let panes = $state<PaneState[]>([{ path: 'Demo.typ', mode: 'reading' }]);
+	interface Props {
+		vault: VaultInfo;
+	}
+
+	const { vault }: Props = $props();
+
+	// svelte-ignore state_referenced_locally
+	let tree = $state(vault.tree);
+	const root = $derived(buildTree(tree));
+	let panes = $state<PaneState[]>([{
+		// svelte-ignore state_referenced_locally
+		path: vault.tree.notes[0]?.path ?? '',
+		mode: 'reading',
+	}]);
+	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
+	let isCreating = $state(false);
 	let focusedIndex = $state(0);
 	let editorMode = $state<EditorMode>('normal');
 	let isPaletteOpen = $state(false);
@@ -80,6 +103,18 @@
 		}
 	}
 
+	function startCreation(kind: 'note' | 'folder', folder: string): void {
+		creation = { kind, folder };
+		isCreating = true;
+	}
+
+	function created(newTree: VaultTree, note: string | undefined): void {
+		tree = newTree;
+		if (note !== undefined) {
+			open(note);
+		}
+	}
+
 	function setEditorMode(mode: EditorMode): void {
 		editorMode = mode;
 	}
@@ -89,31 +124,16 @@
 	}
 
 	function actionsOf(index: number, pane: PaneState): PaneAction[] {
-		const isReading = pane.mode === 'reading';
-		const modeAction: PaneAction = {
-			label: isReading ? 'Edit this note' : 'Read this note',
-			icon: isReading ? 'edit' : 'read',
-			shortcut: isReading ? 'i' : shortcutLabel('toggleMode'),
-			run: () => {
+		return paneActions(pane, {
+			canSplit: panes.length < MAX_PANES,
+			toggleMode: () => {
 				toggleMode(index);
 			},
-		};
-		const paneAction: PaneAction = panes.length < MAX_PANES
-			? {
-				label: 'Split the pane',
-				icon: 'split',
-				shortcut: shortcutLabel('split'),
-				run: split,
-			}
-			: {
-				label: 'Close this pane',
-				icon: 'close',
-				shortcut: shortcutLabel('closePane'),
-				run: () => {
-					close(index);
-				},
-			};
-		return [modeAction, paneAction];
+			split,
+			close: () => {
+				close(index);
+			},
+		});
 	}
 
 	// The keyboard focus follows the pane, once its content is on screen.
@@ -134,11 +154,12 @@
 			?.focus();
 	}
 
-	const notes = [...ROOT_NOTES, ...FOLDERS.flatMap((folder) => folder.notes)];
-
 	const ACTIONS: Record<ShellAction, () => void> = {
 		palette: () => {
 			isPaletteOpen = true;
+		},
+		newNote: () => {
+			startCreation('note', parentOf(currentPath));
 		},
 		toggleExplorer: () => {
 			toggle(explorer);
@@ -164,7 +185,7 @@
 		},
 	};
 
-	const commands: PaletteCommand[] = [
+	const commands: PaletteCommand[] = $derived([
 		...Object.entries(ACTION_LABELS)
 			.filter(([action]) => action !== 'palette')
 			.map(([action, { label, group }]) => ({
@@ -173,14 +194,14 @@
 				shortcut: shortcutLabel(action as ShellAction),
 				run: ACTIONS[action as ShellAction],
 			})),
-		...notes.map((note) => ({
+		...tree.notes.map((note) => ({
 			label: note.title,
 			group: 'Open a note',
 			run: () => {
 				open(note.path);
 			},
 		})),
-	];
+	]);
 
 	let pendingKeys = '';
 
@@ -217,7 +238,7 @@
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">
-		<TitleBar title={titleOf(currentPath)} />
+		<TitleBar title={titleIn(tree, currentPath)} />
 		<PaneGroup
 			direction="horizontal"
 			autoSaveId="musubi-shell"
@@ -230,8 +251,11 @@
 				collapsedSize={0}
 			>
 				<Explorer
+					vaultName={vault.name}
+					{root}
 					current={currentPath}
 					onOpen={open}
+					onCreate={startCreation}
 				/>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -247,6 +271,7 @@
 						<Pane minSize={PANE_SIZES.half.min}>
 							<NotePane
 								{pane}
+								title={titleIn(tree, pane.path)}
 								isFocused={index === focusedIndex}
 								actions={actionsOf(index, pane)}
 								onFocus={() => (focusedIndex = index)}
@@ -266,10 +291,7 @@
 				collapsible
 				collapsedSize={0}
 			>
-				<BacklinksPanel
-					current={currentPath}
-					onOpen={open}
-				/>
+				<BacklinksPanel />
 			</Pane>
 		</PaneGroup>
 		<StatusBar
@@ -285,6 +307,16 @@
 	{commands}
 />
 
+{#if creation}
+	<NewEntryDialog
+		bind:open={isCreating}
+		kind={creation.kind}
+		folder={creation.folder}
+		onCreated={created}
+		onError={setMessage}
+	/>
+{/if}
+
 <style>
 	.shell {
 		display: grid;
@@ -292,21 +324,4 @@
 		height: 100vh;
 	}
 
-	/* A 5-pixel handle, easy to grab, drawn as a 1-pixel line. */
-	:global(.resizer) {
-		width: 5px;
-		background: linear-gradient(
-			to right,
-			transparent 2px,
-			var(--border) 2px,
-			var(--border) 3px,
-			transparent 3px
-		);
-		cursor: col-resize;
-	}
-
-	:global(.resizer:hover),
-	:global(.resizer[data-active]) {
-		background: var(--accent);
-	}
 </style>

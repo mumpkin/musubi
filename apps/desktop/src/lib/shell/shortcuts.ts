@@ -5,6 +5,7 @@
 
 export type ShellAction
 	= | 'palette'
+		| 'newNote'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
 		| 'toggleMode'
@@ -22,6 +23,7 @@ interface ActionLabel {
 
 export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	palette: { label: 'Show the commands', group: 'View' },
+	newNote: { label: 'New note', group: 'Note' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },
 	toggleMode: { label: 'Switch between reading and editing', group: 'Pane' },
@@ -35,6 +37,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 const SEQUENCES = new Map<string, ShellAction>([
 	['Space ?', 'palette'],
 	['C-p', 'palette'],
+	['Space n', 'newNote'],
 	['Space e', 'toggleExplorer'],
 	['Space l', 'toggleBacklinks'],
 	['Space r', 'toggleMode'],

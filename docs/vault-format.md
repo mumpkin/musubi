@@ -79,7 +79,8 @@ From the title to the file stem (the name without `.typ`):
 
 1. **Normalize** the title to Unicode NFC.
 2. **Remove** the characters that are forbidden on Windows or in paths:
-   `< > : " / \ | ? *` and control characters (U+0000 to U+001F, U+007F).
+   `< > : " / \ | ? *` and control characters (U+0000 to U+001F, U+007F)
+   other than whitespace.
 3. **Replace** every run of whitespace characters (Unicode `White_Space`)
    with a single `_`.
 4. **Collapse** every run of several `_` into a single `_`.

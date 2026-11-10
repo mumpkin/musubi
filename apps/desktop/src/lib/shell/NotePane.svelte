@@ -4,14 +4,15 @@
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
 	import HelixEditor from '../editor/HelixEditor.svelte';
+	import { readNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
-	import { sourceOf, titleOf } from './mock-vault.ts';
 	import PaneHeader from './PaneHeader.svelte';
 	import type { PaneState } from './panes.ts';
 	import ReadingPane from './ReadingPane.svelte';
 
 	interface Props {
 		pane: PaneState;
+		title: string;
 		isFocused: boolean;
 		actions: PaneAction[];
 		onFocus: () => void;
@@ -22,6 +23,7 @@
 
 	const {
 		pane,
+		title,
 		isFocused,
 		actions,
 		onFocus,
@@ -44,7 +46,7 @@
 	onfocusin={onFocus}
 >
 	<PaneHeader
-		title={titleOf(pane.path)}
+		{title}
 		mode={pane.mode === 'reading' ? 'LEC' : modeIndicator(editorMode)}
 		{actions}
 	/>
@@ -55,16 +57,22 @@
 		/>
 	{:else}
 		{#key pane.path}
-			<HelixEditor
-				text={sourceOf(pane.path)}
-				onWrite={() => {
-					onMessage(':w — saving comes with the vault');
-				}}
-				onQuit={() => {
-					onMessage(':q — closing panes from the editor comes later');
-				}}
-				onModeChange={setEditorMode}
-			/>
+			{#await readNote(pane.path)}
+				<p class="message">Loading…</p>
+			{:then text}
+				<HelixEditor
+					{text}
+					onWrite={() => {
+						onMessage(':w — saving comes with the next ticket');
+					}}
+					onQuit={() => {
+						onMessage(':q — closing panes from the editor comes later');
+					}}
+					onModeChange={setEditorMode}
+				/>
+			{:catch error}
+				<p class="message">{String(error)}</p>
+			{/await}
 		{/key}
 	{/if}
 </section>
@@ -76,6 +84,11 @@
 		height: 100%;
 		min-height: 0;
 		border-top: 2px solid transparent;
+	}
+
+	.message {
+		margin: 2rem;
+		color: var(--muted);
 	}
 
 	.pane.focused {

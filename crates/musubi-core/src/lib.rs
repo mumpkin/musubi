@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Core of Musubi: vault, file naming, links, backlinks and index.
 
+mod error;
+pub mod naming;
+mod paths;
+pub mod title;
+mod vault;
+
+pub use crate::error::VaultError;
+pub use crate::vault::{FORMAT, NoteEntry, Vault, VaultTree};
+
 /// Version of the core crate, as declared in `Cargo.toml`.
 #[must_use]
 pub const fn version() -> &'static str {

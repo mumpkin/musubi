@@ -1,74 +1,52 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- Side panel listing notes by title. Folders fold; file names only show
-     in the tooltip. -->
+<!-- Side panel listing the notes of the vault by title. Folders fold; file
+     paths only show in tooltips. -->
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
 
-	import { FOLDERS, type MockNote, ROOT_NOTES } from './mock-vault.ts';
+	import type { FolderNode } from '../vault/tree.ts';
+	import ExplorerFolder from './ExplorerFolder.svelte';
 
 	interface Props {
+		vaultName: string;
+		root: FolderNode;
 		current: string;
 		onOpen: (path: string) => void;
+		onCreate: (kind: 'note' | 'folder', folder: string) => void;
 	}
 
-	const { current, onOpen }: Props = $props();
+	const { vaultName, root, current, onOpen, onCreate }: Props = $props();
 
-	// Folded folders, by name.
-	const folded = new SvelteSet(['Drafts']);
-
-	function toggle(name: string): void {
-		if (folded.has(name)) {
-			folded.delete(name);
-		} else {
-			folded.add(name);
-		}
-	}
+	// Folded folders, by path.
+	const folded = new SvelteSet<string>();
 </script>
-
-{#snippet note(entry: MockNote)}
-	<li>
-		<button
-			class="note"
-			class:current={entry.path === current}
-			title={entry.path}
-			onclick={() => {
-				onOpen(entry.path);
-			}}
-		>{entry.title}</button>
-	</li>
-{/snippet}
 
 <nav
 	class="explorer"
 	aria-label="Notes"
 >
-	<h2>Notes</h2>
-	<ul>
-		{#each FOLDERS as folder (folder.name)}
-			<li>
-				<button
-					class="folder"
-					aria-expanded={!folded.has(folder.name)}
-					onclick={() => {
-						toggle(folder.name);
-					}}
-				>
-					<span class="chevron">{folded.has(folder.name) ? '▸' : '▾'}</span>
-					{folder.name}
-				</button>
-				{#if !folded.has(folder.name)}
-					<ul>
-						{#each folder.notes as entry (entry.path)}
-							{@render note(entry)}
-						{/each}
-					</ul>
-				{/if}
-			</li>
-		{/each}
-		{#each ROOT_NOTES as entry (entry.path)}
-			{@render note(entry)}
-		{/each}
-	</ul>
+	<header>
+		<h2 title={vaultName}>{vaultName}</h2>
+		<button
+			title="New note"
+			onclick={() => {
+				onCreate('note', '');
+			}}
+		>+</button>
+		<button
+			title="New folder"
+			onclick={() => {
+				onCreate('folder', '');
+			}}
+		>▤</button>
+	</header>
+	<ExplorerFolder
+		folder={root}
+		{current}
+		{folded}
+		{onOpen}
+		{onCreate}
+	/>
 </nav>
 
 <style>
@@ -79,50 +57,38 @@
 		background: var(--surface);
 	}
 
+	header {
+		display: flex;
+		gap: 0.25rem;
+		align-items: center;
+		margin: 0 0.25rem 0.5rem 0.5rem;
+	}
+
 	h2 {
-		margin: 0.25rem 0.5rem 0.5rem;
+		flex: 1;
+		overflow: hidden;
+		margin: 0;
 		color: var(--muted);
 		font-size: 0.75rem;
 		font-weight: 600;
 		letter-spacing: 0.05em;
+		text-overflow: ellipsis;
 		text-transform: uppercase;
+		white-space: nowrap;
 	}
 
-	ul {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	ul ul {
-		padding-left: 1rem;
-	}
-
-	button {
-		display: block;
-		width: 100%;
-		padding: 0.2rem 0.5rem;
+	header button {
+		padding: 0 0.35rem;
 		border: none;
 		border-radius: 4px;
 		background: none;
-		color: inherit;
+		color: var(--muted);
 		font: inherit;
-		font-size: 0.9rem;
-		text-align: left;
 		cursor: pointer;
 	}
 
-	button:hover {
+	header button:hover {
 		background: var(--hover);
-	}
-
-	.note.current {
-		background: var(--selection);
-	}
-
-	.chevron {
-		display: inline-block;
-		width: 1rem;
-		color: var(--muted);
+		color: inherit;
 	}
 </style>

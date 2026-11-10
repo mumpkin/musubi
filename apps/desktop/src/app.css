@@ -20,3 +20,21 @@ body {
 	background: var(--background);
 	color: var(--foreground);
 }
+
+/* A 5-pixel handle, easy to grab, drawn as a 1-pixel line. */
+.resizer {
+	width: 5px;
+	background: linear-gradient(
+		to right,
+		transparent 2px,
+		var(--border) 2px,
+		var(--border) 3px,
+		transparent 3px
+	);
+	cursor: col-resize;
+}
+
+.resizer:hover,
+.resizer[data-active] {
+	background: var(--accent);
+}
