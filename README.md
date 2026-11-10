@@ -43,6 +43,9 @@ pnpm dev:tauri        # desktop app
 | `cargo test`                                            | Rust tests; also regenerates the TS bindings               |
 | `cargo clippy --workspace --all-targets -- -D warnings` | Rust lint                                                  |
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the code rules, branches, commit
+messages and the changelog.
+
 ## Repository layout
 
 ```

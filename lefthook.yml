@@ -14,3 +14,13 @@ pre-commit:
     - name: rustfmt
       glob: "*.rs"
       run: cargo fmt --all --check
+
+commit-msg:
+  jobs:
+    - name: commit message
+      run: node tools/git/check-commit-message.ts {1} --allow-autosquash
+
+pre-push:
+  jobs:
+    - name: branch name
+      run: node tools/git/check-branch-name.ts
