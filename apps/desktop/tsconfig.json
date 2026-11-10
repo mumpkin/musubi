@@ -8,5 +8,10 @@
 		"allowJs": true,
 		"checkJs": true
 	},
-	"include": ["src/**/*.ts", "src/**/*.svelte", "vite.config.ts", "svelte.config.js"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.svelte",
+		"vite.config.ts",
+		"svelte.config.js"
+	]
 }

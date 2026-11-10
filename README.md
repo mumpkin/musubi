@@ -29,19 +29,19 @@ pnpm install          # also installs the git hooks (lefthook)
 pnpm dev:tauri        # desktop app
 ```
 
-| Command              | Purpose                                         |
-| -------------------- | ----------------------------------------------- |
-| `pnpm dev`           | Interface only, in a browser                    |
-| `pnpm dev:tauri`     | Desktop app                                     |
-| `pnpm check`         | Lint and format check (ESLint), Rust file length |
-| `pnpm fix`           | Apply the automatic fixes and formatting        |
-| `pnpm typecheck`     | Type checking (TypeScript, Svelte)              |
-| `pnpm test`          | Unit tests (Vitest)                             |
-| `pnpm test:coverage` | Unit tests with coverage                        |
-| `pnpm duplicates`    | Duplicate code detection (jscpd)                |
-| `pnpm build:tauri`   | AppImage and `.deb` packages                    |
-| `cargo test`         | Rust tests; also regenerates the TS bindings    |
-| `cargo clippy --workspace --all-targets -- -D warnings` | Rust lint |
+| Command                                                 | Purpose                                                    |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| `pnpm dev`                                              | Interface only, in a browser                               |
+| `pnpm dev:tauri`                                        | Desktop app                                                |
+| `pnpm check`                                            | Lint and format check (ESLint, Prettier), Rust file length |
+| `pnpm fix`                                              | Apply the automatic fixes and formatting                   |
+| `pnpm typecheck`                                        | Type checking (TypeScript, Svelte)                         |
+| `pnpm test`                                             | Unit tests (Vitest)                                        |
+| `pnpm test:coverage`                                    | Unit tests with coverage                                   |
+| `pnpm duplicates`                                       | Duplicate code detection (jscpd)                           |
+| `pnpm build:tauri`                                      | AppImage and `.deb` packages                               |
+| `cargo test`                                            | Rust tests; also regenerates the TS bindings               |
+| `cargo clippy --workspace --all-targets -- -D warnings` | Rust lint                                                  |
 
 ## Repository layout
 
