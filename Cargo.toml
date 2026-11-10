@@ -1,0 +1,29 @@
+[workspace]
+resolver = "3"
+members = ["apps/desktop/src-tauri", "crates/*"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.90"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/mumpkin/musubi"
+
+[workspace.dependencies]
+musubi-core = { path = "crates/musubi-core" }
+musubi-typst = { path = "crates/musubi-typst" }
+serde = { version = "1", features = ["derive"] }
+ts-rs = "12"
+
+# Clean Code limits, mirrored from the TypeScript rules (see clippy.toml)
+[workspace.lints.clippy]
+cognitive_complexity = "deny"
+min_ident_chars = "deny"
+shadow_unrelated = "deny"
+too_many_arguments = "deny"
+too_many_lines = "deny"
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true

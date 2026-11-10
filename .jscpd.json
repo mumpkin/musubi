@@ -1,0 +1,18 @@
+{
+	"threshold": 1,
+	"minLines": 8,
+	"minTokens": 60,
+	"reporters": ["console"],
+	"gitignore": true,
+	"ignore": [
+		"**/node_modules/**",
+		"**/dist/**",
+		"**/coverage/**",
+		"**/target/**",
+		"**/src-tauri/gen/**",
+		"**/bindings/**",
+		"**/*.test.ts",
+		"pnpm-lock.yaml"
+	],
+	"format": ["typescript", "javascript", "css", "rust", "markup"]
+}

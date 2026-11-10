@@ -1,0 +1,12 @@
+# Git hooks, installed by `pnpm install`
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: eslint
+      glob: "*.{js,ts,svelte}"
+      run: pnpm exec eslint --no-warn-ignored {staged_files}
+
+    - name: rustfmt
+      glob: "*.rs"
+      run: cargo fmt --all --check
