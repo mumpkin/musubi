@@ -1,0 +1,50 @@
+{
+	"musubi-link": [],
+	"musubi-card": [
+		{
+			"question": {
+				"func": "text",
+				"text": "What is the capital of France?"
+			},
+			"answer": { "func": "text", "text": "Paris" },
+			"reverse": false
+		},
+		{
+			"question": { "func": "text", "text": "chat" },
+			"answer": { "func": "text", "text": "cat" },
+			"reverse": true
+		},
+		{
+			"question": {
+				"func": "sequence",
+				"children": [
+					{ "func": "text", "text": "Derivative of" },
+					{ "func": "space" },
+					{
+						"func": "equation",
+						"block": false,
+						"body": {
+							"func": "attach",
+							"base": { "func": "symbol", "text": "x" },
+							"t": { "func": "text", "text": "2" }
+						}
+					},
+					{ "func": "text", "text": "?" }
+				]
+			},
+			"answer": {
+				"func": "equation",
+				"block": false,
+				"body": {
+					"func": "sequence",
+					"children": [
+						{ "func": "text", "text": "2" },
+						{ "func": "symbol", "text": "x" }
+					]
+				}
+			},
+			"reverse": false
+		}
+	],
+	"musubi-task": []
+}

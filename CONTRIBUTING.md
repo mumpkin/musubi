@@ -6,8 +6,8 @@ messages, branch names, issues, pull requests, changelog and documentation.
 ## Development setup
 
 Requirements: Node.js 24 or later, pnpm (version pinned in `package.json`),
-Rust 1.90 or later, and the
-[Tauri system dependencies](https://v2.tauri.app/start/prerequisites/).
+Rust 1.90 or later, the [Typst CLI](https://github.com/typst/typst) 0.15, and
+the [Tauri system dependencies](https://v2.tauri.app/start/prerequisites/).
 
 ```sh
 pnpm install          # also installs the git hooks (lefthook)
@@ -21,6 +21,7 @@ pnpm dev:tauri        # desktop app
 | `pnpm typecheck`                                        | Type checking (TypeScript, Svelte)                         |
 | `pnpm test`                                             | Unit tests (Vitest)                                        |
 | `pnpm test:coverage`                                    | Unit tests with coverage                                   |
+| `pnpm test:typst`                                       | Typst package tests (needs the Typst CLI)                  |
 | `pnpm duplicates`                                       | Duplicate code detection (jscpd)                           |
 | `cargo test`                                            | Rust tests; also regenerates the TypeScript bindings       |
 | `cargo clippy --workspace --all-targets -- -D warnings` | Rust lint                                                  |

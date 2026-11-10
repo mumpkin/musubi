@@ -20,6 +20,7 @@
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage",
 		"duplicates": "jscpd",
+		"test:typst": "node tools/typst/check-typst-package.ts",
 		"prepare": "lefthook install"
 	},
 	"devDependencies": {
