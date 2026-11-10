@@ -7,3 +7,9 @@ and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### Added
+
+- `musubi` Typst package: `note-link` for links between notes, `card` for
+  flashcards, `todo` and `done` for tasks. Notes using it still compile with
+  the Typst command-line tool.

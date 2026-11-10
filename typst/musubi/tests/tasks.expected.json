@@ -1,0 +1,11 @@
+{
+	"musubi-link": [],
+	"musubi-card": [],
+	"musubi-task": [
+		{ "body": { "func": "text", "text": "Buy milk" }, "done": false },
+		{
+			"body": { "func": "text", "text": "Write the vault format" },
+			"done": true
+		}
+	]
+}

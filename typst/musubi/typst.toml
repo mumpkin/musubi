@@ -1,0 +1,10 @@
+[package]
+name = "musubi"
+version = "0.1.0"
+entrypoint = "lib.typ"
+authors = ["mumpkin"]
+license = "GPL-3.0-or-later"
+description = "Links, flashcards and tasks for Musubi notes"
+repository = "https://github.com/mumpkin/musubi"
+compiler = "0.15.0"
+exclude = ["tests"]
