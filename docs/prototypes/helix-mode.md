@@ -11,17 +11,20 @@ selection-first editing well.
 
 `packages/editor`:
 
-| File              | Role                                                                    |
-| ----------------- | ----------------------------------------------------------------------- |
-| `mode.ts`         | Modes (`normal`, `insert`, `select`) stored in a state field.           |
-| `text.ts`         | Word motions `w`, `e`, `b` on plain text, with Helix's word boundaries. |
-| `motions.ts`      | Motion commands: `h j k l`, words, `x`, `gh`, `gl`, `gs`.               |
-| `editing.ts`      | `d`, `c`, `y`, `p`, `P`, `u`, `U`, `C`, `s`.                            |
-| `modes.ts`        | `i`, `a`, `o`, `O`, `v`, `Escape`, `;`, command line, `:w`, `:q`.       |
-| `commands.ts`     | The single command registry.                                            |
-| `keymap.ts`       | Keys of each mode, mapped to command names only.                        |
-| `command-line.ts` | Typed commands: `:w`, `:q`, `:wq`, `:x`.                                |
-| `helix.ts`        | The CodeMirror extension: key handling, block cursor, mode classes.     |
+| File                                         | Role                                                                    |
+| -------------------------------------------- | ----------------------------------------------------------------------- |
+| `mode.ts`                                    | Modes (`normal`, `insert`, `select`) stored in a state field.           |
+| `text.ts`                                    | Word motions `w`, `e`, `b` on plain text, with Helix's word boundaries. |
+| `motions.ts`                                 | Motion commands: `h j k l`, words, `x`, `gh`, `gl`, `gs`.               |
+| `editing.ts`                                 | `d`, `c`, `y`, `p`, `P`, `u`, `U`, `C`, `s`.                            |
+| `modes.ts`                                   | `i`, `a`, `o`, `O`, `v`, `Escape`, `;`, command line, `:w`, `:q`.       |
+| `commands.ts`                                | The single command registry.                                            |
+| `keymap.ts`                                  | Keys of each mode, mapped to command names only.                        |
+| `command-line.ts`                            | Typed commands: `:w`, `:q`, `:wq`, `:x`.                                |
+| `objects.ts`                                 | Match mode: `mi`, `ma`, `ms`, `md`, `mr`, `mm`.                         |
+| `textobjects.ts`, `paragraph.ts`, `pairs.ts` | Text objects and delimiter pairs, ported from Helix.                    |
+| `jump-labels.ts`                             | `gw`: two-letter labels on the visible words.                           |
+| `helix.ts`                                   | The CodeMirror extension: key handling, block cursor, mode classes.     |
 
 The desktop app has a "Helix editor" tab: CodeMirror with `codemirror-lang-typst`
 for highlighting (its Lezer parser, without WebAssembly), a mode indicator
@@ -41,7 +44,7 @@ To add a case: add it to `helix-cases.ts`, run
 `node tools/helix/record-helix-reference.ts` (Helix and `script` from
 util-linux required), and commit the new reference.
 
-**Result: the 95 recorded cases match Helix exactly** (text, selections and
+**Result: the 196 recorded cases match Helix exactly** (text, selections and
 cursors). The comparison caught differences that manual testing missed:
 
 - `i` and `a` keep the selection, which moves or grows with the typed text;
@@ -50,6 +53,9 @@ cursors). The comparison caught differences that manual testing missed:
 - after a final line break the cursor may sit on the empty last line;
 - `C` skips the lines too short to hold the selection;
 - after `U` the selection covers one character again;
+- an empty text object (`miw` on a space) still selects one character;
+- `mip` / `map` on a blank line take a neighbouring paragraph, following
+  Helix's algorithm, quirks included;
 - in select mode, `x` covers every line the selection touches, and when the
   cursor crosses the anchor, the anchor character stays selected.
 

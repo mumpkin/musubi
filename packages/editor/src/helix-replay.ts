@@ -4,13 +4,15 @@
 import { EditorSelection } from '@codemirror/state';
 
 import { selectMatches } from './editing.ts';
+import { pressJumpLabel } from './jump-labels.ts';
 import { resolveKey } from './keymap.ts';
 import { cursorOf } from './selection.ts';
 import type { TestEditor } from './test-editor.ts';
 
 const ESCAPE = '\u001B';
 const ENTER = '\r';
-const SEQUENCE_LENGTH = 2;
+// Marks that the `s` prompt is open.
+const PROMPT = '\u0000prompt';
 
 function typeText(editor: TestEditor, text: string): void {
 	const { state } = editor;
@@ -26,37 +28,42 @@ function typeText(editor: TestEditor, text: string): void {
 	editor.dispatch({ changes, selection: EditorSelection.create(ranges) });
 }
 
-// Applies one key; returns how many keys were consumed (a prompt takes the
-// keys up to Enter, a sequence such as `gh` two keys).
-function pressKey(editor: TestEditor, keys: string, index: number): number {
-	const key = keys.charAt(index) === ESCAPE ? 'Escape' : keys.charAt(index);
-	const prefix = resolveKey(editor.mode, '', key);
-	if (prefix.pending !== undefined) {
-		const next = keys.charAt(index + 1);
-		const second = resolveKey(editor.mode, prefix.pending, next);
-		if (second.command !== undefined) {
-			editor.run(second.command);
-		}
-		return SEQUENCE_LENGTH;
+// Applies one key, like the key handler of the editor. `pending` holds the
+// keys of a sequence being typed.
+function pressKey(
+	editor: TestEditor,
+	key: string,
+	pending: { keys: string },
+): void {
+	if (pressJumpLabel(editor, key)) {
+		return;
 	}
-	const name = prefix.command;
-	if (name === 'selectPrompt') {
-		const end = keys.indexOf(ENTER, index);
-		selectMatches(editor, keys.slice(index + 1, end));
-		return end - index + 1;
-	}
-	if (name !== undefined) {
-		editor.run(name);
-	} else if (editor.mode === 'insert') {
+	const resolution = resolveKey(editor.mode, pending.keys, key);
+	pending.keys = resolution.pending ?? '';
+	if (resolution.command === 'selectPrompt') {
+		pending.keys = PROMPT;
+	} else if (resolution.command !== undefined) {
+		editor.runWith(resolution.command, resolution.argument ?? '');
+	} else if (resolution.pending === undefined && editor.mode === 'insert') {
 		typeText(editor, key);
 	}
-	return 1;
 }
 
 export function replayKeys(editor: TestEditor, keys: string): void {
+	const pending = { keys: '' };
 	let index = 0;
 	while (index < keys.length) {
-		index += pressKey(editor, keys, index);
+		const key = keys.charAt(index) === ESCAPE ? 'Escape' : keys.charAt(index);
+		index += 1;
+		if (pending.keys === PROMPT) {
+			// `s` reads a regex up to Enter.
+			const end = keys.indexOf(ENTER, index - 1);
+			selectMatches(editor, keys.slice(index - 1, end));
+			index = end + 1;
+			pending.keys = '';
+		} else {
+			pressKey(editor, key, pending);
+		}
 	}
 }
 

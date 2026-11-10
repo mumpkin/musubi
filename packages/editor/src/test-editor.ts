@@ -11,6 +11,7 @@ import {
 import { type CommandName, runCommand } from './commands.ts';
 import type { CommandContext, CommandTarget, EditorHost } from './context.ts';
 import { insertOrigins } from './insert.ts';
+import { jumpLabelsField } from './jump-labels.ts';
 import { type EditorMode, modeField } from './mode.ts';
 
 export class TestEditor implements CommandTarget {
@@ -26,6 +27,7 @@ export class TestEditor implements CommandTarget {
 			extensions: [
 				modeField,
 				insertOrigins,
+				jumpLabelsField,
 				history(),
 				EditorState.allowMultipleSelections.of(true),
 			],
@@ -45,6 +47,11 @@ export class TestEditor implements CommandTarget {
 		for (const name of names) {
 			runCommand(name, this.context());
 		}
+		return this;
+	}
+
+	runWith(name: CommandName, argument: string): this {
+		runCommand(name, this.context(), argument);
 		return this;
 	}
 

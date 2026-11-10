@@ -5,7 +5,9 @@
 	import demoNote from '../../../../../examples/demo-vault/Demo.typ?raw';
 	import HelixEditor from './HelixEditor.svelte';
 
-	let message = $state('Normal mode: h j k l, w b e, x, d c y p, u U, C, s, :w, :q');
+	let message = $state(
+		'h j k l w b e x gh gl gs gw · d c y p P o O u U C s · mi ma ms md mr mm · :w :q',
+	);
 
 	function write(text: string): void {
 		message = `:w — would save ${String(text.length)} characters`;

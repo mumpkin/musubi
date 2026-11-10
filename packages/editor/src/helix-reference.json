@@ -758,5 +758,813 @@
 		"starts": "one two\nthree f[twoour\n\nfive.six seven\n",
 		"ends": "one two\nthree ftwo]our\n\nfive.six seven\n",
 		"cursors": "one two\nthree ftw|oour\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlma\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmi(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmi[",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmim",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmam",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmiw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmaw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say[ \"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say |\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmiW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello] world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hell|o world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wlmaW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello ]world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello| world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world]\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello worl|d\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlma\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\"] and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world|\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmi(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"h]ello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"|hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"h]ello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"|hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmi[",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"h]ello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"|hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmim",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"h]ello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"|hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmam",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"h]ello world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"|hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmiw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello] world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hell|o world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmaw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello ]world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello| world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmiW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello] world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hell|o world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmaW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say [\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello ]world\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello| world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwma\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmi(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmi[",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmim",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmam",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmiw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\"[ and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmaw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\"[ and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmiW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello [world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\"] and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world|\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmaW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello [world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlma\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmi(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and ([nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner) call]) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner) cal|l) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner) call)] [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner) call|) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmi[",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmim",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmam",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmiw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmaw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and[ (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmiW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested] (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and (neste|d (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmaW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested ](inner) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested| (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (i]nner) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (|inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlma\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (i]nner) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (|inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmi(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner]) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inne|r) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested [(inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner)] call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner|) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmi[",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (i]nner) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (|inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmim",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner]) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inne|r) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmam",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested [(inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner)] call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner|) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmiw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner]) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inne|r) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmaw",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested ([inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner]) call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inne|r) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmiW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested [(inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner)] call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner|) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwlmaW",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested [(inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner) ]call) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner)| call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "mm",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[say \"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "s]ay \"hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "|say \"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwmm",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" [and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and ](nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and| (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwwwwwwmm",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and (nested (inner) [call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner) call]) [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner) cal|l) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwmm",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world[\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" ]and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\"| and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "ms(",
+		"text": "(s)ay \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[(s)ay \"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "(s)]ay \"hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "(s|)ay \"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "ms\"",
+		"text": "\"s\"ay \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[\"s\"ay \"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "\"s\"]ay \"hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "\"s|\"ay \"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wms[",
+		"text": "[say ]\"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[[say ]\"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "[say ]]\"hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "[say |]\"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "xms{",
+		"text": "{say \"hello world\" and (nested (inner) call) [list]\n}",
+		"starts": "[{say \"hello world\" and (nested (inner) call) [list]\n}",
+		"ends": "{say \"hello world\" and (nested (inner) call) [list]\n}]",
+		"cursors": "{say \"hello world\" and (nested (inner) call) [list]\n|}"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmd\"",
+		"text": "say hello world and (nested (inner) call) [list]\n",
+		"starts": "say [hello world and (nested (inner) call) [list]\n",
+		"ends": "say h]ello world and (nested (inner) call) [list]\n",
+		"cursors": "say |hello world and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmd(",
+		"text": "say \"hello world\" and nested (inner) call [list]\n",
+		"starts": "say \"hello world\" and [nested (inner) call [list]\n",
+		"ends": "say \"hello world\" and n]ested (inner) call [list]\n",
+		"cursors": "say \"hello world\" and |nested (inner) call [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmr\"'",
+		"text": "say 'hello world' and (nested (inner) call) [list]\n",
+		"starts": "say '[hello world' and (nested (inner) call) [list]\n",
+		"ends": "say 'h]ello world' and (nested (inner) call) [list]\n",
+		"cursors": "say '|hello world' and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmr([",
+		"text": "say \"hello world\" and [nested (inner) call] [list]\n",
+		"starts": "say \"hello world\" and [[nested (inner) call] [list]\n",
+		"ends": "say \"hello world\" and []nested (inner) call] [list]\n",
+		"cursors": "say \"hello world\" and |[nested (inner) call] [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmrm{",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwlmdm",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (]nested (inner) call) [list]\n",
+		"cursors": "say \"hello world\" and |(nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "vwwms(",
+		"text": "(say \")hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[(say \")hello world\" and (nested (inner) call) [list]\n",
+		"ends": "(say \")]hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "(say \"|)hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "mi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "[say \"hello world\" and (nested (inner) call) [list]\n",
+		"ends": "s]ay \"hello world\" and (nested (inner) call) [list]\n",
+		"cursors": "|say \"hello world\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwlmi\"mi\"",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"[hello world\" and (nested (inner) call) [list]\n",
+		"ends": "say \"hello world]\" and (nested (inner) call) [list]\n",
+		"cursors": "say \"hello worl|d\" and (nested (inner) call) [list]\n"
+	},
+	{
+		"initialText": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"keys": "wwwwwwwlma(ma(",
+		"text": "say \"hello world\" and (nested (inner) call) [list]\n",
+		"starts": "say \"hello world\" and [(nested (inner) call) [list]\n",
+		"ends": "say \"hello world\" and (nested (inner) call)] [list]\n",
+		"cursors": "say \"hello world\" and (nested (inner) call|) [list]\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "mip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n]\nother paragraph\nend\n\n\nlast\n",
+		"cursors": "first line\nsecond line|\n\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "map",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\n]other paragraph\nend\n\n\nlast\n",
+		"cursors": "first line\nsecond line\n|\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jmip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n]\nother paragraph\nend\n\n\nlast\n",
+		"cursors": "first line\nsecond line|\n\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jmap",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\n]other paragraph\nend\n\n\nlast\n",
+		"cursors": "first line\nsecond line\n|\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jjmip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "first line\nsecond line\n\n[other paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\nother paragraph\nend\n]\n\nlast\n",
+		"cursors": "first line\nsecond line\n\nother paragraph\nend|\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jjmap",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "first line\nsecond line\n\n[other paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\nother paragraph\nend\n\n\n]last\n",
+		"cursors": "first line\nsecond line\n\nother paragraph\nend\n\n|\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jjjmip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "first line\nsecond line\n\n[other paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\nother paragraph\nend\n]\n\nlast\n",
+		"cursors": "first line\nsecond line\n\nother paragraph\nend|\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jjjjjmap",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "first line\nsecond line\n\nother paragraph\nend\n\n[\nlast\n",
+		"ends": "first line\nsecond line\n\nother paragraph\nend\n\n\n]last\n",
+		"cursors": "first line\nsecond line\n\nother paragraph\nend\n\n|\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "jjjjjjmip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "first line\nsecond line\n\n[other paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n\nother paragraph\nend\n]\n\nlast\n",
+		"cursors": "first line\nsecond line\n\nother paragraph\nend|\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "xmip",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first line\nsecond line\n]\nother paragraph\nend\n\n\nlast\n",
+		"cursors": "first line\nsecond line|\n\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "miw",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first] line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"cursors": "firs|t line\nsecond line\n\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"keys": "maw",
+		"text": "first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"starts": "[first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"ends": "first ]line\nsecond line\n\nother paragraph\nend\n\n\nlast\n",
+		"cursors": "first| line\nsecond line\n\nother paragraph\nend\n\n\nlast\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gwaa",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha [beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta] gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha bet|a gamma delta\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gwab",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta [gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma] delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamm|a delta\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gwac",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma [delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta]\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delt|a\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gwad",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\n[epsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon] zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilo|n zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwaa",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon zeta [eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta eta] theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zeta et|a theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwab",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon [zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta] eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zet|a eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwac",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon zeta eta [theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta eta theta]\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zeta eta thet|a\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwad",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\n[epsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon] zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilo|n zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwae",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon zeta eta theta\n[iota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta eta theta\niota] kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zeta eta theta\niot|a kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwaf",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma [delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta]\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delt|a\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwgwag",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon zeta eta theta\niota [kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa] lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zeta eta theta\niota kapp|a lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "vgwab",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "[alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma] delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamm|a delta\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwvgwab",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon [zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta ]eta theta\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon |zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "jwwvgwac",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "alpha beta gamma delta\nepsilon [zeta eta theta\niota kappa lambda\n",
+		"ends": "alpha beta gamma delta\nepsilon zeta eta theta]\niota kappa lambda\n",
+		"cursors": "alpha beta gamma delta\nepsilon zeta eta thet|a\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gwa\u001b",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "[alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "a]lpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "|alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "gw\u001b",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "[alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"ends": "a]lpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"cursors": "|alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n"
 	}
 ]
