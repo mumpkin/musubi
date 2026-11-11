@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { describe, expect, it } from 'vitest';
 
-import { blockAt, moveCursor, renderedBlocks } from './block-cursor.ts';
+import {
+	blockAt,
+	blockForLine,
+	moveCursor,
+	renderedBlocks,
+} from './block-cursor.ts';
 
 function container(html: string): HTMLElement {
 	const element = document.createElement('div');
@@ -47,5 +52,22 @@ describe('blockAt', () => {
 		const note = container('<p data-block="2">a <strong>b</strong></p>');
 		const strong = note.querySelector('strong');
 		expect(strong && blockAt(strong)).toBe(2);
+	});
+});
+
+describe('blockForLine', () => {
+	const blocks = [
+		{ startLine: 0, endLine: 0 },
+		{ startLine: 2, endLine: 4 },
+		{ startLine: 6, endLine: 6 },
+	];
+
+	it('finds the block containing the line', () => {
+		expect(blockForLine(blocks, [0, 1, 2], 3)).toBe(1);
+	});
+
+	it('falls back on the last block before the line', () => {
+		expect(blockForLine(blocks, [0, 1, 2], 5)).toBe(1);
+		expect(blockForLine(blocks, [1, 2], 0)).toBe(1);
 	});
 });
