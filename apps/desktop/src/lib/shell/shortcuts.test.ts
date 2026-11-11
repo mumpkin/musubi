@@ -33,6 +33,7 @@ describe('resolveShortcut', () => {
 		expect(press('Space', 'h').action).toBe('leftPanel');
 		expect(press('Space', 'l').action).toBe('rightPanel');
 		expect(press('Space', 'b').action).toBe('toggleBacklinks');
+		expect(press('Space', ',').action).toBe('settings');
 		expect(press('C-w')).toEqual({ pending: '', isUsed: false });
 	});
 

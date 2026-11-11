@@ -12,6 +12,7 @@ mod paths;
 mod pins;
 mod rename;
 mod search;
+mod settings;
 pub mod title;
 pub mod trash;
 pub mod tutorial;

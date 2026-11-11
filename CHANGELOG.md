@@ -36,6 +36,11 @@ and this project adheres to
 
 ### Added
 
+- A settings screen (`Space ,` or "Open the settings" in the palette): the
+  theme, autosave and its delay, which belong to the device, and the number
+  of days deleted notes stay in the trash, stored in the vault. Changes
+  apply at once.
+
 - Color themes: GitHub Light and GitHub Dark, with colors from GitHub's VS
   Code theme, follow the light or dark preference of the system. The palette
   chooses a theme, imports one from a JSON file (`docs/themes.md`) or

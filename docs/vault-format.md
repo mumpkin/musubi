@@ -192,6 +192,8 @@ synced with the notes.
 | `pinned`             | array of strings | `[]`    | Pinned notes, in order (see below).                       |
 | `trashRetentionDays` | integer          | `30`    | Days before trash entries are purged; `0` disables purge. |
 
+The settings screen of Musubi changes `trashRetentionDays`.
+
 `pinned` lists notes by their path from the vault root, with `/` separators
 and the extension, in the order the explorer shows them. Paths that lead to
 no note are ignored but kept. Renaming a note updates its path; moving it to

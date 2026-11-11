@@ -71,6 +71,10 @@ export class VaultState {
 		this.setTree(await pinNote(path, !this.pinnedPaths.has(path)));
 	}
 
+	readonly updateSettings = (settings: DeviceSettings): void => {
+		this.settings = settings;
+	};
+
 	setTree(tree: VaultTree): void {
 		this.tree = tree;
 		this.loads += 1;

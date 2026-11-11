@@ -7,7 +7,8 @@ of the device: they are not stored in the vault.
 
 ## Choosing and importing
 
-The command palette (`Space ?`) lists the theme commands, in the _Theme_
+The settings (`Space ,`) list the themes, with buttons to import and remove.
+The command palette (`Space ?`) has the same commands, in the _Theme_
 group: _Follow the system theme_, _Use the theme …_, _Import a theme_ and
 _Remove the theme …_ for imported themes. The choice applies at once and is
 saved in the settings of the device.

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! Pinned notes: stored in `vault.json`, following renames and the trash.
+//! Settings of the vault in `vault.json`: pinned notes, following renames
+//! and the trash, and the trash retention.
 
 use std::fs;
 
@@ -90,4 +91,15 @@ fn leaves_an_unreadable_settings_file_alone() {
 	let text = fs::read_to_string(directory.path().join(".musubi/vault.json"))
 		.expect("settings");
 	assert_eq!(text, "{ broken");
+}
+
+#[test]
+fn sets_the_trash_retention_and_keeps_the_pins() {
+	let (directory, mut vault) = vault_with(&[("A.typ", "= A\n")]);
+	vault.pin("A.typ", true).expect("pinned");
+	vault.set_trash_retention(7).expect("saved");
+	assert_eq!(vault.trash_retention_days, 7);
+	let again = Vault::open(directory.path()).expect("vault opens");
+	assert_eq!(again.trash_retention_days, 7);
+	assert_eq!(again.pinned(), ["A.typ"]);
 }

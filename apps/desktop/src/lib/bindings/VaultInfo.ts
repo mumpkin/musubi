@@ -4,7 +4,11 @@ import type { VaultTree } from "./VaultTree";
 /**
  * The open vault, as the interface sees it.
  */
-export type VaultInfo = { root: string, name: string, readOnly: boolean, tree: VaultTree, 
+export type VaultInfo = { root: string, name: string, readOnly: boolean, 
+/**
+ * Days before trash entries are purged; `0` keeps them.
+ */
+trashRetentionDays: number, tree: VaultTree, 
 /**
  * The note to show first: the tutorial of a new vault.
  */
