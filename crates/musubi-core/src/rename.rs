@@ -179,6 +179,7 @@ pub fn save_note(
 	};
 	let renamed = join(parent_of(note), &name);
 	move_files(vault, note, &renamed)?;
+	vault.rename_pin(note, &renamed)?;
 	let old_title =
 		old_title.unwrap_or_else(|| title::stem_title(target_of(note)));
 	update_notes(

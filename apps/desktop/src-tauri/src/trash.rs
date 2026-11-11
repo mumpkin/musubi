@@ -3,8 +3,9 @@
 
 use musubi_core::TrashEntry;
 use musubi_core::trash::now;
-use tauri::State;
+use tauri::{AppHandle, State};
 
+use crate::explorer::Recent;
 use crate::state::AppState;
 
 const NO_VAULT: &str = "no vault is open";
@@ -13,6 +14,7 @@ const NO_VAULT: &str = "no vault is open";
 #[tauri::command(async)]
 pub fn trash_note(
 	path: &str,
+	app: AppHandle,
 	state: State<'_, AppState>,
 ) -> Result<TrashEntry, String> {
 	let mut open = state.lock();
@@ -21,6 +23,7 @@ pub fn trash_note(
 		.vault
 		.trash_note(path, now())
 		.map_err(|error| error.to_string())?;
+	Recent::of(&app, open.vault.root())?.forget(path)?;
 	open.refresh_index()?;
 	Ok(entry)
 }

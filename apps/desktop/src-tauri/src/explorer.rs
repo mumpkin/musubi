@@ -1,0 +1,106 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+//! Commands of the explorer sections: pinned notes, kept in the vault, and
+//! recent notes, kept in the settings of this device.
+
+use std::path::{Path, PathBuf};
+
+use musubi_core::VaultTree;
+use tauri::{AppHandle, State};
+
+use crate::state::{AppState, DeviceSettings};
+use crate::vault::config_dir;
+
+const NO_VAULT: &str = "no vault is open";
+/// Notes listed in the "Recent" section.
+const RECENT_LIMIT: usize = 10;
+
+/// Pins or unpins the note at `path`; returns the new tree.
+#[tauri::command(async)]
+pub fn pin_note(
+	path: &str,
+	pinned: bool,
+	state: State<'_, AppState>,
+) -> Result<VaultTree, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.vault
+		.pin(path, pinned)
+		.and_then(|()| open.vault.tree())
+		.map_err(|error| error.to_string())
+}
+
+/// Recent notes of the open vault on this device, newest first.
+#[tauri::command(async)]
+pub fn recent_notes(
+	app: AppHandle,
+	state: State<'_, AppState>,
+) -> Result<Vec<String>, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	Recent::of(&app, open.vault.root())?.update(|_| ())
+}
+
+/// Puts the note at `path` first in the recent notes; returns them.
+#[tauri::command(async)]
+pub fn note_opened(
+	path: &str,
+	app: AppHandle,
+	state: State<'_, AppState>,
+) -> Result<Vec<String>, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	Recent::of(&app, open.vault.root())?.update(|recent| {
+		recent.retain(|note| note != path);
+		recent.insert(0, path.to_owned());
+		recent.truncate(RECENT_LIMIT);
+	})
+}
+
+/// The recent notes of one vault on this device.
+pub struct Recent {
+	config: PathBuf,
+	vault: String,
+}
+
+impl Recent {
+	pub fn of(app: &AppHandle, root: &Path) -> Result<Self, String> {
+		Ok(Self {
+			config: config_dir(app)?,
+			vault: root.to_string_lossy().into_owned(),
+		})
+	}
+
+	/// The recent note `old`, if any, becomes `new`.
+	pub fn rename(&self, old: &str, new: &str) -> Result<(), String> {
+		self.update(|recent| {
+			for note in recent.iter_mut().filter(|note| *note == old) {
+				new.clone_into(note);
+			}
+		})
+		.map(|_| ())
+	}
+
+	/// The note at `path` leaves the recent notes.
+	pub fn forget(&self, path: &str) -> Result<(), String> {
+		self.update(|recent| {
+			recent.retain(|note| note != path);
+		})
+		.map(|_| ())
+	}
+
+	/// Applies `change` to the list and saves it; returns the list.
+	fn update(
+		&self,
+		change: impl FnOnce(&mut Vec<String>),
+	) -> Result<Vec<String>, String> {
+		let mut settings = DeviceSettings::load(&self.config);
+		let recent = settings.recent.entry(self.vault.clone()).or_default();
+		let before = recent.clone();
+		change(recent);
+		let result = recent.clone();
+		if result != before {
+			settings.save(&self.config)?;
+		}
+		Ok(result)
+	}
+}

@@ -9,6 +9,7 @@ pub mod links;
 pub mod naming;
 mod passages;
 mod paths;
+mod pins;
 mod rename;
 mod search;
 pub mod title;

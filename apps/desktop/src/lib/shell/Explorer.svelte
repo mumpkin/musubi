@@ -4,15 +4,21 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
 
+	import type { NoteEntry } from '../bindings/NoteEntry.ts';
 	import type { FolderNode } from '../vault/tree.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
+	import ExplorerSection from './ExplorerSection.svelte';
 	import { focusFirst, listKeydown } from './list-keys.ts';
 
 	interface Props {
 		vaultName: string;
 		root: FolderNode;
+		pinned: NoteEntry[];
+		recent: NoteEntry[];
+		pinnedPaths: ReadonlySet<string>;
 		current: string;
 		onOpen: (path: string) => void;
+		onPin: (path: string) => void;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
 		onDelete: (path: string) => void;
 		// `Escape`: the focus goes back to the pane.
@@ -22,11 +28,11 @@
 	const {
 		vaultName,
 		root,
-		current,
-		onOpen,
+		pinned,
+		recent,
 		onCreate,
-		onDelete,
 		onLeave,
+		...rows
 	}: Props = $props();
 
 	// Folded folders, by path.
@@ -38,7 +44,7 @@
 
 	// `Space h` / `Space l`: the focus goes to the current note.
 	export function focusList(): void {
-		focusFirst(element, ITEMS, '.note.current');
+		focusFirst(element, ITEMS, '.tree .note.current');
 	}
 </script>
 
@@ -68,14 +74,26 @@
 			}}
 		>▤</button>
 	</header>
-	<ExplorerFolder
-		folder={root}
-		{current}
+	<ExplorerSection
+		name="Pinned"
+		notes={pinned}
 		{folded}
-		{onOpen}
-		{onCreate}
-		{onDelete}
+		{...rows}
 	/>
+	<ExplorerSection
+		name="Recent"
+		notes={recent}
+		{folded}
+		{...rows}
+	/>
+	<div class="tree">
+		<ExplorerFolder
+			folder={root}
+			{folded}
+			{onCreate}
+			{...rows}
+		/>
+	</div>
 </nav>
 
 <style>

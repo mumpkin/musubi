@@ -8,15 +8,15 @@
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
-	import type { SearchKind } from '../vault/search.ts';
-	import { trashNote } from '../vault/trash.ts';
 	import { parentOf, titleIn } from '../vault/tree.ts';
 	import { openTutorial } from '../vault/vault.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
+	import { ShellDialogs } from './dialogs.svelte.ts';
 	import Explorer from './Explorer.svelte';
 	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
 	import NewEntryDialog from './NewEntryDialog.svelte';
+	import { NoteActions } from './note-actions.ts';
 	import NotePane from './NotePane.svelte';
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
@@ -41,11 +41,7 @@
 	const manager = new PaneManager(
 		vault.firstNote ?? vault.tree.notes[0]?.path ?? '',
 	);
-	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
-	let isCreating = $state(false);
-	let isPaletteOpen = $state(false);
-	let isTrashOpen = $state(false);
-	let search = $state<SearchKind>();
+	const dialogs = new ShellDialogs();
 	const panels = new SidePanels(manager);
 
 	function loadTree(): void {
@@ -65,11 +61,6 @@
 		}
 	});
 
-	function startCreation(kind: 'note' | 'folder', folder: string): void {
-		creation = { kind, folder };
-		isCreating = true;
-	}
-
 	function created(newTree: VaultTree, note: string | undefined): void {
 		files.setTree(newTree);
 		if (note !== undefined) {
@@ -77,72 +68,43 @@
 		}
 	}
 
-	function showMessage(text: string): void {
-		manager.message = text;
-	}
-
 	function openNote(path: string, line?: number): void {
 		manager.open(path, line);
 	}
 
-	function deleteNote(path: string): void {
-		const next = files.tree.notes.find((note) => note.path !== path);
-		trashNote(path)
-			.then(async (entry) => {
-				manager.forget(path, next?.path ?? '');
-				showMessage(`Moved ${entry.title} to the trash`);
-				await files.load();
-			})
-			.catch((error: unknown) => {
-				showMessage(String(error));
-			});
-	}
+	const notes = new NoteActions(files, manager);
 
-	// Opens a note that was just written (restored, tutorial) once the tree
-	// knows it.
-	function restored(note: string | Promise<string>): void {
-		Promise.resolve(note)
-			.then(async (path) => {
-				await files.load();
-				openNote(path);
-			})
-			.catch((error: unknown) => {
-				showMessage(String(error));
-			});
-	}
-
-	// A link to a missing note creates it, titled from the link.
-	manager.followLink = (path, text) => {
-		files.prepareLink(path, text)
-			.then(() => {
-				openNote(path);
-			})
-			.catch((error: unknown) => {
-				showMessage(String(error));
-			});
-	};
+	// The note of the focused pane goes first in the recent notes.
+	$effect(() => {
+		if (manager.currentPath !== '') {
+			files.opened(manager.currentPath).catch(() => undefined);
+		}
+	});
 
 	const ACTIONS: Record<ShellAction, () => void> = {
 		palette: () => {
-			isPaletteOpen = true;
+			dialogs.isPaletteOpen = true;
 		},
 		deleteNote: () => {
-			deleteNote(manager.currentPath);
+			notes.deleteNote(manager.currentPath);
 		},
 		showTrash: () => {
-			isTrashOpen = true;
+			dialogs.isTrashOpen = true;
 		},
 		openTutorial: () => {
-			restored(openTutorial());
+			notes.restored(openTutorial());
 		},
 		findNote: () => {
-			search = 'titles';
+			dialogs.search = 'titles';
 		},
 		searchText: () => {
-			search = 'text';
+			dialogs.search = 'text';
 		},
 		newNote: () => {
-			startCreation('note', parentOf(manager.currentPath));
+			dialogs.startCreation('note', parentOf(manager.currentPath));
+		},
+		togglePin: () => {
+			notes.togglePin(manager.currentPath);
 		},
 		toggleExplorer: () => {
 			panels.toggleExplorer();
@@ -182,8 +144,7 @@
 			const isInsert = manager.focused?.mode === 'editing'
 				&& manager.editorMode === 'insert';
 			const isInput = event.target instanceof HTMLInputElement;
-			return isPaletteOpen || isTrashOpen || search !== undefined
-				|| isInsert || isInput;
+			return dialogs.isOpen || isInsert || isInput;
 		},
 		isReading: () => manager.focused?.mode === 'reading'
 			&& panels.isInPane(),
@@ -216,10 +177,14 @@
 					bind:this={panels.explorerList}
 					vaultName={vault.name}
 					root={files.root}
+					pinned={files.pinnedNotes}
+					recent={files.recentNotes}
+					pinnedPaths={files.pinnedPaths}
 					current={manager.currentPath}
 					onOpen={openNote}
-					onCreate={startCreation}
-					onDelete={deleteNote}
+					onPin={notes.togglePin}
+					onCreate={dialogs.startCreation}
+					onDelete={notes.deleteNote}
 					onLeave={() => {
 						panels.back();
 					}}
@@ -278,28 +243,28 @@
 </Tooltip.Provider>
 
 <CommandPalette
-	bind:open={isPaletteOpen}
+	bind:open={dialogs.isPaletteOpen}
 	{commands}
 />
 
 <TrashDialog
-	bind:open={isTrashOpen}
-	onRestored={restored}
-	onError={showMessage}
+	bind:open={dialogs.isTrashOpen}
+	onRestored={notes.restored}
+	onError={notes.showMessage}
 />
 
 <SearchPicker
-	bind:kind={search}
+	bind:kind={dialogs.search}
 	onOpen={openNote}
 />
 
-{#if creation}
+{#if dialogs.creation}
 	<NewEntryDialog
-		bind:open={isCreating}
-		kind={creation.kind}
-		folder={creation.folder}
+		bind:open={dialogs.isCreating}
+		kind={dialogs.creation.kind}
+		folder={dialogs.creation.folder}
 		onCreated={created}
-		onError={showMessage}
+		onError={notes.showMessage}
 	/>
 {/if}
 

@@ -32,6 +32,12 @@ and this project adheres to
 
 ### Added
 
+- The explorer shows the pinned notes and the 10 notes opened last. A note
+  is pinned with the pin button of its row or "Pin or unpin the note" in the
+  palette. Pins are stored in the vault (`.musubi/vault.json`), so every
+  copy shows them; recent notes stay on the device. Both follow renames and
+  leave with the trash.
+
 - Web links (`http`, `https`, `mailto`) open in the default browser, never
   inside the window. In the reading view a small arrow tells them from note
   links, and their address shows on hover.

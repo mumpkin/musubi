@@ -3,6 +3,7 @@
 
 mod assets;
 mod commands;
+mod explorer;
 mod links;
 mod reading;
 mod state;
@@ -46,6 +47,9 @@ pub fn run() {
 			trash::trash_entries,
 			trash::restore_note,
 			trash::delete_trash_entries,
+			explorer::pin_note,
+			explorer::recent_notes,
+			explorer::note_opened,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");
