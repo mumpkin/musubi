@@ -36,6 +36,7 @@ pub fn run() {
 			links::search_notes,
 			links::search_sections,
 			links::search_text,
+			links::vault_graph,
 			assets::import_image,
 			assets::paste_image,
 			assets::note_assets,

@@ -4,6 +4,7 @@
 //! vault when it is missing, outdated or unreadable
 //! (`docs/vault-format.md`, "What is never in the vault").
 
+mod graph;
 mod refresh;
 mod schema;
 mod text_search;
@@ -17,6 +18,7 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use ts_rs::TS;
 
+pub use self::graph::{Graph, GraphLink, GraphNode};
 pub use self::text_search::TextMatch;
 use crate::error::VaultError;
 

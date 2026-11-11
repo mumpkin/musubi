@@ -1,13 +1,14 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- One pane: any note, in reading or editing mode. -->
+<!-- One pane: any note, in reading or editing mode, or the graph. -->
 <script lang="ts">
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
 	import HelixEditor from '../editor/HelixEditor.svelte';
+	import GraphView from '../graph/GraphView.svelte';
 	import { readNote, writeNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
 	import PaneHeader from './PaneHeader.svelte';
-	import type { PaneEvents, PaneState } from './panes.ts';
+	import { MODE_LABELS, type PaneEvents, type PaneState } from './panes.ts';
 	import ReadingPane from './ReadingPane.svelte';
 
 	interface Props {
@@ -44,6 +45,11 @@
 		events.editorMode(mode);
 	}
 
+	// A click on a note of the graph shows it in this pane.
+	function openFromGraph(path: string): void {
+		events.open(path, '');
+	}
+
 	async function write(text: string): Promise<void> {
 		const path = await writeNote(pane.path, text);
 		events.saved(pane.path, path);
@@ -57,10 +63,18 @@
 >
 	<PaneHeader
 		title={isModified ? `${title} ●` : title}
-		mode={pane.mode === 'reading' ? 'LEC' : modeIndicator(editorMode)}
+		mode={pane.mode === 'editing'
+			? modeIndicator(editorMode)
+			: MODE_LABELS[pane.mode]}
 		{actions}
 	/>
-	{#if pane.mode === 'reading'}
+	{#if pane.mode === 'graph'}
+		<GraphView
+			current={pane.path}
+			{notes}
+			onOpen={openFromGraph}
+		/>
+	{:else if pane.mode === 'reading'}
 		<ReadingPane
 			path={pane.path}
 			{revision}

@@ -147,6 +147,9 @@
 		toggleMode: () => {
 			manager.toggleMode(manager.focusedIndex);
 		},
+		toggleGraph: () => {
+			manager.toggleGraph(manager.focusedIndex);
+		},
 		split: () => {
 			manager.split();
 		},

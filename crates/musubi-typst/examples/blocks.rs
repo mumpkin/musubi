@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! Prints the blocks of a note and the rendered elements that point to
-//! them: `cargo run --example blocks -p musubi-typst -- <vault> <note>`.
+//! Prints the diagnostics and the blocks of a note, and the rendered
+//! elements that point to them: `cargo run --example blocks -p musubi-typst -- <vault> <note>`.
 
 use std::env;
 use std::path::PathBuf;
@@ -14,6 +14,10 @@ fn main() {
 		return;
 	};
 	let rendered = NoteCompiler::new(PathBuf::from(vault)).render(&note);
+	for diagnostic in &rendered.diagnostics {
+		let line = diagnostic.position.map_or(0, |position| position.line + 1);
+		println!("{line:>3} {:?} {}", diagnostic.severity, diagnostic.message);
+	}
 	for (index, block) in rendered.blocks.iter().enumerate() {
 		println!(
 			"{index:>2} {:<10} lines {}-{}",

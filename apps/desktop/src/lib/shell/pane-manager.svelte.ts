@@ -8,6 +8,7 @@ import { SvelteMap } from 'svelte/reactivity';
 import type { PaneAction } from './actions.ts';
 import {
 	MAX_PANES,
+	MODE_LABELS,
 	otherMode,
 	paneActions,
 	type PaneEvents,
@@ -34,7 +35,9 @@ export class PaneManager {
 	readonly focused = $derived(this.panes[this.focusedIndex] ?? this.panes[0]);
 	readonly currentPath = $derived(this.focused?.path ?? '');
 	readonly statusMode = $derived(
-		this.focused?.mode === 'editing' ? modeIndicator(this.editorMode) : 'LEC',
+		this.focused?.mode === 'editing'
+			? modeIndicator(this.editorMode)
+			: MODE_LABELS[this.focused?.mode ?? 'reading'],
 	);
 
 	constructor(firstNote: string) {
@@ -53,6 +56,21 @@ export class PaneManager {
 			pane.draft = undefined;
 			pane.line = line;
 			pane.loads += 1;
+			// A note opened from the graph shows in reading mode.
+			if (pane.mode === 'graph') {
+				pane.mode = 'reading';
+			}
+		}
+	}
+
+	// `Space g`: the graph in pane `index`, or back to its note.
+	toggleGraph(index: number): void {
+		const pane = this.panes[index];
+		if (pane && pane.draft === undefined) {
+			pane.mode = pane.mode === 'graph' ? 'reading' : 'graph';
+			this.focusAfterRender(index);
+		} else if (pane) {
+			this.message = 'Save the note before showing the graph';
 		}
 	}
 
@@ -226,7 +244,9 @@ export class PaneManager {
 		this.focusedIndex = (index + this.panes.length) % this.panes.length;
 		const element = document.querySelectorAll<HTMLElement>('.pane')
 			.item(this.focusedIndex);
-		element.querySelector<HTMLElement>('.reading-view, .cm-content')
+		element.querySelector<HTMLElement>(
+			'.reading-view, .cm-content, .graph-canvas',
+		)
 			?.focus();
 	}
 }

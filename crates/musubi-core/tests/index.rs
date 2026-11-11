@@ -192,3 +192,32 @@ fn finds_text_without_accents_with_highlighted_excerpts() {
 	);
 	assert!(setup.index.search_text("  ").expect("search").is_empty());
 }
+
+#[test]
+fn builds_the_graph_of_existing_notes() {
+	let directory = demo();
+	let mut setup =
+		Setup::new(directory.path(), VaultIndex::in_memory().expect("index"));
+	setup.refresh();
+	write(
+		directory.path(),
+		"Lonely.typ",
+		"= Lonely\n#note-link(\"Gone\")[x]",
+	);
+	setup.refresh();
+	let graph = setup.index.graph().expect("graph");
+	let mut titles: Vec<&str> =
+		graph.nodes.iter().map(|node| node.title.as_str()).collect();
+	titles.sort_unstable();
+	assert_eq!(titles, ["Analyse", "Kant", "Lonely", "Self", "Target"]);
+	let mut links: Vec<(&str, &str)> = graph
+		.links
+		.iter()
+		.map(|link| {
+			let at = |index: u32| graph.nodes[index as usize].title.as_str();
+			(at(link.source), at(link.target))
+		})
+		.collect();
+	links.sort_unstable();
+	assert_eq!(links, [("Analyse", "Target"), ("Kant", "Target")]);
+}

@@ -5,9 +5,14 @@ import type { PaneAction } from './actions.ts';
 import { shortcutLabel } from './shortcuts.ts';
 
 // The panes of the main area: one by default, two side by side when split.
-// Each shows any note, in reading or editing mode.
+// Each shows any note, in reading or editing mode, or the graph of the
+// notes around its note.
 
-export type PaneMode = 'reading' | 'editing';
+export type PaneMode = 'reading' | 'editing' | 'graph';
+
+// What the header and the status bar show for a mode of a pane, the
+// editor showing its own mode.
+export const MODE_LABELS = { reading: 'LEC', graph: 'GRA' } as const;
 
 export interface PaneState {
 	path: string;
@@ -39,6 +44,8 @@ export interface PaneEvents {
 
 export const MAX_PANES = 2;
 
+// Reading and editing switch to each other; the graph goes back to
+// reading.
 export function otherMode(mode: PaneMode): PaneMode {
 	return mode === 'reading' ? 'editing' : 'reading';
 }
