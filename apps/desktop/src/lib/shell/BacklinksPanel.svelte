@@ -7,6 +7,7 @@
 		backlinks,
 		groupBacklinks,
 	} from '../vault/links.ts';
+	import { focusFirst, listKeydown } from './list-keys.ts';
 
 	interface Props {
 		// Path of the current note.
@@ -14,9 +15,20 @@
 		// Bumped when the vault may have changed: the list is read again.
 		revision: number;
 		onOpen: (path: string) => void;
+		// `Escape`: the focus goes back to the pane.
+		onLeave: () => void;
 	}
 
-	const { path, revision, onOpen }: Props = $props();
+	const { path, revision, onOpen, onLeave }: Props = $props();
+
+	// The notes that `j` and `k` move between.
+	const ITEMS = '.source';
+	let element = $state<HTMLElement>();
+
+	// `Space l`: the focus goes to the first note.
+	export function focusList(): void {
+		focusFirst(element, ITEMS, ITEMS);
+	}
 
 	let groups = $state<BacklinkGroup[]>([]);
 	let failure = $state<string>();
@@ -44,9 +56,16 @@
 	});
 </script>
 
+<!-- `j`, `k`, `l` and `Escape` reach the panel from its entries. -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <aside
+	bind:this={element}
 	class="backlinks"
 	aria-label="Backlinks"
+	tabindex="-1"
+	onkeydown={(event) => {
+		listKeydown(event, { container: element, selector: ITEMS, onLeave });
+	}}
 >
 	<h2>Backlinks</h2>
 	{#if failure}
@@ -130,6 +149,20 @@
 
 	.source:hover {
 		text-decoration: underline;
+	}
+
+	/* The note reached with `j` and `k`. */
+	.source:focus-visible {
+		outline: none;
+		text-decoration: underline;
+	}
+
+	li:has(.source:focus-visible) {
+		box-shadow: inset 2px 0 0 var(--accent);
+	}
+
+	.backlinks:focus {
+		outline: none;
 	}
 
 	.context {

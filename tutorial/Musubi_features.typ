@@ -18,7 +18,7 @@ follows.
 
 == Backlinks
 
-`Space l` shows, on the right, the notes that link to the current one, with
+`Space b` shows, on the right, the notes that link to the current one, with
 the sentence around each link. Open #note-link("Welcome/Start_here")[Start
 here] and look: this note is there.
 

@@ -6,6 +6,7 @@
 
 	import type { FolderNode } from '../vault/tree.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
+	import { focusFirst, listKeydown } from './list-keys.ts';
 
 	interface Props {
 		vaultName: string;
@@ -14,6 +15,8 @@
 		onOpen: (path: string) => void;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
 		onDelete: (path: string) => void;
+		// `Escape`: the focus goes back to the pane.
+		onLeave: () => void;
 	}
 
 	const {
@@ -23,15 +26,32 @@
 		onOpen,
 		onCreate,
 		onDelete,
+		onLeave,
 	}: Props = $props();
 
 	// Folded folders, by path.
 	const folded = new SvelteSet<string>();
+
+	// The entries that `j` and `k` move between.
+	const ITEMS = '.folder, .note';
+	let element = $state<HTMLElement>();
+
+	// `Space h` / `Space l`: the focus goes to the current note.
+	export function focusList(): void {
+		focusFirst(element, ITEMS, '.note.current');
+	}
 </script>
 
+<!-- `j`, `k`, `l` and `Escape` reach the panel from its entries. -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <nav
+	bind:this={element}
 	class="explorer"
 	aria-label="Notes"
+	tabindex="-1"
+	onkeydown={(event) => {
+		listKeydown(event, { container: element, selector: ITEMS, onLeave });
+	}}
 >
 	<header>
 		<h2 title={vaultName}>{vaultName}</h2>
@@ -61,6 +81,7 @@
 <style>
 	.explorer {
 		height: 100%;
+		outline: none;
 		overflow: auto;
 		padding: 0.5rem 0.25rem;
 		background: var(--surface);

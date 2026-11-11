@@ -20,7 +20,7 @@
 		<span class="message">{message}</span>
 	{/if}
 	<span class="hint">
-		Space ? commands · Space e notes · Space l backlinks · Ctrl-w v split
+		Space ? commands · Space h Space l panels · Space w v split
 	</span>
 </footer>
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Shortcuts of the interface, in the Helix style: `Space` opens a menu and
-// `Ctrl-w` the pane commands. Keys of a sequence are separated by spaces;
-// `C-w` is Ctrl and w.
+// Shortcuts of the interface, in the Helix style: `Space` opens a menu, and
+// `Space w` the pane commands as the window menu of Helix. Keys of a
+// sequence are separated by spaces; `C-p` is Ctrl and p.
 
 export type ShellAction
 	= | 'palette'
@@ -18,8 +18,8 @@ export type ShellAction
 		| 'split'
 		| 'closePane'
 		| 'nextPane'
-		| 'leftPane'
-		| 'rightPane';
+		| 'leftPanel'
+		| 'rightPanel';
 
 // Commands of the palette for each action.
 interface ActionLabel {
@@ -42,8 +42,8 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	split: { label: 'Split the pane', group: 'Pane' },
 	closePane: { label: 'Close the pane', group: 'Pane' },
 	nextPane: { label: 'Next pane', group: 'Pane' },
-	leftPane: { label: 'Pane on the left', group: 'Pane' },
-	rightPane: { label: 'Pane on the right', group: 'Pane' },
+	leftPanel: { label: 'Focus the panel on the left', group: 'View' },
+	rightPanel: { label: 'Focus the panel on the right', group: 'View' },
 };
 
 const SEQUENCES = new Map<string, ShellAction>([
@@ -53,15 +53,16 @@ const SEQUENCES = new Map<string, ShellAction>([
 	['Space /', 'searchText'],
 	['Space n', 'newNote'],
 	['Space e', 'toggleExplorer'],
-	['Space l', 'toggleBacklinks'],
+	['Space b', 'toggleBacklinks'],
 	['Space g', 'toggleGraph'],
 	['Space r', 'toggleMode'],
-	['C-w v', 'split'],
-	['C-w q', 'closePane'],
-	['C-w w', 'nextPane'],
-	['C-w C-w', 'nextPane'],
-	['C-w h', 'leftPane'],
-	['C-w l', 'rightPane'],
+	['Space h', 'leftPanel'],
+	['Space l', 'rightPanel'],
+	['Space w v', 'split'],
+	['Space w q', 'closePane'],
+	['Space w w', 'nextPane'],
+	['Space w h', 'leftPanel'],
+	['Space w l', 'rightPanel'],
 ]);
 
 // The label of a shortcut, as shown in tooltips and the palette.

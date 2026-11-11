@@ -15,7 +15,7 @@ export interface ShortcutContext {
 }
 
 // A `keydown` handler for the window, which remembers the keys of a
-// sequence being typed (`Space`, `Ctrl-w`).
+// sequence being typed (`Space w v`).
 export function shortcutHandler(context: ShortcutContext) {
 	let pendingKeys = '';
 	return (event: KeyboardEvent): void => {

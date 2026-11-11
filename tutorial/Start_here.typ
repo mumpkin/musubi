@@ -28,10 +28,17 @@ a screen, smoothly. `Escape` hides the selection.
 
 == Panes and panels
 
-- `Ctrl-w v` splits the window: the same note, read on one side and edited on
-  the other. `Ctrl-w w` moves between the two panes, `Ctrl-w q` closes one.
-- `Space e` shows or hides the explorer, on the left. `Space l` shows or
+- `Space w v` splits the window: the same note, read on one side and edited
+  on the other. `Space w w` moves between the two panes, `Space w q` closes
+  one.
+- `Space e` shows or hides the explorer, on the left. `Space b` shows or
   hides the backlinks, on the right.
+- `Space h` and `Space l` move to the panel on the left and on the right:
+  explorer, panes, backlinks. In the explorer and the backlinks, `j` and `k`
+  move, `Enter` (or `l`) opens, `Escape` goes back to the note.
+
+Try it now: `Space h`, then `j` a few times, `Enter`, and `Space l` to come
+back.
 
 == Finding anything
 

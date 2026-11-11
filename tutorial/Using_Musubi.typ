@@ -14,8 +14,12 @@ command palette (`Space ?`) lists the same commands.
   pointer is over it.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
   read or edited, or the graph. Drag the line between panes to resize them.
-- *Backlinks*, on the right (`Space l`): the notes that link to the current
+- *Backlinks*, on the right (`Space b`): the notes that link to the current
   one.
+- `Space h` and `Space l` move the keyboard to the panel on the left and on
+  the right, folded panels skipped. In the explorer and the backlinks, `j`
+  and `k` move, `Enter` or `l` opens a note or folds a folder, `Escape` goes
+  back to the pane.
 - *Status bar*, at the bottom: the mode (`READ`; `NORMAL`, `INSERT`,
   `SELECT` in the editor; `GRAPH`), the path of the note, messages, and a
   reminder of the main keys.
@@ -32,13 +36,13 @@ They work everywhere except while typing text.
   [`Space /`], [Search the text of the notes],
   [`Space n`], [New note],
   [`Space e`], [Show or hide the explorer],
-  [`Space l`], [Show or hide the backlinks],
+  [`Space b`], [Show or hide the backlinks],
+  [`Space h`, `Space l`], [Panel on the left, on the right],
   [`Space g`], [Graph of the links, or back to the note],
   [`Space r`], [Switch between reading and editing],
-  [`Ctrl-w v`], [Split the pane],
-  [`Ctrl-w w`], [Next pane],
-  [`Ctrl-w h`, `Ctrl-w l`], [Pane on the left, on the right],
-  [`Ctrl-w q`], [Close the pane],
+  [`Space w v`], [Split the pane],
+  [`Space w w`], [Next pane],
+  [`Space w q`], [Close the pane],
 )
 
 == Reading view

@@ -35,14 +35,18 @@ color is already a CSS variable holding both values (`light-dark()`).
 In the Helix style, so that the same habits work everywhere. They are read
 before the panes, except while typing (insert mode, command line, palette).
 
-| Action                   | Keys                               |
-| ------------------------ | ---------------------------------- |
-| Command palette          | `Space ?`, `Ctrl-p`                |
-| Note explorer            | `Space e`                          |
-| Backlinks                | `Space l`                          |
-| Switch reading / editing | `Space r`; `i` while reading       |
-| Split, close the pane    | `Ctrl-w v`, `Ctrl-w q`             |
-| Next pane, left, right   | `Ctrl-w w`, `Ctrl-w h`, `Ctrl-w l` |
+| Action                   | Keys                         |
+| ------------------------ | ---------------------------- |
+| Command palette          | `Space ?`, `Ctrl-p`          |
+| Note explorer            | `Space e`                    |
+| Backlinks                | `Space b`                    |
+| Switch reading / editing | `Space r`; `i` while reading |
+| Split, close the pane    | `Space w v`, `Space w q`     |
+| Next pane                | `Space w w`                  |
+| Panel on the left, right | `Space h`, `Space l`         |
+
+Since #55, `Ctrl-w` is no longer used: every pane command lives under
+`Space w`, as the window menu of Helix.
 
 `Ctrl-b` and `Ctrl-l` are left free: `Ctrl-b` scrolls a page up in Helix.
 Every pane button shows its shortcut in its tooltip.
