@@ -12,6 +12,7 @@ export type ShellAction
 		| 'showTrash'
 		| 'openTutorial'
 		| 'togglePin'
+		| 'settings'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
 		| 'toggleGraph'
@@ -37,6 +38,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	showTrash: { label: 'Show the trash', group: 'Note' },
 	openTutorial: { label: 'Open the tutorial', group: 'Help' },
 	togglePin: { label: 'Pin or unpin the note', group: 'Note' },
+	settings: { label: 'Open the settings', group: 'View' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },
 	toggleGraph: { label: 'Show the graph of links', group: 'View' },
@@ -54,6 +56,7 @@ const SEQUENCES = new Map<string, ShellAction>([
 	['Space f', 'findNote'],
 	['Space /', 'searchText'],
 	['Space n', 'newNote'],
+	['Space ,', 'settings'],
 	['Space e', 'toggleExplorer'],
 	['Space b', 'toggleBacklinks'],
 	['Space g', 'toggleGraph'],

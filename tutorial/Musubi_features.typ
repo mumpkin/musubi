@@ -58,6 +58,7 @@ again goes back to the note.
 
 The trash button of a note in the explorer (or "Move the note to the trash"
 in the palette) moves it to the trash with its images. "Show the trash" in
-the palette restores it. Notes stay there 30 days.
+the palette restores it. Notes stay there 30 days, or as long as the
+settings (`Space ,`) say.
 
 Next: #note-link("Welcome/Using_Musubi")[Using Musubi].

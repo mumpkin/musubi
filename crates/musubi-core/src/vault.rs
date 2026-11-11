@@ -21,6 +21,7 @@ pub(crate) const SETTINGS_FILE: &str = "vault.json";
 const NOTE_EXTENSION: &str = "typ";
 const ASSETS_EXTENSION: &str = "assets";
 const DEFAULT_RETENTION_DAYS: u64 = 30;
+pub(crate) const TRASH_RETENTION: &str = "trashRetentionDays";
 const DEFAULT_SETTINGS: &str =
 	"{\n\t\"format\": 0,\n\t\"trashRetentionDays\": 30\n}\n";
 
@@ -75,7 +76,7 @@ impl Vault {
 			root,
 			read_only: format > FORMAT,
 			trash_retention_days: values
-				.get("trashRetentionDays")
+				.get(TRASH_RETENTION)
 				.and_then(serde_json::Value::as_u64)
 				.unwrap_or(DEFAULT_RETENTION_DAYS),
 		})

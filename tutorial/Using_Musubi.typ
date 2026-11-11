@@ -37,6 +37,7 @@ They work everywhere except while typing text.
   [`Space f`], [Find a note by title],
   [`Space /`], [Search the text of the notes],
   [`Space n`], [New note],
+  [`Space ,`], [Settings],
   [`Space e`], [Show or hide the explorer],
   [`Space b`], [Show or hide the backlinks],
   [`Space h`, `Space l`], [Panel on the left, on the right],
@@ -94,18 +95,25 @@ image on the editor inserts it too.
   renamed note stays pinned; a note moved to the trash is unpinned.
 - *Delete*: the trash button in the explorer, or "Move the note to the
   trash" in the palette. "Show the trash" restores notes or deletes them for
-  good. Notes stay 30 days in the trash.
+  good. Notes stay 30 days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
 
-== Themes
+== Settings and themes
 
-Musubi follows the light or dark preference of the system, with the colors
-of GitHub Light and GitHub Dark. To choose another theme, type `theme` in
-the palette (`Space ?`): "Use the theme GitHub Dark", "Follow the system
-theme"… "Import a theme" adds one from a JSON file; the guide
-`docs/themes.md` of the repository describes the format. Themes are a
-setting of this computer, not of the vault.
+`Space ,` opens the settings; every change applies at once.
+
+- *Theme*: Musubi follows the light or dark preference of the system, with
+  the colors of GitHub Light and GitHub Dark, or uses the theme you choose.
+  "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of
+  the repository describes the format. The palette has the same commands:
+  type `theme` in it.
+- *Editor*: save automatically after a few seconds without typing.
+- *Trash of this vault*: how many days deleted notes stay in the trash
+  (0 keeps them).
+
+The theme and autosave are settings of this computer; the trash delay
+belongs to the vault, so every copy of it uses the same.
 
 == Where your notes live
 

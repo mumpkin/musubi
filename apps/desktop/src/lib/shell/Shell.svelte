@@ -8,6 +8,7 @@
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
+	import SettingsDialog from '../settings/SettingsDialog.svelte';
 	import { themeCommands } from '../theme/theme-commands.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
 	import { parentOf, titleIn } from '../vault/tree.ts';
@@ -44,6 +45,8 @@
 		vault.firstNote ?? vault.tree.notes[0]?.path ?? '',
 	);
 	const dialogs = new ShellDialogs();
+	// svelte-ignore state_referenced_locally
+	let trashRetentionDays = $state(vault.trashRetentionDays);
 	const panels = new SidePanels(manager);
 
 	function loadTree(): void {
@@ -92,6 +95,9 @@
 		},
 		showTrash: () => {
 			dialogs.isTrashOpen = true;
+		},
+		settings: () => {
+			dialogs.isSettingsOpen = true;
 		},
 		openTutorial: () => {
 			notes.restored(openTutorial());
@@ -253,6 +259,15 @@
 <TrashDialog
 	bind:open={dialogs.isTrashOpen}
 	onRestored={notes.restored}
+	onError={notes.showMessage}
+/>
+
+<SettingsDialog
+	bind:open={dialogs.isSettingsOpen}
+	bind:trashRetentionDays
+	settings={files.settings}
+	isReadOnly={vault.readOnly}
+	onSettings={files.updateSettings}
 	onError={notes.showMessage}
 />
 

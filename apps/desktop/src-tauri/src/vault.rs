@@ -19,6 +19,9 @@ pub struct VaultInfo {
 	pub root: String,
 	pub name: String,
 	pub read_only: bool,
+	/// Days before trash entries are purged; `0` keeps them.
+	#[ts(type = "number")]
+	pub trash_retention_days: u64,
 	pub tree: VaultTree,
 	/// The note to show first: the tutorial of a new vault.
 	pub first_note: Option<String>,
@@ -35,6 +38,7 @@ fn info(open: &OpenVault) -> Result<VaultInfo, String> {
 			.map(|name| name.to_string_lossy().into_owned())
 			.unwrap_or_default(),
 		read_only: open.vault.read_only,
+		trash_retention_days: open.vault.trash_retention_days,
 		tree: open.vault.tree().map_err(|error| error.to_string())?,
 		first_note: None,
 	})

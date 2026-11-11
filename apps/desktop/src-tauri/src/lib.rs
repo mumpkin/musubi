@@ -6,6 +6,7 @@ mod commands;
 mod explorer;
 mod links;
 mod reading;
+mod settings;
 mod state;
 mod themes;
 mod trash;
@@ -48,6 +49,8 @@ macro_rules! commands {
 			themes::import_theme,
 			themes::remove_theme,
 			themes::choose_theme,
+			settings::set_autosave,
+			settings::set_trash_retention,
 		]
 	};
 }
