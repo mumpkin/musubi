@@ -17,7 +17,8 @@
 		// Scrolls the selection into view without animation, for the first
 		// display of a note.
 		isFirstDisplay?: boolean;
-		onNavigate: (path: string) => void;
+		// A note link was followed; `text` is the text of the link.
+		onNavigate: (path: string, text: string) => void;
 		onSelect: (block: number | undefined) => void;
 		// Double click on a block: edit the note there.
 		onEdit: (block: number) => void;
@@ -82,7 +83,7 @@
 		event.preventDefault();
 		const path = linkedNotePath(anchor);
 		if (path !== undefined) {
-			onNavigate(path);
+			onNavigate(path, anchor.textContent);
 		}
 	}
 </script>
@@ -181,6 +182,13 @@
 
 	.reading-view :global(a.musubi-link:hover) {
 		text-decoration: underline;
+	}
+
+	/* A note that does not exist yet: following the link creates it. */
+	.reading-view :global(a.musubi-link.missing) {
+		color: var(--muted);
+		text-decoration: underline dashed;
+		text-underline-offset: 3px;
 	}
 
 	.reading-view :global(.musubi-card) {

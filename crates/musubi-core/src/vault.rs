@@ -3,6 +3,7 @@
 //! (`docs/vault-format.md`).
 
 use std::fs;
+use std::io::{self, Write as _};
 use std::path::{Path, PathBuf};
 
 use serde::Serialize;
@@ -192,6 +193,39 @@ impl Vault {
 		let path = directory.join(name);
 		fs::write(&path, format!("= {}\n", title.trim()))?;
 		Ok(paths::relative(&self.root, &path))
+	}
+
+	/// Creates the note at `note` (from the vault root, with the extension),
+	/// titled `title`: the target of a link to a missing note. Missing
+	/// folders are created.
+	///
+	/// # Errors
+	///
+	/// [`VaultError::OutsideVault`], [`VaultError::NotANote`],
+	/// [`VaultError::AlreadyExists`], a read-only vault, or an I/O error.
+	pub fn create_note_at(
+		&self,
+		note: &str,
+		title: &str,
+	) -> Result<(), VaultError> {
+		if !note.ends_with(".typ") {
+			return Err(VaultError::NotANote(note.to_owned()));
+		}
+		let folder = note.rfind('/').map_or("", |slash| &note[..slash]);
+		self.writable_folder(folder)?;
+		let path = paths::resolve(&self.root, note)?;
+		let mut file = fs::OpenOptions::new()
+			.write(true)
+			.create_new(true)
+			.open(&path)
+			.map_err(|error| match error.kind() {
+				io::ErrorKind::AlreadyExists => {
+					VaultError::AlreadyExists(note.to_owned())
+				}
+				_ => VaultError::Io(error),
+			})?;
+		file.write_all(format!("= {}\n", title.trim()).as_bytes())?;
+		Ok(())
 	}
 
 	/// Creates a folder named from `name` in `parent`. Returns its path.

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+import type { PaneAPI } from 'paneforge';
 // Sizes of the panes, in percent of the window width, and interface delays.
 
 export const PANE_SIZES = {
@@ -11,3 +12,12 @@ export const PANE_SIZES = {
 
 export const TOOLTIP_DELAY_MILLISECONDS = 400;
 export const TOOLTIP_OFFSET_PIXELS = 4;
+
+// Folds a side panel, or unfolds it if folded.
+export function toggle(pane: PaneAPI | undefined): void {
+	if (pane?.isCollapsed()) {
+		pane.expand();
+	} else {
+		pane?.collapse();
+	}
+}

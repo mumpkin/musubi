@@ -42,6 +42,13 @@ fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {
 		.map_err(|error| error.to_string())
 }
 
+/// Where the indexes of vaults are kept: data of this device only.
+fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {
+	app.path()
+		.app_local_data_dir()
+		.map_err(|error| error.to_string())
+}
+
 /// Opens the vault at `root` and remembers it for the next launch.
 #[tauri::command(async)]
 pub fn open_vault(
@@ -49,7 +56,7 @@ pub fn open_vault(
 	app: AppHandle,
 	state: State<'_, AppState>,
 ) -> Result<VaultInfo, String> {
-	let open = OpenVault::open(root)?;
+	let open = OpenVault::open(root, &data_dir(&app)?)?;
 	let vault_info = info(&open)?;
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
@@ -69,18 +76,21 @@ pub fn current_vault(
 	let mut open = state.lock();
 	if open.is_none() {
 		let last = DeviceSettings::load(&config_dir(&app)?).last_vault;
+		let data = data_dir(&app)?;
 		*open = last
 			.filter(|root| root.is_dir())
-			.and_then(|root| OpenVault::open(&root).ok());
+			.and_then(|root| OpenVault::open(&root, &data).ok());
 	}
 	open.as_ref().map(info).transpose()
 }
 
-/// Folders and notes of the open vault.
+/// Folders and notes of the open vault. Notes may have changed on disk:
+/// the index is brought up to date first.
 #[tauri::command(async)]
 pub fn vault_tree(state: State<'_, AppState>) -> Result<VaultTree, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	open.refresh_index()?;
 	open.vault.tree().map_err(|error| error.to_string())
 }
 
@@ -104,10 +114,12 @@ pub fn write_note(
 	content: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	musubi_core::save_note(&open.vault, path, content)
-		.map_err(|error| error.to_string())
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let saved = musubi_core::save_note(&open.vault, path, content)
+		.map_err(|error| error.to_string())?;
+	open.refresh_index()?;
+	Ok(saved)
 }
 
 /// Settings of this device that the interface needs.

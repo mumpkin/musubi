@@ -92,6 +92,18 @@ impl NoteCompiler {
 		}
 	}
 
+	/// Links, cards and tasks of the note at `note_path`, without producing
+	/// its HTML; `None` if the note does not compile.
+	pub fn index(&mut self, note_path: &str) -> Option<NoteIndex> {
+		let note = VirtualPath::new(note_path).ok()?;
+		self.world.prepare(&note);
+		let document =
+			typst::compile::<HtmlDocument>(&self.world).output.ok()?;
+		Some(NoteIndex::from_introspector(
+			document.introspector().as_ref(),
+		))
+	}
+
 	/// Finds the blocks of the main note and marks the rendered elements
 	/// with them.
 	fn annotate_blocks(&self, document: &mut HtmlDocument) -> Vec<SourceBlock> {

@@ -24,7 +24,8 @@ export interface PaneState {
 // What a pane reports to the shell.
 export interface PaneEvents {
 	focus: () => void;
-	open: (path: string) => void;
+	// Follow a link; `text` is the text of the link.
+	open: (path: string, text: string) => void;
 	message: (text: string) => void;
 	editorMode: (mode: EditorMode) => void;
 	draft: (text: string | undefined) => void;

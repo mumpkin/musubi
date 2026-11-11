@@ -9,24 +9,24 @@
 	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
+	import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 	import { buildTree, parentOf, titleIn } from '../vault/tree.ts';
 	import { deviceSettings, vaultTree } from '../vault/vault.ts';
-	import type { PaletteCommand, PaneAction } from './actions.ts';
+	import type { PaneAction } from './actions.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
-	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
+	import {
+		PANE_SIZES,
+		toggle,
+		TOOLTIP_DELAY_MILLISECONDS,
+	} from './layout.ts';
 	import NewEntryDialog from './NewEntryDialog.svelte';
 	import NotePane from './NotePane.svelte';
+	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
 	import { paneActions, type PaneState } from './panes.ts';
-	import {
-		ACTION_LABELS,
-		keyName,
-		resolveShortcut,
-		type ShellAction,
-		shortcutLabel,
-	} from './shortcuts.ts';
+	import { keyName, resolveShortcut, type ShellAction } from './shortcuts.ts';
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 
@@ -38,7 +38,10 @@
 
 	// svelte-ignore state_referenced_locally
 	let tree = $state(vault.tree);
+	// Bumped on every read of the tree: the backlinks may have changed.
+	let treeLoads = $state(0);
 	const root = $derived(buildTree(tree));
+	const notePaths = $derived(new Set(tree.notes.map((note) => note.path)));
 	// svelte-ignore state_referenced_locally
 	const manager = new PaneManager(vault.tree.notes[0]?.path ?? '');
 	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
@@ -62,6 +65,7 @@
 		vaultTree()
 			.then((loaded) => {
 				tree = loaded;
+				treeLoads += 1;
 			})
 			.catch(() => undefined);
 	}
@@ -78,14 +82,6 @@
 			loadTree();
 		}
 	});
-
-	function toggle(pane: PaneAPI | undefined): void {
-		if (pane?.isCollapsed()) {
-			pane.expand();
-		} else {
-			pane?.collapse();
-		}
-	}
 
 	function startCreation(kind: 'note' | 'folder', folder: string): void {
 		creation = { kind, folder };
@@ -106,6 +102,21 @@
 	function openNote(path: string): void {
 		manager.open(path);
 	}
+
+	// A link to a missing note creates it, titled from the link.
+	manager.followLink = (path, text) => {
+		const ready = notePaths.has(path)
+			? Promise.resolve()
+			: createLinkedNote(path, linkedNoteTitle(path, text))
+				.then(loadTree);
+		ready
+			.then(() => {
+				openNote(path);
+			})
+			.catch((error: unknown) => {
+				showMessage(String(error));
+			});
+	};
 
 	function actionsOf(index: number, pane: PaneState): PaneAction[] {
 		return paneActions(pane, {
@@ -155,23 +166,7 @@
 		},
 	};
 
-	const commands: PaletteCommand[] = $derived([
-		...Object.entries(ACTION_LABELS)
-			.filter(([action]) => action !== 'palette')
-			.map(([action, { label, group }]) => ({
-				label,
-				group,
-				shortcut: shortcutLabel(action as ShellAction),
-				run: ACTIONS[action as ShellAction],
-			})),
-		...tree.notes.map((note) => ({
-			label: note.title,
-			group: 'Open a note',
-			run: () => {
-				manager.open(note.path);
-			},
-		})),
-	]);
+	const commands = $derived(paletteCommands(ACTIONS, tree.notes, openNote));
 
 	let pendingKeys = '';
 
@@ -249,6 +244,7 @@
 								actions={actionsOf(index, pane)}
 								revision={manager.revisions.get(pane.path) ?? 0}
 								{autosaveDelay}
+								notes={notePaths}
 								events={manager.events(index)}
 							/>
 						</Pane>
@@ -263,7 +259,11 @@
 				collapsible
 				collapsedSize={0}
 			>
-				<BacklinksPanel />
+				<BacklinksPanel
+					path={manager.currentPath}
+					revision={treeLoads}
+					onOpen={openNote}
+				/>
 			</Pane>
 		</PaneGroup>
 		<StatusBar

@@ -2,6 +2,7 @@
 //! Tauri entry point: registers the commands called by the interface.
 
 mod commands;
+mod links;
 mod reading;
 mod state;
 mod vault;
@@ -28,6 +29,8 @@ pub fn run() {
 			vault::create_note,
 			vault::create_folder,
 			vault::demo_vault_path,
+			links::backlinks,
+			links::create_linked_note,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");

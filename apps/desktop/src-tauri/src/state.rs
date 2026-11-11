@@ -5,23 +5,43 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard, PoisonError};
 
-use musubi_core::Vault;
+use musubi_core::{Vault, VaultIndex};
 use musubi_typst::NoteCompiler;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-/// A vault and its Typst compiler, which keeps its caches between
-/// compilations.
+/// A vault, its Typst compiler, which keeps its caches between
+/// compilations, and its index.
 pub struct OpenVault {
 	pub vault: Vault,
 	pub compiler: NoteCompiler,
+	pub index: VaultIndex,
 }
 
 impl OpenVault {
-	pub fn open(root: &Path) -> Result<Self, String> {
+	/// Opens the vault at `root` and brings its index, stored in
+	/// `data_dir`, up to date.
+	pub fn open(root: &Path, data_dir: &Path) -> Result<Self, String> {
 		let vault = Vault::open(root).map_err(|error| error.to_string())?;
 		let compiler = NoteCompiler::new(vault.root().to_path_buf());
-		Ok(Self { vault, compiler })
+		let index =
+			VaultIndex::open(&VaultIndex::file_for(data_dir, vault.root()))
+				.map_err(|error| error.to_string())?;
+		let mut open = Self {
+			vault,
+			compiler,
+			index,
+		};
+		open.refresh_index()?;
+		Ok(open)
+	}
+
+	/// Indexes the notes changed on disk since the last refresh.
+	pub fn refresh_index(&mut self) -> Result<(), String> {
+		self.index
+			.refresh(&self.vault, &mut self.compiler)
+			.map(|_| ())
+			.map_err(|error| error.to_string())
 	}
 }
 
