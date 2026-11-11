@@ -22,6 +22,10 @@ and this project adheres to
 
 ### Added
 
+- Modes are named in full in the pane headers and the status bar: `READ`,
+  `NORMAL`, `INSERT`, `SELECT`, `GRAPH`. The handles between panels no
+  longer light up on hover; the resize cursor shows them.
+
 - A new vault starts with a tutorial in a `Welcome` folder: _Start here_,
   _Helix basics_ with exercises, _Typst basics_, _Musubi features_ and
   _Using Musubi_, a guide to the whole app. "Open the tutorial" in the

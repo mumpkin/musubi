@@ -13,7 +13,7 @@
 <footer class="status-bar">
 	<span
 		class="mode"
-		class:insert={mode === 'INS'}
+		class:insert={mode === 'INSERT'}
 	>{mode}</span>
 	<span class="path">{path}</span>
 	{#if message}

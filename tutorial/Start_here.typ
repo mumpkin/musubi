@@ -10,10 +10,10 @@ them once you know your way.
 == Reading and editing
 
 A note opens in the *reading view*: the note as it looks, not its source.
-The status bar shows `LEC` (reading).
+The status bar shows `READ`.
 
 - Press `i`, or double click a paragraph, to *edit* the note at that place.
-  The status bar shows `NOR` (normal mode of the editor).
+  The status bar shows `NORMAL` (normal mode of the editor).
 - In the editor, type `:w` then `Enter` to save, and `:q` to go back to
   reading. `:wq` does both.
 - `Space r` switches between reading and editing without leaving the note.

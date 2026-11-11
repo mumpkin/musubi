@@ -12,7 +12,7 @@ export type PaneMode = 'reading' | 'editing' | 'graph';
 
 // What the header and the status bar show for a mode of a pane, the
 // editor showing its own mode.
-export const MODE_LABELS = { reading: 'LEC', graph: 'GRA' } as const;
+export const MODE_LABELS = { reading: 'READ', graph: 'GRAPH' } as const;
 
 export interface PaneState {
 	path: string;
