@@ -57,12 +57,14 @@ export function blockForLine(
 	return found ?? rendered[0];
 }
 
-// `smooth` animates the scroll (moves of the cursor); otherwise the block
-// is centred at once (opening a note on a block).
+// How selecting a block scrolls: animated for moves of the cursor, at once
+// when a note opens on a block, not at all when the caller scrolls.
+export type BlockScroll = 'smooth' | 'instant' | 'none';
+
 export function highlightBlock(
 	container: Element,
 	block: number | undefined,
-	isSmooth = true,
+	scroll: BlockScroll = 'smooth',
 ): void {
 	for (const element of container.querySelectorAll('.selected-block')) {
 		element.classList.remove('selected-block');
@@ -74,7 +76,9 @@ export function highlightBlock(
 	for (const element of elements) {
 		element.classList.add('selected-block');
 	}
-	elements[0]?.scrollIntoView(isSmooth
-		? { block: 'nearest', behavior: 'smooth' }
-		: { block: 'center' });
+	if (scroll !== 'none') {
+		elements[0]?.scrollIntoView(scroll === 'smooth'
+			? { block: 'nearest', behavior: 'smooth' }
+			: { block: 'center' });
+	}
 }

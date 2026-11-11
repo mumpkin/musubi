@@ -1790,5 +1790,285 @@
 		"starts": "one two\nthree four\n[[]\n[[five.six seven\n",
 		"ends": "one two\nthree four\n[]]\n[f]ive.six seven\n",
 		"cursors": "one two\nthree four\n[|]\n[|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jjjgg",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "lllge",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n\n[five.six seven\n",
+		"ends": "one two\nthree four\n\nf]ive.six seven\n",
+		"cursors": "one two\nthree four\n\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wge",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n\n[five.six seven\n",
+		"ends": "one two\nthree four\n\nf]ive.six seven\n",
+		"cursors": "one two\nthree four\n\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "2G",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\n[three four\n\nfive.six seven\n",
+		"ends": "one two\nt]hree four\n\nfive.six seven\n",
+		"cursors": "one two\n|three four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "G",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "9G",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n\n[five.six seven\n",
+		"ends": "one two\nthree four\n\nf]ive.six seven\n",
+		"cursors": "one two\nthree four\n\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "3gg",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n[\nfive.six seven\n",
+		"ends": "one two\nthree four\n\n]five.six seven\n",
+		"cursors": "one two\nthree four\n|\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jj1gg",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "vge",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nthree four\n\nf]ive.six seven\n",
+		"cursors": "one two\nthree four\n\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jvgg",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nt]hree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "2j",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n[\nfive.six seven\n",
+		"ends": "one two\nthree four\n\n]five.six seven\n",
+		"cursors": "one two\nthree four\n|\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "3l",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one[ two\nthree four\n\nfive.six seven\n",
+		"ends": "one ]two\nthree four\n\nfive.six seven\n",
+		"cursors": "one| two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "alpha beta_gamma  delta-epsilon, zeta\n",
+		"keys": "2w",
+		"text": "alpha beta_gamma  delta-epsilon, zeta\n",
+		"starts": "alpha [beta_gamma  delta-epsilon, zeta\n",
+		"ends": "alpha beta_gamma  ]delta-epsilon, zeta\n",
+		"cursors": "alpha beta_gamma | delta-epsilon, zeta\n"
+	},
+	{
+		"initialText": "alpha beta_gamma  delta-epsilon, zeta\n",
+		"keys": "3e",
+		"text": "alpha beta_gamma  delta-epsilon, zeta\n",
+		"starts": "alpha beta_gamma[  delta-epsilon, zeta\n",
+		"ends": "alpha beta_gamma  delta]-epsilon, zeta\n",
+		"cursors": "alpha beta_gamma  delt|a-epsilon, zeta\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "x2x",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one two\nthree four\n\n]five.six seven\n",
+		"cursors": "one two\nthree four\n|\nfive.six seven\n"
+	},
+	{
+		"initialText": "a long first line\nshort\n\nanother long line\n",
+		"keys": "wwlljjj",
+		"text": "a long first line\nshort\n\nanother long line\n",
+		"starts": "a long first line\nshort\n\nanother [long line\n",
+		"ends": "a long first line\nshort\n\nanother l]ong line\n",
+		"cursors": "a long first line\nshort\n\nanother |long line\n"
+	},
+	{
+		"initialText": "a long first line\nshort\n\nanother long line\n",
+		"keys": "wwlljjjk",
+		"text": "a long first line\nshort\n\nanother long line\n",
+		"starts": "a long first line\nshort\n[\nanother long line\n",
+		"ends": "a long first line\nshort\n\n]another long line\n",
+		"cursors": "a long first line\nshort\n|\nanother long line\n"
+	},
+	{
+		"initialText": "a long first line\nshort\n\nanother long line\n",
+		"keys": "wwlljhjj",
+		"text": "a long first line\nshort\n\nanother long line\n",
+		"starts": "a long first line\nshort\n\nanot[her long line\n",
+		"ends": "a long first line\nshort\n\nanoth]er long line\n",
+		"cursors": "a long first line\nshort\n\nanot|her long line\n"
+	},
+	{
+		"initialText": "a long first line\nshort\n\nanother long line\n",
+		"keys": "glj",
+		"text": "a long first line\nshort\n\nanother long line\n",
+		"starts": "a long first line\nshort[\n\nanother long line\n",
+		"ends": "a long first line\nshort\n]\nanother long line\n",
+		"cursors": "a long first line\nshort|\n\nanother long line\n"
+	},
+	{
+		"initialText": "a long first line\nshort\n\nanother long line\n",
+		"keys": "gljjj",
+		"text": "a long first line\nshort\n\nanother long line\n",
+		"starts": "a long first line\nshort\n\nanother long lin[e\n",
+		"ends": "a long first line\nshort\n\nanother long line]\n",
+		"cursors": "a long first line\nshort\n\nanother long lin|e\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/dog\r",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat [dog cat\nbird cat dog\nfish\n",
+		"ends": "cat dog] cat\nbird cat dog\nfish\n",
+		"cursors": "cat do|g cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/dog\rn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog cat\nbird cat [dog\nfish\n",
+		"ends": "cat dog cat\nbird cat dog]\nfish\n",
+		"cursors": "cat dog cat\nbird cat do|g\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/dog\rnn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat [dog cat\nbird cat dog\nfish\n",
+		"ends": "cat dog] cat\nbird cat dog\nfish\n",
+		"cursors": "cat do|g cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/dog\rN",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog cat\nbird cat [dog\nfish\n",
+		"ends": "cat dog cat\nbird cat dog]\nfish\n",
+		"cursors": "cat dog cat\nbird cat do|g\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/c.t\rn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog cat\nbird [cat dog\nfish\n",
+		"ends": "cat dog cat\nbird cat] dog\nfish\n",
+		"cursors": "cat dog cat\nbird ca|t dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "?cat\r",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog cat\nbird [cat dog\nfish\n",
+		"ends": "cat dog cat\nbird cat] dog\nfish\n",
+		"cursors": "cat dog cat\nbird ca|t dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "?cat\rn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "[cat dog cat\nbird cat dog\nfish\n",
+		"ends": "cat] dog cat\nbird cat dog\nfish\n",
+		"cursors": "ca|t dog cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "?cat\rN",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog [cat\nbird cat dog\nfish\n",
+		"ends": "cat dog cat]\nbird cat dog\nfish\n",
+		"cursors": "cat dog ca|t\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/zebra\r",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "[cat dog cat\nbird cat dog\nfish\n",
+		"ends": "c]at dog cat\nbird cat dog\nfish\n",
+		"cursors": "|cat dog cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "*n",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog [cat\nbird cat dog\nfish\n",
+		"ends": "cat dog c]at\nbird cat dog\nfish\n",
+		"cursors": "cat dog |cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "*N",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog cat\nbird [cat dog\nfish\n",
+		"ends": "cat dog cat\nbird c]at dog\nfish\n",
+		"cursors": "cat dog cat\nbird |cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "e*n",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog [cat\nbird cat dog\nfish\n",
+		"ends": "cat dog cat]\nbird cat dog\nfish\n",
+		"cursors": "cat dog ca|t\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "ll*n",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat dog ca[t\nbird cat dog\nfish\n",
+		"ends": "cat dog cat]\nbird cat dog\nfish\n",
+		"cursors": "cat dog ca|t\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "/dog\rvn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "cat [dog cat\nbird cat [dog\nfish\n",
+		"ends": "cat dog] cat\nbird cat dog]\nfish\n",
+		"cursors": "cat do|g cat\nbird cat do|g\nfish\n"
+	},
+	{
+		"initialText": "cat dog cat\nbird cat dog\nfish\n",
+		"keys": "jw/cat\rn",
+		"text": "cat dog cat\nbird cat dog\nfish\n",
+		"starts": "[cat dog cat\nbird cat dog\nfish\n",
+		"ends": "cat] dog cat\nbird cat dog\nfish\n",
+		"cursors": "ca|t dog cat\nbird cat dog\nfish\n"
 	}
 ]

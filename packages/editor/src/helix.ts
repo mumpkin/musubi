@@ -24,7 +24,9 @@ import {
 import { resolveKey } from './keymap.ts';
 import { linkCompletion, type LinkSource } from './link-completion.ts';
 import { type EditorMode, modeField } from './mode.ts';
+import { searchPatternField } from './search.ts';
 import { cursorOf } from './selection.ts';
+import { smoothScrolling } from './smooth-scroll.ts';
 
 const cursorMark = Decoration.mark({ class: 'helix-cursor' });
 
@@ -89,7 +91,12 @@ const theme = EditorView.baseTheme({
 });
 
 function hasModifier(event: KeyboardEvent): boolean {
-	return event.ctrlKey || event.altKey || event.metaKey || event.isComposing;
+	return event.altKey || event.metaKey || event.isComposing;
+}
+
+// The name of a key in the keymap: `C-d` for Ctrl and d.
+function keyName(event: KeyboardEvent): string {
+	return event.ctrlKey ? `C-${event.key}` : event.key;
 }
 
 // The view, with the part of the text on screen for `gw`.
@@ -102,6 +109,18 @@ function viewTarget(view: EditorView): CommandTarget & VisibleText {
 			view.dispatch(...specs);
 		},
 		visibleRange: () => view.viewport,
+		scroller: {
+			visibleLines: () =>
+				Math.floor(
+					view.scrollDOM.clientHeight / view.defaultLineHeight,
+				),
+			scrollByLines: (lines) => {
+				view.scrollDOM.scrollBy({
+					top: lines * view.defaultLineHeight,
+					behavior: 'smooth',
+				});
+			},
+		},
 	};
 }
 
@@ -122,20 +141,20 @@ function handleKey(
 	if (hasModifier(event) || MODIFIER_KEYS.has(event.key)) {
 		return false;
 	}
-	if (pressJumpLabel(view, event.key)) {
+	if (!event.ctrlKey && pressJumpLabel(view, event.key)) {
 		event.preventDefault();
 		return true;
 	}
 	const mode = view.state.field(modeField);
-	const resolution = resolveKey(mode, pending.keys, event.key);
+	const resolution = resolveKey(mode, pending.keys, keyName(event));
 	pending.keys = resolution.pending ?? '';
-	if (resolution.command !== undefined) {
-		runCommand(
-			resolution.command,
-			{ ...context, target: viewTarget(view) },
-			resolution.argument,
-		);
-	} else if (resolution.pending === undefined && mode === 'insert') {
+	const { command, argument, count } = resolution;
+	if (command !== undefined) {
+		const target = viewTarget(view);
+		runCommand(command, { ...context, target, count }, argument);
+	} else if (resolution.pending === undefined
+		&& (mode === 'insert' || event.ctrlKey)) {
+		// Typed text, or a Ctrl shortcut of CodeMirror or the system.
 		return false;
 	}
 	event.preventDefault();
@@ -192,6 +211,8 @@ export function helix({
 		modeField,
 		insertOrigins,
 		jumpLabelsField,
+		searchPatternField,
+		smoothScrolling,
 		jumpLabelDecorations,
 		EditorState.allowMultipleSelections.of(true),
 		keyHandler(host, register),

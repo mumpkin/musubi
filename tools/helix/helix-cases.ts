@@ -14,6 +14,9 @@ const PARAGRAPHS = 'first line\nsecond line\n\nother paragraph\nend\n\n\nlast\n'
 const MANY = 'alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n';
 const WORDS = 'alpha beta_gamma  delta-epsilon, zeta\n';
 
+const STICKY = 'a long first line\nshort\n\nanother long line\n';
+const SEARCH = 'cat dog cat\nbird cat dog\nfish\n';
+
 export const HELIX_CASES: HelixCase[] = [
 	{ text: LINES, keys: 'l' },
 	{ text: LINES, keys: 'llh' },
@@ -240,4 +243,42 @@ export const HELIX_CASES: HelixCase[] = [
 	{ text: MANY, keys: 'wCC' },
 	{ text: MANY, keys: 'wCCd' },
 	{ text: LINES, keys: 'jjCi[\x1b' },
+	// Navigation (#31): file start and end, line numbers, counts.
+	{ text: LINES, keys: 'jjjgg' },
+	{ text: LINES, keys: 'lllge' },
+	{ text: LINES, keys: 'wge' },
+	{ text: LINES, keys: '2G' },
+	{ text: LINES, keys: 'G' },
+	{ text: LINES, keys: '9G' },
+	{ text: LINES, keys: '3gg' },
+	{ text: LINES, keys: 'jj1gg' },
+	{ text: LINES, keys: 'vge' },
+	{ text: LINES, keys: 'jvgg' },
+	{ text: LINES, keys: '2j' },
+	{ text: LINES, keys: '3l' },
+	{ text: WORDS, keys: '2w' },
+	{ text: WORDS, keys: '3e' },
+	{ text: LINES, keys: 'x2x' },
+	// Sticky column for `j` and `k`.
+	{ text: STICKY, keys: 'wwlljjj' },
+	{ text: STICKY, keys: 'wwlljjjk' },
+	{ text: STICKY, keys: 'wwlljhjj' },
+	{ text: STICKY, keys: 'glj' },
+	{ text: STICKY, keys: 'gljjj' },
+	// Search: `/`, `?`, `n`, `N`, `*`.
+	{ text: SEARCH, keys: '/dog\r' },
+	{ text: SEARCH, keys: '/dog\rn' },
+	{ text: SEARCH, keys: '/dog\rnn' },
+	{ text: SEARCH, keys: '/dog\rN' },
+	{ text: SEARCH, keys: '/c.t\rn' },
+	{ text: SEARCH, keys: '?cat\r' },
+	{ text: SEARCH, keys: '?cat\rn' },
+	{ text: SEARCH, keys: '?cat\rN' },
+	{ text: SEARCH, keys: '/zebra\r' },
+	{ text: SEARCH, keys: '*n' },
+	{ text: SEARCH, keys: '*N' },
+	{ text: SEARCH, keys: 'e*n' },
+	{ text: SEARCH, keys: 'll*n' },
+	{ text: SEARCH, keys: '/dog\rvn' },
+	{ text: SEARCH, keys: 'jw/cat\rn' },
 ];

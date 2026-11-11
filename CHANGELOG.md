@@ -34,6 +34,11 @@ and this project adheres to
 - Find a note by title with `Space f`, and search the text of every note
   with `Space /`, ignoring accents and case, with the matched words
   highlighted; the note opens at the matching block.
+- Helix navigation in the editor and the reading view: `gg`, `ge`, `G`
+  and counts (`3j`, `10G`), search with `/`, `?`, `n`, `N` and `*`, `zz`,
+  `zt`, `zb`, `Ctrl-d`, `Ctrl-u`, `Ctrl-f`, `Ctrl-b`. `j` and `k` keep the
+  column. In the reading view, `/` highlights the matches in the rendered
+  text and moves the block cursor to them. Every scroll is smooth.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

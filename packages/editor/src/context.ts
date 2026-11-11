@@ -8,13 +8,22 @@ import type {
 
 import { type EditorMode, modeField, setMode } from './mode.ts';
 
+// Scrolling of the view, for page moves. Tests have no view.
+export interface Scroller {
+	// Lines of text that fit on screen.
+	visibleLines: () => number;
+	// Scrolls smoothly by `lines` (negative: up).
+	scrollByLines: (lines: number) => void;
+}
+
 // What a command acts on: an `EditorView` in the app, a plain state in tests.
 export interface CommandTarget {
 	readonly state: EditorState;
 	dispatch: (...specs: (Transaction | TransactionSpec)[]) => void;
+	scroller?: Scroller;
 }
 
-export type PromptKind = 'command' | 'select';
+export type PromptKind = 'command' | 'select' | 'search' | 'reverseSearch';
 
 export interface Clipboard {
 	write: (text: string) => Promise<void>;
@@ -37,6 +46,8 @@ export interface CommandContext {
 	// Text yanked or deleted last, used when the system clipboard cannot be
 	// read.
 	register: { text: string };
+	// The count typed before the keys (`3` in `3j`), if any.
+	count?: number | undefined;
 }
 
 // `argument` holds the characters typed after keys such as `mi` or `ms`.

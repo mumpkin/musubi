@@ -36,6 +36,21 @@ const shared: [string, CommandName][] = [
 	['gs', 'gotoFirstNonWhitespace'],
 	['gw', 'showJumpLabels'],
 	['mm', 'matchBrackets'],
+	['gg', 'gotoFileStart'],
+	['ge', 'gotoLastLine'],
+	['G', 'gotoLine'],
+	['/', 'searchForward'],
+	['?', 'searchBackward'],
+	['n', 'searchNext'],
+	['N', 'searchPrevious'],
+	['*', 'searchSelection'],
+	['zz', 'alignViewCenter'],
+	['zt', 'alignViewTop'],
+	['zb', 'alignViewBottom'],
+	['C-d', 'pageCursorHalfDown'],
+	['C-u', 'pageCursorHalfUp'],
+	['C-f', 'pageDown'],
+	['C-b', 'pageUp'],
 ];
 
 export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
@@ -69,6 +84,8 @@ const WITH_ARGUMENT = new Map<string, ArgumentCommand>([
 export interface KeyResolution {
 	command?: CommandName;
 	argument?: string;
+	// The count typed before the keys, as `3` in `3j`.
+	count?: number;
 	// Keys typed so far when a sequence is not complete yet.
 	pending?: string;
 }
@@ -92,8 +109,18 @@ function startsSequence(mode: EditorMode, sequence: string): boolean {
 		keys.length > sequence.length && keys.startsWith(sequence));
 }
 
-// What a key does in `mode`, after the keys `pending` of a sequence.
-// `Escape` cancels a sequence; an unknown sequence does nothing.
+const COUNT = /^(?<digits>[1-9]\d*)?(?<keys>.*)$/su;
+
+// Splits the count typed before a sequence from its keys.
+function withoutCount(sequence: string): { count?: number; keys: string } {
+	const groups = COUNT.exec(sequence)?.groups;
+	const digits = groups?.digits;
+	const keys = groups?.keys ?? sequence;
+	return digits === undefined ? { keys } : { count: Number(digits), keys };
+}
+
+// What a key does in `mode`, after the keys `pending` of a sequence and a
+// count. `Escape` cancels a sequence; an unknown sequence does nothing.
 export function resolveKey(
 	mode: EditorMode,
 	pending: string,
@@ -102,7 +129,21 @@ export function resolveKey(
 	if (pending !== '' && key === 'Escape') {
 		return {};
 	}
-	const sequence = pending + key;
+	if (mode === 'insert') {
+		return resolveSequence(mode, pending + key);
+	}
+	const { count, keys } = withoutCount(pending + key);
+	if (keys === '') {
+		return { pending: pending + key };
+	}
+	const resolution = resolveSequence(mode, keys);
+	if (resolution.pending !== undefined) {
+		return { pending: pending + key };
+	}
+	return count === undefined ? resolution : { ...resolution, count };
+}
+
+function resolveSequence(mode: EditorMode, sequence: string): KeyResolution {
 	const command = keymaps[mode].get(sequence);
 	if (command !== undefined) {
 		return { command };
