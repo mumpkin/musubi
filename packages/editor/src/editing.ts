@@ -12,6 +12,7 @@ import {
 	type CommandContext,
 	type CommandTarget,
 } from './context.ts';
+import { copySelectionOnNextLine } from './copy-selection.ts';
 import { enterInsertMode } from './modes.ts';
 import { asCharacters, withCharacters } from './selection.ts';
 
@@ -106,27 +107,6 @@ function paste(side: PasteSide): Command {
 			})
 			.catch(() => undefined);
 	};
-}
-
-// `C`: the same columns on the next line long enough to hold them.
-function copySelectionOnNextLine({ target }: CommandContext): void {
-	const { state } = target;
-	const main = state.selection.main;
-	const line = state.doc.lineAt(main.from);
-	const anchorColumn = main.anchor - state.doc.lineAt(main.anchor).from;
-	const headColumn = main.head - state.doc.lineAt(main.head).from;
-	const width = Math.max(anchorColumn, headColumn);
-	for (let number = line.number + 1; number <= state.doc.lines; number += 1) {
-		const next = state.doc.line(number);
-		if (next.length >= width) {
-			const range = EditorSelection.range(
-				next.from + anchorColumn,
-				next.from + headColumn,
-			);
-			target.dispatch({ selection: state.selection.addRange(range) });
-			return;
-		}
-	}
 }
 
 // `s`: selects every match of `pattern` inside the selections.

@@ -31,6 +31,8 @@ pub fn run() {
 			vault::demo_vault_path,
 			links::backlinks,
 			links::create_linked_note,
+			links::search_notes,
+			links::search_sections,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");

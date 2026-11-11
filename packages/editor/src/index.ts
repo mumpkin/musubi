@@ -13,4 +13,10 @@ export type {
 export { selectMatches } from './editing.ts';
 export { helix, type HelixOptions } from './helix.ts';
 export { keymaps } from './keymap.ts';
+export {
+	importChange,
+	linkMarkup,
+	type LinkSource,
+	type LinkSuggestion,
+} from './link-completion.ts';
 export { type EditorMode, editorModes, modeField, modeIndicator } from './mode.ts';

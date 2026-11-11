@@ -22,6 +22,7 @@
 	import { typst_lezer as typstLanguage } from 'codemirror-lang-typst/lezer';
 	import { onMount } from 'svelte';
 
+	import { linkSource } from '../vault/links.ts';
 	import { runPrompt } from './prompt.ts';
 
 	interface Props {
@@ -140,6 +141,7 @@
 			EditorView.updateListener.of(reportChanges),
 			helix({
 				host,
+				linkSource,
 				onModeChange: (next) => {
 					onModeChange?.(next);
 				},

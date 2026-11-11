@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Replays Helix key sequences on a `TestEditor`, and marks its selections
 // the way the reference recorder marks those of the real Helix.
-import { EditorSelection } from '@codemirror/state';
-
+import { typeText } from './auto-pairs.ts';
 import { selectMatches } from './editing.ts';
 import { pressJumpLabel } from './jump-labels.ts';
 import { resolveKey } from './keymap.ts';
@@ -11,22 +10,13 @@ import type { TestEditor } from './test-editor.ts';
 
 const ESCAPE = '\u001B';
 const ENTER = '\r';
+const BACKSPACE = '\u007F';
+const KEY_NAMES = new Map([
+	[ESCAPE, 'Escape'],
+	[BACKSPACE, 'Backspace'],
+]);
 // Marks that the `s` prompt is open.
 const PROMPT = '\u0000prompt';
-
-function typeText(editor: TestEditor, text: string): void {
-	const { state } = editor;
-	const changes = state.changes(state.selection.ranges.map((range) => ({
-		from: range.from,
-		to: range.to,
-		insert: text,
-	})));
-	const ranges = state.selection.ranges.map((range) => {
-		const position = changes.mapPos(range.to);
-		return EditorSelection.cursor(position);
-	});
-	editor.dispatch({ changes, selection: EditorSelection.create(ranges) });
-}
 
 // Applies one key, like the key handler of the editor. `pending` holds the
 // keys of a sequence being typed.
@@ -45,7 +35,7 @@ function pressKey(
 	} else if (resolution.command !== undefined) {
 		editor.runWith(resolution.command, resolution.argument ?? '');
 	} else if (resolution.pending === undefined && editor.mode === 'insert') {
-		typeText(editor, key);
+		editor.dispatch(typeText(editor.state, key));
 	}
 }
 
@@ -53,7 +43,7 @@ export function replayKeys(editor: TestEditor, keys: string): void {
 	const pending = { keys: '' };
 	let index = 0;
 	while (index < keys.length) {
-		const key = keys.charAt(index) === ESCAPE ? 'Escape' : keys.charAt(index);
+		const key = KEY_NAMES.get(keys.charAt(index)) ?? keys.charAt(index);
 		index += 1;
 		if (pending.keys === PROMPT) {
 			// `s` reads a regex up to Enter.

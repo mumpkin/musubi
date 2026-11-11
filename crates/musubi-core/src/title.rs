@@ -48,6 +48,22 @@ pub fn heading_title(source: &str) -> Option<String> {
 	(!title.is_empty()).then_some(title)
 }
 
+/// Text of every heading at the top level of `source`, in order: the
+/// sections a link can target.
+#[must_use]
+pub fn headings(source: &str) -> Vec<String> {
+	let root = typst_syntax::parse(source);
+	root.children()
+		.filter(|node| node.kind() == SyntaxKind::Heading)
+		.filter_map(|heading| {
+			let mut text = String::new();
+			plain_text(heading, &mut text);
+			let words = text.split_whitespace().collect::<Vec<_>>().join(" ");
+			(!words.is_empty()).then_some(words)
+		})
+		.collect()
+}
+
 /// Title from the file stem, with `_` read as spaces.
 #[must_use]
 pub fn stem_title(stem: &str) -> String {
@@ -56,7 +72,7 @@ pub fn stem_title(stem: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-	use super::{heading_title, stem_title};
+	use super::{heading_title, headings, stem_title};
 
 	#[test]
 	fn reads_the_first_level_one_heading() {
@@ -78,6 +94,12 @@ mod tests {
 	fn has_no_title_without_a_level_one_heading() {
 		assert_eq!(heading_title("== Only a section\nText"), None);
 		assert_eq!(heading_title("#heading[Made by a function]"), None);
+	}
+
+	#[test]
+	fn lists_the_top_level_headings() {
+		let source = "= Note\n== Lists\ntext\n=== Nested *list*\n#[= Hidden]";
+		assert_eq!(headings(source), ["Note", "Lists", "Nested list"]);
 	}
 
 	#[test]

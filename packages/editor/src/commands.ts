@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // The command registry: every action of the editor is a named command. Keys
 // and the command line only map to these names.
+import { pairCommands } from './auto-pairs.ts';
 import type { Command, CommandContext } from './context.ts';
 import { editingCommands } from './editing.ts';
 import { showJumpLabels } from './jump-labels.ts';
@@ -13,6 +14,7 @@ export const commands = {
 	...editingCommands,
 	...modeCommands,
 	...objectCommands,
+	...pairCommands,
 	showJumpLabels,
 } satisfies Record<string, Command>;
 
