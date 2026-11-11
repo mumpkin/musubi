@@ -44,7 +44,11 @@ export class ReadingNavigator {
 	private matches: Range[] = [];
 	private current = -1;
 
-	constructor(private readonly surface: ReadingSurface) {}
+	private readonly surface: ReadingSurface;
+
+	constructor(surface: ReadingSurface) {
+		this.surface = surface;
+	}
 
 	// Runs `name` if the reading view knows it; returns whether it did.
 	run(name: CommandName, count?: number): boolean {

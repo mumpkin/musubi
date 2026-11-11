@@ -54,11 +54,11 @@
 		}
 	});
 
-	const navigator = $derived(container
-		? new ReadingNavigator({
-			container,
-			scroller: container.parentElement ?? container,
-			blocks: () => renderedBlocks(container),
+	function navigatorFor(root: HTMLElement): ReadingNavigator {
+		return new ReadingNavigator({
+			container: root,
+			scroller: root.parentElement ?? root,
+			blocks: () => renderedBlocks(root),
 			sourceBlocks: () => sourceBlocks,
 			selected: () => selectedBlock,
 			select: (block, scroll) => {
@@ -68,8 +68,10 @@
 			openPrompt: (kind) => {
 				prompt = kind;
 			},
-		})
-		: undefined);
+		});
+	}
+
+	const navigator = $derived(container ? navigatorFor(container) : undefined);
 
 	onDestroy(() => {
 		navigator?.clear();
