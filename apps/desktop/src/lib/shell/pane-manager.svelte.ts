@@ -43,12 +43,14 @@ export class PaneManager {
 		return this.panes.length < MAX_PANES;
 	}
 
-	open(path: string): void {
+	// Opens `path` in the focused pane, at the source `line` if given.
+	open(path: string, line?: number): void {
 		const pane = this.panes[this.focusedIndex];
 		if (pane) {
 			pane.path = path;
 			pane.draft = undefined;
-			pane.line = undefined;
+			pane.line = line;
+			pane.loads += 1;
 		}
 	}
 

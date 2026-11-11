@@ -11,6 +11,9 @@
 		path: string;
 		// Bumped when the note changes, to render it again.
 		revision: number;
+		// Bumped when a note is opened in the pane: the cursor goes to
+		// `line` again.
+		loads: number;
 		// Source line (from 0) to show first: where the editor was.
 		line: number | undefined;
 		// Paths of the notes of the vault: links to others show as missing.
@@ -24,6 +27,7 @@
 	const {
 		path,
 		revision,
+		loads,
 		line,
 		notes,
 		onOpen,
@@ -39,8 +43,10 @@
 
 	// The latest render asked for: a slower, older one must not replace it.
 	let latest = 0;
+	// The opening of a note shown so far, as `path:loads`.
+	let shown = '';
 
-	function render(notePath: string, version: number): void {
+	function render(notePath: string, opening: string): void {
 		latest += 1;
 		const request = latest;
 		renderNote(notePath)
@@ -50,7 +56,8 @@
 				}
 				view = result;
 				failure = undefined;
-				if (version === 0) {
+				if (opening !== shown) {
+					shown = opening;
 					selectedBlock = startBlock(result);
 				}
 			})
@@ -59,9 +66,13 @@
 			});
 	}
 
-	// Renders again when the note changes or a new version is saved.
+	// Renders again when the note changes, is opened again or a new version
+	// is saved.
 	$effect(() => {
-		render(path, revision);
+		// Read to render again on a save.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		revision;
+		render(path, `${path}:${String(loads)}`);
 	});
 
 	const markup = $derived(

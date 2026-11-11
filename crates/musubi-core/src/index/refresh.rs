@@ -13,6 +13,7 @@ use rusqlite::Transaction;
 use super::VaultIndex;
 use crate::context::{LinkContext, link_contexts};
 use crate::error::VaultError;
+use crate::passages::passages;
 use crate::vault::{NoteEntry, Vault};
 
 /// What tells whether a file changed since it was indexed.
@@ -132,13 +133,31 @@ impl Indexer<'_> {
 		)?;
 		let links = with_contexts(&facts.links, link_contexts(&source));
 		self.insert_links(&entry.path, links)?;
-		self.insert_cards_and_tasks(&entry.path, &facts)
+		self.insert_cards_and_tasks(&entry.path, &facts)?;
+		self.insert_passages(&entry.path, &source)
+	}
+
+	fn insert_passages(
+		&self,
+		note: &str,
+		source: &str,
+	) -> Result<(), VaultError> {
+		let mut statement = self.transaction.prepare_cached(
+			"INSERT INTO passages (path, line, text) VALUES (?1, ?2, ?3)",
+		)?;
+		for passage in passages(source) {
+			let line = i64::try_from(passage.line).unwrap_or(i64::MAX);
+			statement.execute((note, line, &passage.text))?;
+		}
+		Ok(())
 	}
 
 	/// Removes a note, its links, cards and tasks.
 	fn forget(&self, note: &str) -> Result<(), VaultError> {
 		self.transaction
 			.execute("DELETE FROM notes WHERE path = ?1", [note])?;
+		self.transaction
+			.execute("DELETE FROM passages WHERE path = ?1", [note])?;
 		Ok(())
 	}
 }

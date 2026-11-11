@@ -31,6 +31,9 @@ and this project adheres to
   (the matcher of Helix), with the folder when titles are shared; `Enter`
   inserts the `note-link` and the `musubi` import if missing.
   `[[Note#` lists the headings of that note to link to a section.
+- Find a note by title with `Space f`, and search the text of every note
+  with `Space /`, ignoring accents and case, with the matched words
+  highlighted; the note opens at the matching block.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

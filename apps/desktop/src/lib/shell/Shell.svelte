@@ -10,6 +10,7 @@
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
 	import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
+	import type { SearchKind } from '../vault/search.ts';
 	import { buildTree, parentOf, titleIn } from '../vault/tree.ts';
 	import { deviceSettings, vaultTree } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
@@ -26,7 +27,9 @@
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
 	import { paneActions, type PaneState } from './panes.ts';
-	import { keyName, resolveShortcut, type ShellAction } from './shortcuts.ts';
+	import SearchPicker from './SearchPicker.svelte';
+	import { shortcutHandler } from './shortcut-handler.ts';
+	import type { ShellAction } from './shortcuts.ts';
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 
@@ -47,6 +50,7 @@
 	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
 	let isCreating = $state(false);
 	let isPaletteOpen = $state(false);
+	let search = $state<SearchKind>();
 	let explorer = $state<PaneAPI>();
 	let backlinks = $state<PaneAPI>();
 	let settings = $state<DeviceSettings>();
@@ -99,8 +103,8 @@
 		manager.message = text;
 	}
 
-	function openNote(path: string): void {
-		manager.open(path);
+	function openNote(path: string, line?: number): void {
+		manager.open(path, line);
 	}
 
 	// A link to a missing note creates it, titled from the link.
@@ -137,6 +141,12 @@
 		palette: () => {
 			isPaletteOpen = true;
 		},
+		findNote: () => {
+			search = 'titles';
+		},
+		searchText: () => {
+			search = 'text';
+		},
 		newNote: () => {
 			startCreation('note', parentOf(manager.currentPath));
 		},
@@ -168,35 +178,18 @@
 
 	const commands = $derived(paletteCommands(ACTIONS, tree.notes, openNote));
 
-	let pendingKeys = '';
-
-	// Shortcuts are read before the panes see the keys, except while typing
-	// text: in insert mode, the command line or the palette.
-	function isTyping(event: KeyboardEvent): boolean {
-		const isInsert = manager.focused?.mode === 'editing'
-			&& manager.editorMode === 'insert';
-		const isInput = event.target instanceof HTMLInputElement;
-		return isPaletteOpen || isInsert || isInput;
-	}
-
-	function handleShortcut(event: KeyboardEvent): void {
-		if (isTyping(event)) {
-			return;
-		}
-		const isReadingEdit = manager.focused?.mode === 'reading'
-			&& pendingKeys === '' && event.key === 'i';
-		const resolution = isReadingEdit
-			? { action: 'toggleMode' as const, pending: '', isUsed: true }
-			: resolveShortcut(pendingKeys, keyName(event));
-		pendingKeys = resolution.pending;
-		if (resolution.isUsed) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-		if (resolution.action) {
-			ACTIONS[resolution.action]();
-		}
-	}
+	const handleShortcut = shortcutHandler({
+		isTyping: (event) => {
+			const isInsert = manager.focused?.mode === 'editing'
+				&& manager.editorMode === 'insert';
+			const isInput = event.target instanceof HTMLInputElement;
+			return isPaletteOpen || search !== undefined || isInsert || isInput;
+		},
+		isReading: () => manager.focused?.mode === 'reading',
+		run: (action) => {
+			ACTIONS[action]();
+		},
+	});
 </script>
 
 <svelte:window
@@ -277,6 +270,11 @@
 <CommandPalette
 	bind:open={isPaletteOpen}
 	{commands}
+/>
+
+<SearchPicker
+	bind:kind={search}
+	onOpen={openNote}
 />
 
 {#if creation}

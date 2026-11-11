@@ -20,7 +20,8 @@ pub struct LinkContext {
 	pub context: String,
 }
 
-/// Text of a function call: its content arguments (the text of a link).
+/// Text of a function call: its content arguments (the text of a link),
+/// separated by spaces.
 fn call_text(call: &SyntaxNode, text: &mut String) {
 	let Some(args) = call
 		.children()
@@ -28,17 +29,20 @@ fn call_text(call: &SyntaxNode, text: &mut String) {
 	else {
 		return;
 	};
-	for block in args
+	let blocks = args
 		.children()
-		.filter(|child| child.kind() == SyntaxKind::ContentBlock)
-	{
+		.filter(|child| child.kind() == SyntaxKind::ContentBlock);
+	for (index, block) in blocks.enumerate() {
+		if index > 0 {
+			text.push(' ');
+		}
 		visible_text(block, text);
 	}
 }
 
 /// Text of `node` as a reader sees it, roughly: markup removed, code
 /// skipped, function calls reduced to their content arguments.
-fn visible_text(node: &SyntaxNode, text: &mut String) {
+pub(crate) fn visible_text(node: &SyntaxNode, text: &mut String) {
 	match node.kind() {
 		SyntaxKind::Text
 		| SyntaxKind::Shorthand

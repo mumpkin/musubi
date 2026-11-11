@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! Commands of links between notes: backlinks, and following a link to a
-//! note that does not exist yet.
+//! Commands of links and search: backlinks, following a link to a note
+//! that does not exist yet, searching titles, headings and text.
 
-use musubi_core::{Backlink, NoteMatch};
+use musubi_core::{Backlink, NoteMatch, TextMatch};
 use tauri::State;
 
 use crate::state::AppState;
@@ -66,4 +66,17 @@ pub fn search_sections(
 		.map_err(|error| error.to_string())?;
 	let headings = musubi_core::title::headings(&source);
 	Ok(musubi_core::search_headings(&headings, query))
+}
+
+/// Passages of notes containing every word of `text`, best first.
+#[tauri::command(async)]
+pub fn search_text(
+	text: &str,
+	state: State<'_, AppState>,
+) -> Result<Vec<TextMatch>, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.index
+		.search_text(text)
+		.map_err(|error| error.to_string())
 }
