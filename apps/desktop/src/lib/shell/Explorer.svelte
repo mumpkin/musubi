@@ -13,9 +13,17 @@
 		current: string;
 		onOpen: (path: string) => void;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
+		onDelete: (path: string) => void;
 	}
 
-	const { vaultName, root, current, onOpen, onCreate }: Props = $props();
+	const {
+		vaultName,
+		root,
+		current,
+		onOpen,
+		onCreate,
+		onDelete,
+	}: Props = $props();
 
 	// Folded folders, by path.
 	const folded = new SvelteSet<string>();
@@ -46,6 +54,7 @@
 		{folded}
 		{onOpen}
 		{onCreate}
+		{onDelete}
 	/>
 </nav>
 

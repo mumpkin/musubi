@@ -19,10 +19,13 @@ pub struct OpenVault {
 }
 
 impl OpenVault {
-	/// Opens the vault at `root` and brings its index, stored in
-	/// `data_dir`, up to date.
+	/// Opens the vault at `root`, purges its old trash entries and brings
+	/// its index, stored in `data_dir`, up to date.
 	pub fn open(root: &Path, data_dir: &Path) -> Result<Self, String> {
 		let vault = Vault::open(root).map_err(|error| error.to_string())?;
+		// A trash that cannot be purged now will be on the next opening.
+		let _ = vault
+			.purge_trash(musubi_core::trash::now(), vault.trash_retention_days);
 		let compiler = NoteCompiler::new(vault.root().to_path_buf());
 		let index =
 			VaultIndex::open(&VaultIndex::file_for(data_dir, vault.root()))

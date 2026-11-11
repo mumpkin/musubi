@@ -20,6 +20,7 @@ const MUSUBI_FOLDER: &str = ".musubi";
 const SETTINGS_FILE: &str = "vault.json";
 const NOTE_EXTENSION: &str = "typ";
 const ASSETS_EXTENSION: &str = "assets";
+const DEFAULT_RETENTION_DAYS: u64 = 30;
 const DEFAULT_SETTINGS: &str =
 	"{\n\t\"format\": 0,\n\t\"trashRetentionDays\": 30\n}\n";
 
@@ -45,6 +46,8 @@ pub struct Vault {
 	root: PathBuf,
 	/// A vault in a newer format opens read-only.
 	pub read_only: bool,
+	/// Days before trash entries are purged; `0` keeps them.
+	pub trash_retention_days: u64,
 }
 
 impl Vault {
@@ -61,10 +64,18 @@ impl Vault {
 			fs::create_dir_all(root.join(MUSUBI_FOLDER))?;
 			fs::write(&settings, DEFAULT_SETTINGS)?;
 		}
-		let format = read_format(&settings);
+		let values = read_settings(&settings);
+		let format = values
+			.get("format")
+			.and_then(serde_json::Value::as_u64)
+			.unwrap_or(FORMAT);
 		Ok(Self {
 			root,
 			read_only: format > FORMAT,
+			trash_retention_days: values
+				.get("trashRetentionDays")
+				.and_then(serde_json::Value::as_u64)
+				.unwrap_or(DEFAULT_RETENTION_DAYS),
 		})
 	}
 
@@ -277,11 +288,11 @@ fn names_in(directory: &Path) -> Result<Vec<String>, VaultError> {
 		.collect())
 }
 
-/// Format of the vault; a missing or unreadable file means format 0.
-fn read_format(settings: &Path) -> u64 {
+/// Fields of `vault.json`; a missing or unreadable file has none, which
+/// means the default values.
+fn read_settings(settings: &Path) -> serde_json::Value {
 	fs::read_to_string(settings)
 		.ok()
-		.and_then(|text| serde_json::from_str::<serde_json::Value>(&text).ok())
-		.and_then(|value| value.get("format")?.as_u64())
-		.unwrap_or(FORMAT)
+		.and_then(|text| serde_json::from_str(&text).ok())
+		.unwrap_or(serde_json::Value::Null)
 }

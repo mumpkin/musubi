@@ -8,7 +8,7 @@ export interface PaletteCommand {
 	run: () => void;
 }
 
-export type IconName = 'edit' | 'read' | 'split' | 'close';
+export type IconName = 'edit' | 'read' | 'split' | 'close' | 'trash';
 
 export interface PaneAction {
 	label: string;

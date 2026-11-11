@@ -12,6 +12,8 @@ mod paths;
 mod rename;
 mod search;
 pub mod title;
+pub mod trash;
+mod utc;
 mod vault;
 
 pub use crate::assets::{NewAsset, is_image};
@@ -19,6 +21,7 @@ pub use crate::error::VaultError;
 pub use crate::index::{Backlink, TextMatch, VaultIndex};
 pub use crate::rename::save_note;
 pub use crate::search::{NoteMatch, search_headings, search_titles};
+pub use crate::trash::TrashEntry;
 pub use crate::vault::{FORMAT, NoteEntry, Vault, VaultTree};
 
 /// Version of the core crate, as declared in `Cargo.toml`.
