@@ -44,9 +44,32 @@ function sanitize(root: Element): void {
 	}
 }
 
-export function toNoteMarkup(html: string): NoteMarkup {
+// Class of the links to notes that do not exist yet.
+export const MISSING_LINK_CLASS = 'missing';
+
+// Marks the note links whose note `exists` does not know.
+function markMissingLinks(
+	root: Element,
+	exists: (path: string) => boolean,
+): void {
+	for (const link of root.querySelectorAll<HTMLElement>('a.musubi-link')) {
+		const path = linkedNotePath(link);
+		if (path !== undefined && !exists(path)) {
+			link.classList.add(MISSING_LINK_CLASS);
+			link.title = 'This note does not exist yet: click to create it';
+		}
+	}
+}
+
+// `exists` tells whether a note path (from the vault root, with the
+// extension) is a note of the vault.
+export function toNoteMarkup(
+	html: string,
+	exists: (path: string) => boolean = () => true,
+): NoteMarkup {
 	const document = new DOMParser().parseFromString(html, 'text/html');
 	sanitize(document.documentElement);
+	markMissingLinks(document.body, exists);
 	const styles = [...document.head.querySelectorAll('style')]
 		.map((style) => style.textContent)
 		.join('\n');

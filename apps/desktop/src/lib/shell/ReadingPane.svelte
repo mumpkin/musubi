@@ -13,13 +13,23 @@
 		revision: number;
 		// Source line (from 0) to show first: where the editor was.
 		line: number | undefined;
-		onOpen: (path: string) => void;
+		// Paths of the notes of the vault: links to others show as missing.
+		notes: ReadonlySet<string>;
+		onOpen: (path: string, text: string) => void;
 		// The source line of the selected block.
 		onLine: (line: number | undefined) => void;
 		onEdit: (line: number) => void;
 	}
 
-	const { path, revision, line, onOpen, onLine, onEdit }: Props = $props();
+	const {
+		path,
+		revision,
+		line,
+		notes,
+		onOpen,
+		onLine,
+		onEdit,
+	}: Props = $props();
 
 	let isFirstDisplay = $state(true);
 
@@ -55,7 +65,9 @@
 	});
 
 	const markup = $derived(
-		view?.note.html ? toNoteMarkup(view.note.html) : undefined,
+		view?.note.html
+			? toNoteMarkup(view.note.html, (note) => notes.has(note))
+			: undefined,
 	);
 
 	// The block at `line`, among the blocks shown in the rendering.

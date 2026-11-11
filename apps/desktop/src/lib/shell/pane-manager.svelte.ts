@@ -23,6 +23,11 @@ export class PaneManager {
 	saves = $state(0);
 	// Saves of each note, by path: reading panes render again on a change.
 	readonly revisions = new SvelteMap<string, number>();
+	// Follows a link from a reading pane; the shell replaces it to create
+	// missing notes.
+	followLink: (path: string, text: string) => void = (path) => {
+		this.open(path);
+	};
 
 	readonly focused = $derived(this.panes[this.focusedIndex] ?? this.panes[0]);
 	readonly currentPath = $derived(this.focused?.path ?? '');
@@ -142,8 +147,8 @@ export class PaneManager {
 			focus: () => {
 				this.focusedIndex = index;
 			},
-			open: (path) => {
-				this.open(path);
+			open: (path, text) => {
+				this.followLink(path, text);
 			},
 			message: (text) => {
 				this.message = text;

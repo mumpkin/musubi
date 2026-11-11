@@ -21,6 +21,12 @@ and this project adheres to
   and updates the links and image paths that point to it.
 - Edit a note from the reading view at the selected block (`i` or double
   click); back in the reading view, the block under the editor cursor shows.
+- Backlinks panel (`Space l`): the notes linking to the current one, with
+  the sentence around each link; click one to open it. Links, cards and
+  tasks are indexed in the app data directory, never in the vault, and the
+  index rebuilds itself when deleted.
+- Links to notes that do not exist yet show greyed out with a dashed
+  underline; following one creates the note, titled from the link text.
 - Reading and editing panes, side by side, with Helix-style shortcuts
   (`Space ?`, `Space e`, `Ctrl-w v`…).
 

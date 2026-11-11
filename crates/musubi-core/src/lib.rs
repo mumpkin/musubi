@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Core of Musubi: vault, file naming, links, backlinks and index.
 
+mod context;
 mod error;
+mod index;
 pub mod links;
 pub mod naming;
 mod paths;
@@ -10,6 +12,7 @@ pub mod title;
 mod vault;
 
 pub use crate::error::VaultError;
+pub use crate::index::{Backlink, VaultIndex};
 pub use crate::rename::save_note;
 pub use crate::vault::{FORMAT, NoteEntry, Vault, VaultTree};
 

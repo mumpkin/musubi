@@ -44,6 +44,24 @@ describe('toNoteMarkup', () => {
 	});
 });
 
+describe('missing links', () => {
+	it('marks the links to notes that do not exist', () => {
+		const markup = toNoteMarkup(
+			page(
+				'',
+				'<a class="musubi-link" data-target="Here">a</a>'
+				+ '<a class="musubi-link" data-target="Gone">b</a>',
+			),
+			(path) => path === 'Here.typ',
+		);
+		const container = document.createElement('div');
+		container.innerHTML = markup.body;
+		const missing = [...container.querySelectorAll('a.missing')]
+			.map((link) => link.textContent);
+		expect(missing).toEqual(['b']);
+	});
+});
+
 describe('linkedNotePath', () => {
 	it('returns the path of the linked note', () => {
 		const markup = toNoteMarkup(

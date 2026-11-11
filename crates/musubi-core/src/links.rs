@@ -23,7 +23,7 @@ struct Edit {
 
 /// Name of the function called by `call`: `note-link` for
 /// `#note-link(…)` and `#musubi.note-link(…)`.
-fn callee_name(call: &LinkedNode<'_>) -> Option<String> {
+pub(crate) fn callee_name(call: &LinkedNode<'_>) -> Option<String> {
 	let callee = call.children().next()?;
 	match callee.kind() {
 		SyntaxKind::Ident => Some(callee.leaf_text().to_string()),
@@ -35,13 +35,15 @@ fn callee_name(call: &LinkedNode<'_>) -> Option<String> {
 	}
 }
 
-fn arguments<'node>(call: &LinkedNode<'node>) -> Option<LinkedNode<'node>> {
+pub(crate) fn arguments<'node>(
+	call: &LinkedNode<'node>,
+) -> Option<LinkedNode<'node>> {
 	call.children()
 		.find(|child| child.kind() == SyntaxKind::Args)
 }
 
 /// The first positional string argument, with its value.
-fn first_string<'node>(
+pub(crate) fn first_string<'node>(
 	args: &LinkedNode<'node>,
 ) -> Option<(LinkedNode<'node>, String)> {
 	let string = args
@@ -93,7 +95,7 @@ fn link_edits(
 	}
 }
 
-fn collect<'node>(
+pub(crate) fn collect<'node>(
 	node: &LinkedNode<'node>,
 	visit: &mut dyn FnMut(&LinkedNode<'node>),
 ) {

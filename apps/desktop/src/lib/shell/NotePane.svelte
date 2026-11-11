@@ -19,6 +19,8 @@
 		revision: number;
 		// Seconds of pause before saving, or `undefined` without autosave.
 		autosaveDelay: number | undefined;
+		// Paths of the notes of the vault.
+		notes: ReadonlySet<string>;
 		events: PaneEvents;
 	}
 
@@ -29,6 +31,7 @@
 		actions,
 		revision,
 		autosaveDelay,
+		notes,
 		events,
 	}: Props = $props();
 
@@ -62,6 +65,7 @@
 			path={pane.path}
 			{revision}
 			line={pane.line}
+			{notes}
 			onOpen={events.open}
 			onLine={events.line}
 			onEdit={events.edit}
