@@ -9,10 +9,12 @@
 
 use std::collections::BTreeSet;
 
+use ecow::eco_vec;
 use typst::World;
 use typst::WorldExt;
+use typst::syntax::FileId;
 use typst::syntax::Span;
-use typst_html::{HtmlAttr, HtmlElement, HtmlNode};
+use typst_html::{HtmlAttr, HtmlElement, HtmlNode, tag};
 
 use crate::blocks::SourceBlock;
 
@@ -21,6 +23,8 @@ const BLOCK_ATTRIBUTE: &str = "data-block";
 /// What the annotation needs to know about the note.
 pub struct SourceMap<'a> {
 	pub world: &'a dyn World,
+	/// The note whose blocks are marked.
+	pub note: FileId,
 	pub blocks: &'a [SourceBlock],
 }
 
@@ -31,10 +35,36 @@ impl SourceMap<'_> {
 			return;
 		};
 		for child in element.children.make_mut() {
-			if let HtmlNode::Element(child_element) = child {
-				self.annotate_element(child_element, attribute);
+			match child {
+				HtmlNode::Element(child_element) => {
+					self.annotate_element(child_element, attribute);
+				}
+				HtmlNode::Frame(_) => self.wrap_frame(child, attribute),
+				HtmlNode::Tag(_) | HtmlNode::Text(..) => {}
 			}
 		}
+	}
+
+	/// A frame of its own (an SVG island) goes into a `div` that carries
+	/// its block, as other blocks do.
+	fn wrap_frame(&self, node: &mut HtmlNode, attribute: HtmlAttr) {
+		let HtmlNode::Frame(frame) = node else {
+			return;
+		};
+		let span = frame.span;
+		let mut covered = BTreeSet::new();
+		self.insert_block(span, &mut covered);
+		let Some(index) = covered.first() else {
+			return;
+		};
+		let island =
+			std::mem::replace(node, HtmlNode::text("", Span::detached()));
+		*node = HtmlNode::Element(
+			HtmlElement::new(tag::div)
+				.with_attr(attribute, index.to_string())
+				.with_children(eco_vec![island])
+				.spanned(span),
+		);
 	}
 
 	fn annotate_element(&self, element: &mut HtmlElement, attribute: HtmlAttr) {
@@ -71,7 +101,8 @@ impl SourceMap<'_> {
 			HtmlNode::Element(element) => {
 				self.collect_element(element, covered)
 			}
-			HtmlNode::Tag(_) | HtmlNode::Frame(_) => {}
+			HtmlNode::Frame(frame) => self.insert_block(frame.span, covered),
+			HtmlNode::Tag(_) => {}
 		}
 	}
 
@@ -87,7 +118,7 @@ impl SourceMap<'_> {
 	}
 
 	fn insert_block(&self, span: Span, covered: &mut BTreeSet<usize>) {
-		if span.id() != Some(self.world.main()) {
+		if span.id() != Some(self.note) {
 			return;
 		}
 		let Some(range) = self.world.range(span) else {

@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Security
+
+- The HTML of notes is cleaned in the Rust core before it reaches the
+  interface: no scripts, embedded documents, forms, event handlers or
+  `javascript:` URLs. The interface and the content security policy of the
+  window remain as further barriers.
+
 ### Added
 
 - Open a folder as a vault; the last vault reopens at launch.
@@ -49,6 +56,11 @@ and this project adheres to
   is taken, and deletes them for good after a second click. Entries older
   than `trashRetentionDays` (30 by default) are purged when the vault
   opens.
+- The reading view shows every element of a note: figures, terms,
+  footnotes (their links scroll to the note), outlines, highlights, web
+  links, table headers, images. What Typst cannot export to HTML (shapes,
+  grids, rotations, placement…) is drawn as an SVG island instead of
+  disappearing.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

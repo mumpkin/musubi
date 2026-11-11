@@ -143,3 +143,41 @@ fn maps_generated_content_to_its_call() {
 		assert!(html.contains(expected), "missing {expected}");
 	}
 }
+
+#[test]
+fn renders_nothing_executable() {
+	let vault = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/vault");
+	let note = NoteCompiler::new(vault).render("Unsafe.typ");
+	let html = note.html.expect("the note compiles");
+	let body = html.split("<body>").nth(1).expect("a body");
+	for forbidden in [
+		"<script",
+		"<iframe",
+		"<object",
+		"<style",
+		"javascript",
+		"onclick",
+		"onerror",
+		"onmouseover",
+		"alert",
+	] {
+		assert!(!body.contains(forbidden), "{forbidden} in {body}");
+	}
+	assert!(body.contains("Text that stays."));
+	assert!(body.contains(">link</a>"), "the link text stays");
+}
+
+#[test]
+fn renders_every_element_without_warnings() {
+	let vault = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/vault");
+	let note = NoteCompiler::new(vault).render("Elements.typ");
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+	let html = note.html.expect("the note compiles");
+	for element in ["<figure", "<figcaption", "<dl", "<mark", "doc-endnotes"] {
+		assert!(html.contains(element), "{element}");
+	}
+	assert!(
+		html.matches("<svg").count() >= 9,
+		"shapes, grids and transforms render as SVG"
+	);
+}

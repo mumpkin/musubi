@@ -13,6 +13,7 @@ use typst_kit::datetime::Time;
 use typst_kit::files::FileStore;
 use typst_kit::fonts::{self, FontStore};
 
+use crate::entry;
 use crate::files::VaultFiles;
 
 /// Compilation context of a vault. It is kept between compilations so that
@@ -21,7 +22,11 @@ pub struct VaultWorld {
 	library: LazyHash<Library>,
 	fonts: FontStore,
 	files: FileStore<VaultFiles>,
-	main: FileId,
+	/// The note being compiled.
+	note: FileId,
+	/// The entry point of the compilation, which includes the note
+	/// (`entry.rs`).
+	entry: Source,
 	time: Time,
 }
 
@@ -34,13 +39,13 @@ impl VaultWorld {
 			.build();
 		let mut font_store = FontStore::new();
 		font_store.extend(fonts::embedded());
+		let note = note_id(&entry::entry_path());
 		Self {
 			library: LazyHash::new(library),
 			fonts: font_store,
 			files: FileStore::new(VaultFiles::new(vault_root)),
-			main: note_id(&VirtualPath::new("/main.typ").unwrap_or_else(
-				|_| unreachable!("`/main.typ` is a valid virtual path"),
-			)),
+			note,
+			entry: entry::entry_source(note, ""),
 			time: Time::system(),
 		}
 	}
@@ -48,9 +53,19 @@ impl VaultWorld {
 	/// Selects the note to compile and marks the files as stale, so that the
 	/// next compilation reads changed files again.
 	pub fn prepare(&mut self, note: &VirtualPath) {
-		self.main = note_id(note);
+		self.note = note_id(note);
+		self.entry = entry::entry_source(
+			note_id(&entry::entry_path()),
+			note.get_with_slash(),
+		);
 		self.files.reset();
 		self.time.reset();
+	}
+
+	/// The note being compiled; the main file of the compilation is the
+	/// entry point that includes it.
+	pub const fn note(&self) -> FileId {
+		self.note
 	}
 }
 
@@ -68,10 +83,13 @@ impl World for VaultWorld {
 	}
 
 	fn main(&self) -> FileId {
-		self.main
+		self.entry.id()
 	}
 
 	fn source(&self, id: FileId) -> FileResult<Source> {
+		if id == self.entry.id() {
+			return Ok(self.entry.clone());
+		}
 		self.files.source(id)
 	}
 

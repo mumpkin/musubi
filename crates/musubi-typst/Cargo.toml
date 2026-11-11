@@ -11,6 +11,7 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+ecow = "0.2.6"
 serde.workspace = true
 ts-rs.workspace = true
 typst = "0.15.1"
