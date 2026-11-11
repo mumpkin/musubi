@@ -7,6 +7,7 @@ import {
 } from '@codemirror/state';
 import { Decoration, EditorView, WidgetType } from '@codemirror/view';
 
+import { isPairCharacter, typeText } from './auto-pairs.ts';
 import { runCommand } from './commands.ts';
 import type {
 	CommandContext,
@@ -21,6 +22,7 @@ import {
 	type VisibleText,
 } from './jump-labels.ts';
 import { resolveKey } from './keymap.ts';
+import { linkCompletion, type LinkSource } from './link-completion.ts';
 import { type EditorMode, modeField } from './mode.ts';
 import { cursorOf } from './selection.ts';
 
@@ -162,12 +164,29 @@ function keyHandler(
 	});
 }
 
+// Typing a delimiter in insert mode pairs it, as in Helix.
+// Arguments: view, from, to, text.
+const autoPairs = EditorView.inputHandler.of((view, ...rest) => {
+	const [, , text] = rest;
+	if (view.state.field(modeField) !== 'insert' || !isPairCharacter(text)) {
+		return false;
+	}
+	view.dispatch(typeText(view.state, text));
+	return true;
+});
+
 export interface HelixOptions {
 	host: EditorHost;
 	onModeChange: (mode: EditorMode) => void;
+	// Notes and headings for links typed with `[[`.
+	linkSource?: LinkSource;
 }
 
-export function helix({ host, onModeChange }: HelixOptions): Extension {
+export function helix({
+	host,
+	onModeChange,
+	linkSource,
+}: HelixOptions): Extension {
 	const register = { text: '' };
 	return [
 		modeField,
@@ -176,6 +195,8 @@ export function helix({ host, onModeChange }: HelixOptions): Extension {
 		jumpLabelDecorations,
 		EditorState.allowMultipleSelections.of(true),
 		keyHandler(host, register),
+		autoPairs,
+		linkSource ? linkCompletion(linkSource) : [],
 		blockCursors,
 		modeClass,
 		theme,

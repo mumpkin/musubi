@@ -1566,5 +1566,229 @@
 		"starts": "[alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
 		"ends": "a]lpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
 		"cursors": "|alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "i(\u001b",
+		"text": "(one two\nthree four\n\nfive.six seven\n",
+		"starts": "([one two\nthree four\n\nfive.six seven\n",
+		"ends": "(o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "(|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "i[[\u001b",
+		"text": "[[one two\nthree four\n\nfive.six seven\n",
+		"starts": "[[[one two\nthree four\n\nfive.six seven\n",
+		"ends": "[[o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "[[|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "i[]\u001b",
+		"text": "[]one two\nthree four\n\nfive.six seven\n",
+		"starts": "[][one two\nthree four\n\nfive.six seven\n",
+		"ends": "[]o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "[]|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "i[x]\u001b",
+		"text": "[x]one two\nthree four\n\nfive.six seven\n",
+		"starts": "[x][one two\nthree four\n\nfive.six seven\n",
+		"ends": "[x]o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "[x]|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wi\"\u001b",
+		"text": "\"one two\nthree four\n\nfive.six seven\n",
+		"starts": "\"[one two\nthree four\n\nfive.six seven\n",
+		"ends": "\"one ]two\nthree four\n\nfive.six seven\n",
+		"cursors": "\"|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "i[\u001b",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jjiX[[\u001b",
+		"text": "one two\nthree four\nX[[]]\nfive.six seven\n",
+		"starts": "one two\nthree four\nX[[[]]\nfive.six seven\n",
+		"ends": "one two\nthree four\nX[[]]]\nfive.six seven\n",
+		"cursors": "one two\nthree four\nX[[|]]\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jji[[\u001b",
+		"text": "one two\nthree four\n[[]]\nfive.six seven\n",
+		"starts": "one two\nthree four\n[[[]]\nfive.six seven\n",
+		"ends": "one two\nthree four\n[[]]]\nfive.six seven\n",
+		"cursors": "one two\nthree four\n[[|]]\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jji[[ana\u001b",
+		"text": "one two\nthree four\n[[ana]]\nfive.six seven\n",
+		"starts": "one two\nthree four\n[[ana[]]\nfive.six seven\n",
+		"ends": "one two\nthree four\n[[ana]]]\nfive.six seven\n",
+		"cursors": "one two\nthree four\n[[ana|]]\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jji[[]]\u001b",
+		"text": "one two\nthree four\n[[]]\nfive.six seven\n",
+		"starts": "one two\nthree four\n[[]][\nfive.six seven\n",
+		"ends": "one two\nthree four\n[[]]\n]five.six seven\n",
+		"cursors": "one two\nthree four\n[[]]|\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jji(\u001b",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n[\nfive.six seven\n",
+		"ends": "one two\nthree four\n\n]five.six seven\n",
+		"cursors": "one two\nthree four\n|\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jji\"\u001b",
+		"text": "one two\nthree four\n\"\"\nfive.six seven\n",
+		"starts": "one two\nthree four\n\"[\"\nfive.six seven\n",
+		"ends": "one two\nthree four\n\"\"]\nfive.six seven\n",
+		"cursors": "one two\nthree four\n\"|\"\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "gla(\u001b",
+		"text": "one two()\nthree four\n\nfive.six seven\n",
+		"starts": "one tw[o()\nthree four\n\nfive.six seven\n",
+		"ends": "one two(])\nthree four\n\nfive.six seven\n",
+		"cursors": "one two|()\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "gla(x)\u001b",
+		"text": "one two(x)\nthree four\n\nfive.six seven\n",
+		"starts": "one tw[o(x)\nthree four\n\nfive.six seven\n",
+		"ends": "one two(x)]\nthree four\n\nfive.six seven\n",
+		"cursors": "one two(x|)\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "gla\"\u001b",
+		"text": "one two\"\nthree four\n\nfive.six seven\n",
+		"starts": "one tw[o\"\nthree four\n\nfive.six seven\n",
+		"ends": "one two\"]\nthree four\n\nfive.six seven\n",
+		"cursors": "one two|\"\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jja((\u001b",
+		"text": "one two\nthree four\n\n(five.six seven\n",
+		"starts": "one two\nthree four\n[\n(five.six seven\n",
+		"ends": "one two\nthree four\n\n(]five.six seven\n",
+		"cursors": "one two\nthree four\n\n|(five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jjiab\u001b",
+		"text": "one two\nthree four\na\nfive.six seven\n",
+		"starts": "one two\nthree four\na[\nfive.six seven\n",
+		"ends": "one two\nthree four\na\n]five.six seven\n",
+		"cursors": "one two\nthree four\na|\nfive.six seven\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "jvli(\u001b",
+		"text": "start\n()    indented line\n\t\ttabs\n",
+		"starts": "start\n([)    indented line\n\t\ttabs\n",
+		"ends": "start\n()  ]  indented line\n\t\ttabs\n",
+		"cursors": "start\n(|)    indented line\n\t\ttabs\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "jvla(\u001b",
+		"text": "start\n  ()  indented line\n\t\ttabs\n",
+		"starts": "start\n[  ()  indented line\n\t\ttabs\n",
+		"ends": "start\n  (])  indented line\n\t\ttabs\n",
+		"cursors": "start\n  |()  indented line\n\t\ttabs\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "jvli()\u001b",
+		"text": "start\n()    indented line\n\t\ttabs\n",
+		"starts": "start\n()[    indented line\n\t\ttabs\n",
+		"ends": "start\n()  ]  indented line\n\t\ttabs\n",
+		"cursors": "start\n()|    indented line\n\t\ttabs\n"
+	},
+	{
+		"initialText": "start\n    indented line\n\t\ttabs\n",
+		"keys": "jvla()\u001b",
+		"text": "start\n  ()  indented line\n\t\ttabs\n",
+		"starts": "start\n[  ()  indented line\n\t\ttabs\n",
+		"ends": "start\n  ()]  indented line\n\t\ttabs\n",
+		"cursors": "start\n  (|)  indented line\n\t\ttabs\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jjC",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "one two\nthree four\n[\n[five.six seven\n",
+		"ends": "one two\nthree four\n\n]f]ive.six seven\n",
+		"cursors": "one two\nthree four\n|\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xC",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\n[three four\n\nfive.six seven\n",
+		"ends": "one two\n]three fo]ur\n\nfive.six seven\n",
+		"cursors": "one two|\nthree f|our\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "vjC",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n[\nfive.six seven\n",
+		"ends": "one two\nt]hree four\n\nf]ive.six seven\n",
+		"cursors": "one two\n|three four\n\n|five.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "lllvhhC",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "o[ne two\nt[hree four\n\nfive.six seven\n",
+		"ends": "one ]two\nthre]e four\n\nfive.six seven\n",
+		"cursors": "o|ne two\nt|hree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "wCC",
+		"text": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"starts": "[alpha beta gamma delta\n[epsilon zeta eta theta\n[iota kappa lambda\n",
+		"ends": "alpha ]beta gamma delta\nepsilo]n zeta eta theta\niota k]appa lambda\n",
+		"cursors": "alpha| beta gamma delta\nepsil|on zeta eta theta\niota |kappa lambda\n"
+	},
+	{
+		"initialText": "alpha beta gamma delta\nepsilon zeta eta theta\niota kappa lambda\n",
+		"keys": "wCCd",
+		"text": "beta gamma delta\nn zeta eta theta\nappa lambda\n",
+		"starts": "[beta gamma delta\n[n zeta eta theta\n[appa lambda\n",
+		"ends": "b]eta gamma delta\nn] zeta eta theta\na]ppa lambda\n",
+		"cursors": "|beta gamma delta\n|n zeta eta theta\n|appa lambda\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "jjCi[\u001b",
+		"text": "one two\nthree four\n[]\n[five.six seven\n",
+		"starts": "one two\nthree four\n[[]\n[[five.six seven\n",
+		"ends": "one two\nthree four\n[]]\n[f]ive.six seven\n",
+		"cursors": "one two\nthree four\n[|]\n[|five.six seven\n"
 	}
 ]

@@ -45,7 +45,10 @@ export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
 		['v', 'normalMode'],
 		['Escape', 'normalMode'],
 	]),
-	insert: new Map([['Escape', 'normalMode']]),
+	insert: new Map([
+		['Escape', 'normalMode'],
+		['Backspace', 'deleteCharBackward'],
+	]),
 };
 
 // Sequences followed by characters typed as the command's argument: the

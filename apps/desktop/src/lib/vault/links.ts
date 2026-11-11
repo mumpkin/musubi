@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Links between notes: backlinks from the index of the Rust core, and
 // links to notes that do not exist yet.
+import type { LinkSource, LinkSuggestion } from '@musubi/editor';
 import { invoke } from '@tauri-apps/api/core';
 
 import type { Backlink } from '../bindings/Backlink.ts';
+import type { NoteMatch } from '../bindings/NoteMatch.ts';
 
 export async function backlinks(path: string): Promise<Backlink[]> {
 	return invoke<Backlink[]>('backlinks', { path });
@@ -54,3 +56,22 @@ export function linkedNoteTitle(path: string, text: string): string {
 	const stem = path.slice(path.lastIndexOf('/') + 1).replace(/\.typ$/u, '');
 	return stem.replaceAll('_', ' ');
 }
+
+// Notes for a link typed with `[[`, best match first.
+export async function searchLinks(query: string): Promise<LinkSuggestion[]> {
+	const found = await invoke<NoteMatch[]>('search_notes', { query });
+	return found.map(({ path, title, folder }) => ({
+		target: path.replace(/\.typ$/u, ''),
+		title,
+		folder,
+	}));
+}
+
+// Links typed with `[[`: notes by title, then headings after `#`.
+export const linkSource: LinkSource = {
+	notes: searchLinks,
+	sections: async (target, query) => invoke<string[]>(
+		'search_sections',
+		{ path: `${target}.typ`, query },
+	),
+};

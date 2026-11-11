@@ -27,6 +27,12 @@ and this project adheres to
   index rebuilds itself when deleted.
 - Links to notes that do not exist yet show greyed out with a dashed
   underline; following one creates the note, titled from the link text.
+- Type `[[` in insert mode to link to a note: a fuzzy search over titles
+  (the matcher of Helix), with the folder when titles are shared; `Enter`
+  inserts the `note-link` and the `musubi` import if missing.
+  `[[Note#` lists the headings of that note to link to a section.
+- Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
+  typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts
   (`Space ?`, `Space e`, `Ctrl-w v`…).
 
