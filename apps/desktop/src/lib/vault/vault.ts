@@ -23,8 +23,9 @@ export async function readNote(path: string): Promise<string> {
 	return invoke<string>('read_note', { path });
 }
 
+// Saves a note; resolves to its path, new if the title changed.
 export async function writeNote(path: string, content: string) {
-	await invoke('write_note', { path, content });
+	return invoke<string>('write_note', { path, content });
 }
 
 export async function deviceSettings(): Promise<DeviceSettings> {

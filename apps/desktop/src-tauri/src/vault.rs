@@ -96,16 +96,17 @@ pub fn read_note(
 		.map_err(|error| error.to_string())
 }
 
+/// Saves a note; renames it if its title changed. Returns its path after
+/// saving.
 #[tauri::command(async)]
 pub fn write_note(
 	path: &str,
 	content: &str,
 	state: State<'_, AppState>,
-) -> Result<(), String> {
+) -> Result<String, String> {
 	let open = state.lock();
 	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.write_note(path, content)
+	musubi_core::save_note(&open.vault, path, content)
 		.map_err(|error| error.to_string())
 }
 

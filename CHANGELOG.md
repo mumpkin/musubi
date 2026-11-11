@@ -17,6 +17,8 @@ and this project adheres to
   (`:q!` discards them), `:wq` and `:x` save then close. Reading panes
   render the note again on save; notes changed by another program reload
   when the window gets the focus back.
+- Changing the title of a note renames its file and its `.assets` folder,
+  and updates the links and image paths that point to it.
 - Edit a note from the reading view at the selected block (`i` or double
   click); back in the reading view, the block under the editor cursor shows.
 - Reading and editing panes, side by side, with Helix-style shortcuts

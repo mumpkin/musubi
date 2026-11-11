@@ -42,8 +42,8 @@
 	}
 
 	async function write(text: string): Promise<void> {
-		await writeNote(pane.path, text);
-		events.saved(pane.path);
+		const path = await writeNote(pane.path, text);
+		events.saved(pane.path, path);
 	}
 </script>
 

@@ -32,6 +32,16 @@ describe('PaneManager', () => {
 		expect(manager.revisions.get('Note.typ')).toBe(2);
 	});
 
+	it('follows a note renamed by its new title', () => {
+		const manager = new PaneManager('Old.typ');
+		manager.split();
+		manager.saved('Old.typ', 'New.typ');
+		expect(manager.panes.map((pane) => pane.path)).toEqual([
+			'New.typ',
+			'New.typ',
+		]);
+	});
+
 	it('reloads only the panes without unsaved changes', () => {
 		const manager = new PaneManager('Note.typ');
 		manager.split();

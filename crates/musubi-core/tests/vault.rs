@@ -111,3 +111,46 @@ fn saves_notes_in_place() {
 	assert!(vault.write_note("../Note.typ", "x").is_err());
 	assert!(vault.write_note("Missing.typ", "x").is_err());
 }
+
+#[test]
+fn renames_a_note_and_its_links_when_the_title_changes() {
+	let directory = vault_with(&[
+		(
+			"Maths/Analyse.typ",
+			"= Analyse\n#image(\"Analyse.assets/f.png\")\n",
+		),
+		("Maths/Analyse.assets/f.png", "png"),
+		(
+			"Index.typ",
+			"= Index\n#note-link(\"Maths/Analyse\")[Analyse]\n",
+		),
+	]);
+	let vault = open(directory.path());
+	let content = "= Analyse réelle\n#image(\"Analyse.assets/f.png\")\n";
+	let path = musubi_core::save_note(&vault, "Maths/Analyse.typ", content)
+		.expect("saved");
+	assert_eq!(path, "Maths/Analyse_réelle.typ");
+	assert!(
+		directory
+			.path()
+			.join("Maths/Analyse_réelle.assets/f.png")
+			.exists()
+	);
+	assert_eq!(
+		vault.read_note(&path).expect("renamed"),
+		"= Analyse réelle\n#image(\"Analyse_réelle.assets/f.png\")\n",
+	);
+	assert_eq!(
+		vault.read_note("Index.typ").expect("index"),
+		"= Index\n#note-link(\"Maths/Analyse_réelle\")[Analyse réelle]\n",
+	);
+}
+
+#[test]
+fn keeps_the_name_when_the_title_does_not_change() {
+	let directory = vault_with(&[("Note.typ", "= Note\n")]);
+	let vault = open(directory.path());
+	let path = musubi_core::save_note(&vault, "Note.typ", "= Note\nMore\n")
+		.expect("saved");
+	assert_eq!(path, "Note.typ");
+}

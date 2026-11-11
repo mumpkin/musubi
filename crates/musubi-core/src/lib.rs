@@ -2,12 +2,15 @@
 //! Core of Musubi: vault, file naming, links, backlinks and index.
 
 mod error;
+pub mod links;
 pub mod naming;
 mod paths;
+mod rename;
 pub mod title;
 mod vault;
 
 pub use crate::error::VaultError;
+pub use crate::rename::save_note;
 pub use crate::vault::{FORMAT, NoteEntry, Vault, VaultTree};
 
 /// Version of the core crate, as declared in `Cargo.toml`.

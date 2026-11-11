@@ -28,7 +28,8 @@ export interface PaneEvents {
 	message: (text: string) => void;
 	editorMode: (mode: EditorMode) => void;
 	draft: (text: string | undefined) => void;
-	saved: (path: string) => void;
+	// `renamed` differs from `path` when the new title renamed the note.
+	saved: (path: string, renamed: string) => void;
 	quit: (force: boolean) => void;
 	line: (line: number | undefined) => void;
 	// Edit the note at a source line (double click on a block).
