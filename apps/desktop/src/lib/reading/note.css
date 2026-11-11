@@ -1,0 +1,187 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/* Styles of the notes in the reading view: every element the HTML export
+   of Typst produces. */
+
+.reading-view h2 {
+	margin-top: 0;
+	font-size: 1.9rem;
+}
+
+.reading-view h3 {
+	margin-top: 2rem;
+	font-size: 1.35rem;
+}
+
+.reading-view math {
+	font-family: 'New Computer Modern Math', 'STIX Two Math', math;
+}
+
+.reading-view math[display='block'] {
+	margin: 1rem 0;
+}
+
+.reading-view pre {
+	overflow-x: auto;
+	padding: 0.75rem 1rem;
+	border-radius: 6px;
+	background: var(--surface);
+}
+
+.reading-view code {
+	font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
+	font-size: 0.9em;
+}
+
+.reading-view blockquote {
+	margin: 1rem 0;
+	padding-left: 1rem;
+	border-left: 3px solid var(--muted);
+	color: var(--muted);
+}
+
+.reading-view table {
+	border-collapse: collapse;
+}
+
+.reading-view td,
+.reading-view th {
+	padding: 0.3rem 0.8rem;
+	border: 1px solid var(--border);
+}
+
+.reading-view th {
+	background: var(--surface);
+	text-align: left;
+}
+
+.reading-view img {
+	max-width: 100%;
+	height: auto;
+}
+
+.reading-view svg {
+	max-width: 100%;
+}
+
+/* What the HTML export of Typst cannot express (shapes, grids,
+   transforms) is drawn by Typst as an SVG block: it needs room around it,
+   as its content may overflow its box. */
+.reading-view svg[style*='display: block'] {
+	margin: 1rem 0;
+}
+
+.reading-view figure {
+	display: grid;
+	justify-items: center;
+	gap: 0.5rem;
+	margin: 1.25rem 0;
+}
+
+.reading-view figcaption {
+	order: 1;
+	color: var(--muted);
+	font-size: 0.9em;
+}
+
+.reading-view dt {
+	font-weight: 600;
+}
+
+.reading-view dd {
+	margin: 0 0 0.5rem 1.5rem;
+}
+
+.reading-view mark {
+	padding: 0 0.15em;
+	border-radius: 2px;
+	background: light-dark(#fff3a3, #5c5010);
+	color: inherit;
+}
+
+.reading-view a:not(.musubi-link) {
+	color: var(--accent);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.reading-view sup[role='doc-noteref'] a,
+.reading-view sup[role='doc-backlink'] a {
+	text-decoration: none;
+}
+
+.reading-view section[role='doc-endnotes'] {
+	margin-top: 2.5rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--border);
+	color: var(--muted);
+	font-size: 0.9em;
+}
+
+.reading-view section[role='doc-endnotes'] ol,
+.reading-view nav[role='doc-toc'] ol {
+	padding-left: 1rem;
+}
+
+.reading-view nav[role='doc-toc'] {
+	margin: 1rem 0;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	background: var(--surface);
+}
+
+.reading-view nav[role='doc-toc'] h2 {
+	font-size: 1rem;
+}
+
+.reading-view .selected-block {
+	border-radius: 4px;
+	outline: 2px solid var(--accent);
+	outline-offset: 4px;
+}
+
+.reading-view a.musubi-link {
+	color: var(--accent);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.reading-view a.musubi-link:hover {
+	text-decoration: underline;
+}
+
+/* A note that does not exist yet: following the link creates it. */
+.reading-view a.musubi-link.missing {
+	color: var(--muted);
+	text-decoration: underline dashed;
+	text-underline-offset: 3px;
+}
+
+.reading-view .musubi-card {
+	display: grid;
+	gap: 0.4rem;
+	margin: 0.75rem 0;
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+}
+
+.reading-view .musubi-card-question {
+	font-weight: 600;
+}
+
+.reading-view .musubi-card[data-reverse]::after {
+	content: '↔ both directions';
+	font-size: 0.8em;
+	color: var(--muted);
+}
+
+.reading-view .musubi-task {
+	display: inline-flex;
+	gap: 0.4rem;
+	align-items: baseline;
+}
+
+.reading-view .musubi-task[data-done='true'] {
+	color: var(--muted);
+	text-decoration: line-through;
+}

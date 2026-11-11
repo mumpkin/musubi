@@ -6,6 +6,7 @@ use ts_rs::TS;
 use typst::World;
 use typst::WorldExt;
 use typst::diag::{Severity, SourceDiagnostic};
+use typst::syntax::FileId;
 
 /// An error or a warning of the Typst compiler.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
@@ -36,8 +37,11 @@ pub struct SourcePosition {
 }
 
 impl Diagnostic {
+	/// `diagnostic` of a compilation, with its position in `note` if it is
+	/// in that file.
 	pub fn from_typst(
 		world: &dyn World,
+		note: FileId,
 		diagnostic: &SourceDiagnostic,
 	) -> Self {
 		Self {
@@ -51,20 +55,21 @@ impl Diagnostic {
 				.iter()
 				.map(|hint| hint.v.to_string())
 				.collect(),
-			position: position_in_main(world, diagnostic),
+			position: position_in_note(world, note, diagnostic),
 		}
 	}
 }
 
-fn position_in_main(
+fn position_in_note(
 	world: &dyn World,
+	note: FileId,
 	diagnostic: &SourceDiagnostic,
 ) -> Option<SourcePosition> {
-	if diagnostic.span.id() != Some(world.main()) {
+	if diagnostic.span.id() != Some(note) {
 		return None;
 	}
 	let range = world.range(diagnostic.span)?;
-	let source = world.source(world.main()).ok()?;
+	let source = world.source(note).ok()?;
 	let (line, column) = source.lines().byte_to_line_column(range.start)?;
 	Some(SourcePosition { line, column })
 }

@@ -4,9 +4,11 @@
 
 mod blocks;
 mod diagnostics;
+mod entry;
 mod files;
 mod index;
 mod package;
+mod sanitize;
 mod source_map;
 mod world;
 
@@ -74,6 +76,7 @@ impl NoteCompiler {
 				};
 			}
 		};
+		sanitize::sanitize(document.root_mut());
 		let blocks = self.annotate_blocks(&mut document);
 		let html = match typst_html::html(&document, &HtmlOptions::default()) {
 			Ok(html) => Some(html),
@@ -107,12 +110,13 @@ impl NoteCompiler {
 	/// Finds the blocks of the main note and marks the rendered elements
 	/// with them.
 	fn annotate_blocks(&self, document: &mut HtmlDocument) -> Vec<SourceBlock> {
-		let Ok(source) = self.world.source(self.world.main()) else {
+		let Ok(source) = self.world.source(self.world.note()) else {
 			return Vec::new();
 		};
 		let blocks = blocks::source_blocks(&source);
 		let source_map = SourceMap {
 			world: &self.world,
+			note: self.world.note(),
 			blocks: &blocks,
 		};
 		for node in document.root_mut().children.make_mut() {
@@ -132,7 +136,13 @@ impl NoteCompiler {
 		typst_diagnostics
 			.iter()
 			.filter(|diagnostic| !is_html_export_warning(diagnostic))
-			.map(|diagnostic| Diagnostic::from_typst(&self.world, diagnostic))
+			.map(|diagnostic| {
+				Diagnostic::from_typst(
+					&self.world,
+					self.world.note(),
+					diagnostic,
+				)
+			})
 			.collect()
 	}
 }
