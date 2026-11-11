@@ -22,6 +22,8 @@
 		// The source line of the selected block.
 		onLine: (line: number | undefined) => void;
 		onEdit: (line: number) => void;
+		// Whether the pane has the focus.
+		isFocused: boolean;
 	}
 
 	const {
@@ -33,6 +35,7 @@
 		onOpen,
 		onLine,
 		onEdit,
+		isFocused,
 	}: Props = $props();
 
 	let isFirstDisplay = $state(true);
@@ -127,6 +130,7 @@
 			onNavigate={onOpen}
 			onSelect={selectBlock}
 			onEdit={editBlock}
+			autofocus={isFocused}
 		/>
 	{/if}
 </div>

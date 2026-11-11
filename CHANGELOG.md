@@ -15,6 +15,11 @@ and this project adheres to
   `javascript:` URLs. The interface and the content security policy of the
   window remain as further barriers.
 
+### Fixed
+
+- Back in the reading view after editing (`:q`, `Space r`), the keyboard
+  works at once: `j` and `k` move without a click first.
+
 ### Added
 
 - A new vault starts with a tutorial in a `Welcome` folder: _Start here_,

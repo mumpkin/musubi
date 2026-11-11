@@ -70,6 +70,7 @@
 	/>
 	{#if pane.mode === 'graph'}
 		<GraphView
+			autofocus={isFocused}
 			current={pane.path}
 			{notes}
 			onOpen={openFromGraph}
@@ -84,6 +85,7 @@
 			onOpen={events.open}
 			onLine={events.line}
 			onEdit={events.edit}
+			{isFocused}
 		/>
 	{:else}
 		{#key `${pane.path}:${String(pane.loads)}`}

@@ -31,9 +31,17 @@
 		// Notes of the vault: the graph is read again when they change.
 		notes: ReadonlySet<string>;
 		onOpen: (path: string) => void;
+		// The pane has the focus: the graph takes the keyboard once shown.
+		autofocus?: boolean;
 	}
 
-	const { current, notes, onOpen }: Props = $props();
+	const { current, notes, onOpen, autofocus = false }: Props = $props();
+
+	$effect(() => {
+		if (canvas && autofocus) {
+			canvas.focus({ preventScroll: true });
+		}
+	});
 
 	const MIN_ZOOM = 0.05;
 	const MAX_ZOOM = 8;

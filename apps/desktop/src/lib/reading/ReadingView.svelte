@@ -32,6 +32,8 @@
 		onSelect: (block: number | undefined) => void;
 		// Double click on a block: edit the note there.
 		onEdit: (block: number) => void;
+		// The pane has the focus: the view takes the keyboard once shown.
+		autofocus?: boolean;
 	}
 
 	const {
@@ -42,6 +44,7 @@
 		onNavigate,
 		onSelect,
 		onEdit,
+		autofocus = false,
 	}: Props = $props();
 
 	let container = $state<HTMLElement>();
@@ -75,6 +78,15 @@
 	}
 
 	const navigator = $derived(container ? navigatorFor(container) : undefined);
+
+	// The view appears after the note is compiled, later than the pane:
+	// it takes the focus itself, so that `j` and `k` work at once.
+	$effect(() => {
+		const hasFocus = container?.contains(document.activeElement) ?? false;
+		if (container && autofocus && !hasFocus) {
+			container.focus({ preventScroll: true });
+		}
+	});
 
 	onDestroy(() => {
 		navigator?.clear();
