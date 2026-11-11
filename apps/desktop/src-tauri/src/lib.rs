@@ -31,6 +31,7 @@ pub fn run() {
 			vault::create_note,
 			vault::create_folder,
 			vault::demo_vault_path,
+			vault::open_tutorial,
 			links::backlinks,
 			links::create_linked_note,
 			links::search_notes,

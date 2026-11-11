@@ -40,6 +40,11 @@ export async function createFolder(parent: string, name: string) {
 	return invoke<string>('create_folder', { parent, name });
 }
 
+// Writes the missing notes of the tutorial; resolves to its first note.
+export async function openTutorial(): Promise<string> {
+	return invoke<string>('open_tutorial');
+}
+
 export async function demoVaultPath(): Promise<string | null> {
 	return invoke<string | null>('demo_vault_path');
 }

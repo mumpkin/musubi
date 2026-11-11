@@ -11,6 +11,7 @@
 	import type { SearchKind } from '../vault/search.ts';
 	import { trashNote } from '../vault/trash.ts';
 	import { parentOf, titleIn } from '../vault/tree.ts';
+	import { openTutorial } from '../vault/vault.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
@@ -40,7 +41,9 @@
 	// svelte-ignore state_referenced_locally
 	const files = new VaultState(vault.tree);
 	// svelte-ignore state_referenced_locally
-	const manager = new PaneManager(vault.tree.notes[0]?.path ?? '');
+	const manager = new PaneManager(
+		vault.firstNote ?? vault.tree.notes[0]?.path ?? '',
+	);
 	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
 	let isCreating = $state(false);
 	let isPaletteOpen = $state(false);
@@ -99,13 +102,17 @@
 			});
 	}
 
-	function restored(path: string): void {
-		files.load()
-			.then(() => {
+	// Opens a note that was just written (restored, tutorial) once the tree
+	// knows it.
+	function restored(note: string | Promise<string>): void {
+		Promise.resolve(note)
+			.then(async (path) => {
+				await files.load();
 				openNote(path);
-				showMessage(`Restored ${path}`);
 			})
-			.catch(() => undefined);
+			.catch((error: unknown) => {
+				showMessage(String(error));
+			});
 	}
 
 	// A link to a missing note creates it, titled from the link.
@@ -128,6 +135,9 @@
 		},
 		showTrash: () => {
 			isTrashOpen = true;
+		},
+		openTutorial: () => {
+			restored(openTutorial());
 		},
 		findNote: () => {
 			search = 'titles';

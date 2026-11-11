@@ -10,6 +10,7 @@ export type ShellAction
 		| 'newNote'
 		| 'deleteNote'
 		| 'showTrash'
+		| 'openTutorial'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
 		| 'toggleGraph'
@@ -33,6 +34,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	newNote: { label: 'New note', group: 'Note' },
 	deleteNote: { label: 'Move the note to the trash', group: 'Note' },
 	showTrash: { label: 'Show the trash', group: 'Note' },
+	openTutorial: { label: 'Open the tutorial', group: 'Help' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },
 	toggleGraph: { label: 'Show the graph of links', group: 'View' },

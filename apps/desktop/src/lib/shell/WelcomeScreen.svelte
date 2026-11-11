@@ -38,7 +38,7 @@
 	<p>Notes written in Typst, edited the Helix way.</p>
 	<p class="muted">
 		A vault is a folder of notes. Choose an empty folder to start a new one,
-		or a folder you already sync.
+		with a short tutorial, or a folder you already sync.
 	</p>
 	<button
 		class="primary"
