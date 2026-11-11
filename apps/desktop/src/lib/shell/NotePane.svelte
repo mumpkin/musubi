@@ -64,6 +64,7 @@
 		<ReadingPane
 			path={pane.path}
 			{revision}
+			loads={pane.loads}
 			line={pane.line}
 			{notes}
 			onOpen={events.open}

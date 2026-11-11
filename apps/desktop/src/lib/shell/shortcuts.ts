@@ -5,6 +5,8 @@
 
 export type ShellAction
 	= | 'palette'
+		| 'findNote'
+		| 'searchText'
 		| 'newNote'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
@@ -23,6 +25,8 @@ interface ActionLabel {
 
 export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	palette: { label: 'Show the commands', group: 'View' },
+	findNote: { label: 'Find a note by title', group: 'Note' },
+	searchText: { label: 'Search the text of the notes', group: 'Note' },
 	newNote: { label: 'New note', group: 'Note' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },
@@ -37,6 +41,8 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 const SEQUENCES = new Map<string, ShellAction>([
 	['Space ?', 'palette'],
 	['C-p', 'palette'],
+	['Space f', 'findNote'],
+	['Space /', 'searchText'],
 	['Space n', 'newNote'],
 	['Space e', 'toggleExplorer'],
 	['Space l', 'toggleBacklinks'],

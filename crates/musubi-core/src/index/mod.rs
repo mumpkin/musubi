@@ -6,6 +6,7 @@
 
 mod refresh;
 mod schema;
+mod text_search;
 
 use std::fmt::Write as _;
 use std::fs;
@@ -16,6 +17,7 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use ts_rs::TS;
 
+pub use self::text_search::TextMatch;
 use crate::error::VaultError;
 
 /// Hex digits of the vault path hash in the index file name.

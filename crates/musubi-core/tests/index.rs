@@ -163,3 +163,32 @@ fn creates_the_note_of_a_missing_link_at_its_path() {
 	);
 	assert!(vault.create_note_at("../outside.typ", "Out").is_err());
 }
+
+#[test]
+fn finds_text_without_accents_with_highlighted_excerpts() {
+	let directory = vault_with(&[
+		(
+			"Maths/Analyse.typ",
+			"= Analyse\n\n== Intégrales\n\nAire sous la courbe.",
+		),
+		("Other.typ", "= Other\n\nNothing about it."),
+	]);
+	let mut setup =
+		Setup::new(directory.path(), VaultIndex::in_memory().expect("index"));
+	setup.refresh();
+	let found = setup.index.search_text("integrale").expect("search");
+	assert_eq!(found.len(), 1);
+	let first = &found[0];
+	assert_eq!(first.path, "Maths/Analyse.typ");
+	assert_eq!(first.title, "Analyse");
+	assert_eq!(first.line, 3, "the line of the heading");
+	assert_eq!(first.excerpt, "\u{E000}Intégrales\u{E001}");
+	assert!(
+		setup
+			.index
+			.search_text("courbe aire")
+			.expect("search")
+			.len() == 1
+	);
+	assert!(setup.index.search_text("  ").expect("search").is_empty());
+}

@@ -33,6 +33,7 @@ pub fn run() {
 			links::create_linked_note,
 			links::search_notes,
 			links::search_sections,
+			links::search_text,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");
