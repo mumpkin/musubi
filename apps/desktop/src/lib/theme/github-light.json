@@ -1,0 +1,29 @@
+{
+	"name": "GitHub Light",
+	"colorScheme": "light",
+	"credit": "Colors of GitHub Light Default from primer/github-vscode-theme (MIT licence, see LICENSE-github-vscode-theme)",
+	"ui": {
+		"background": "#ffffff",
+		"foreground": "#24292f",
+		"muted": "#57606a",
+		"surface": "#f6f8fa",
+		"border": "#d0d7de",
+		"accent": "#0969da",
+		"selection": "#0969da33",
+		"hover": "#eaeef2",
+		"error": "#cf222e",
+		"warning": "#9a6700",
+		"mark": "#fff8c5"
+	},
+	"syntax": {
+		"comment": "#6e7781",
+		"keyword": "#cf222e",
+		"string": "#0a3069",
+		"constant": "#0550ae",
+		"function": "#8250df",
+		"macro": "#116329",
+		"escape": "#116329",
+		"special": "#953800",
+		"raw": "#0550ae"
+	}
+}

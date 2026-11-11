@@ -36,6 +36,12 @@ and this project adheres to
 
 ### Added
 
+- Color themes: GitHub Light and GitHub Dark, with colors from GitHub's VS
+  Code theme, follow the light or dark preference of the system. The palette
+  chooses a theme, imports one from a JSON file (`docs/themes.md`) or
+  removes it; the choice applies at once and stays on the device. The
+  editor, code blocks, math and the shapes drawn by Typst follow the theme.
+
 - The explorer shows the pinned notes and the 10 notes opened last. A note
   is pinned with the pin button of its row or "Pin or unpin the note" in the
   palette. Pins are stored in the vault (`.musubi/vault.json`), so every

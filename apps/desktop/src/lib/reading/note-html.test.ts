@@ -23,6 +23,16 @@ describe('toNoteMarkup', () => {
 		expect(markup.body).toBe('<p>a</p>');
 	});
 
+	it('gives code colors of the Typst palette to the theme', () => {
+		const code = '<code><span style="color: #d73948">fn</span> '
+			+ '<span style="color: #123456">x</span></code>';
+		const markup = toNoteMarkup(page('', `<pre>${code}</pre>`));
+		expect(markup.body).toBe(
+			'<pre><code><span class="syntax-keyword">fn</span> '
+			+ '<span style="color: #123456">x</span></code></pre>',
+		);
+	});
+
 	it('removes event handlers', () => {
 		const markup = toNoteMarkup(page('', '<p onclick="alert(1)">a</p>'));
 		expect(markup.body).toBe('<p>a</p>');

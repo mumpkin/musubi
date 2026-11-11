@@ -1,18 +1,19 @@
 :root {
-	/* Light only for now: the dark theme comes later (J2). The variables
-	   already hold both. */
+	/* The colors of GitHub Light until the theme of the device is applied
+	   (`lib/theme`), which sets every variable on this element. */
 	color-scheme: light;
 	font-family: system-ui, sans-serif;
-	--background: light-dark(#fafafa, #1e1f22);
-	--foreground: light-dark(#1e1f22, #d4d4d4);
-	--muted: light-dark(#6b6f76, #8b8f96);
-	--surface: light-dark(#f0f0f2, #2b2d31);
-	--border: light-dark(#dcdde0, #3a3c42);
-	--accent: light-dark(#2f6fde, #6ea8ff);
-	--selection: light-dark(#d6e4fb, #2c3e5c);
-	--hover: light-dark(#e6e7ea, #34363c);
-	--error: light-dark(#c62828, #ff6b6b);
-	--warning: light-dark(#a15c00, #f0b45a);
+	--background: #ffffff;
+	--foreground: #24292f;
+	--muted: #57606a;
+	--surface: #f6f8fa;
+	--border: #d0d7de;
+	--accent: #0969da;
+	--selection: #0969da33;
+	--hover: #eaeef2;
+	--error: #cf222e;
+	--warning: #9a6700;
+	--mark: #fff8c5;
 }
 
 body {

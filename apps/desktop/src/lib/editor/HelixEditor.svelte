@@ -14,12 +14,12 @@
 		type EditorMode,
 		helix,
 		type PromptKind,
+		typstLanguage,
 	} from '@musubi/editor';
 	import {
 		readText,
 		writeText,
 	} from '@tauri-apps/plugin-clipboard-manager';
-	import { typst_lezer as typstLanguage } from 'codemirror-lang-typst/lezer';
 	import { onMount, untrack } from 'svelte';
 
 	import { noteAssets } from '../vault/assets.ts';
@@ -267,6 +267,34 @@
 
 	.editor :global(.cm-scroller) {
 		font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
+	}
+
+	/* The gutter and the caret take the colors of the theme, not the
+	light defaults of CodeMirror. */
+	.editor :global(.cm-gutters) {
+		border-right: 1px solid var(--border);
+		background: var(--background);
+		color: var(--muted);
+	}
+
+	.editor :global(.cm-activeLineGutter) {
+		background: var(--hover);
+	}
+
+	/* Completion of links and images. */
+	.editor :global(.cm-tooltip) {
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--foreground);
+	}
+
+	.editor :global(.cm-tooltip-autocomplete li[aria-selected]) {
+		background: var(--selection);
+		color: inherit;
+	}
+
+	.editor :global(.cm-cursor) {
+		border-left-color: var(--foreground);
 	}
 
 	.editor :global(.cm-selectionBackground),

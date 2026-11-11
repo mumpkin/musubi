@@ -8,6 +8,8 @@
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
+	import { themeCommands } from '../theme/theme-commands.ts';
+	import { themes } from '../theme/theme-state.svelte.ts';
 	import { parentOf, titleIn } from '../vault/tree.ts';
 	import { openTutorial } from '../vault/vault.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
@@ -135,9 +137,10 @@
 		},
 	};
 
-	const commands = $derived(
-		paletteCommands(ACTIONS, files.tree.notes, openNote),
-	);
+	const commands = $derived([
+		...paletteCommands(ACTIONS, files.tree.notes, openNote),
+		...themeCommands(themes, notes.showMessage),
+	]);
 
 	const handleShortcut = shortcutHandler({
 		isTyping: (event) => {

@@ -87,7 +87,7 @@ const theme = EditorView.baseTheme({
 		display: 'none',
 	},
 	'.helix-cursor': { outline: '1px solid currentColor' },
-	'.helix-jump-label': { color: '#d4380d', fontWeight: 'bold' },
+	'.helix-jump-label': { color: 'var(--warning)', fontWeight: 'bold' },
 });
 
 function hasModifier(event: KeyboardEvent): boolean {

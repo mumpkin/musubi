@@ -21,3 +21,9 @@ export {
 } from './link-completion.ts';
 export { type EditorMode, editorModes, modeField, modeIndicator } from './mode.ts';
 export { runPatternPrompt } from './search.ts';
+export {
+	SYNTAX_TOKENS,
+	type SyntaxToken,
+	typstToken,
+} from './syntax-colors.ts';
+export { typstLanguage } from './typst-language.ts';

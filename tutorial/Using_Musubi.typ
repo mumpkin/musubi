@@ -98,6 +98,15 @@ image on the editor inserts it too.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
 
+== Themes
+
+Musubi follows the light or dark preference of the system, with the colors
+of GitHub Light and GitHub Dark. To choose another theme, type `theme` in
+the palette (`Space ?`): "Use the theme GitHub Dark", "Follow the system
+theme"… "Import a theme" adds one from a JSON file; the guide
+`docs/themes.md` of the repository describes the format. Themes are a
+setting of this computer, not of the vault.
+
 == Where your notes live
 
 Your vault is an ordinary folder; Musubi only reads and writes files in it.

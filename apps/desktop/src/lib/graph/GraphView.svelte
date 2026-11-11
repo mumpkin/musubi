@@ -14,6 +14,7 @@
 	} from 'd3-zoom';
 	import { onMount } from 'svelte';
 
+	import { themes } from '../theme/theme-state.svelte.ts';
 	import {
 		boundsOf,
 		type GraphEdge,
@@ -68,6 +69,14 @@
 	// How settled the layout is when it is framed (`alpha` of d3-force,
 	// from 1 down to 0).
 	const SETTLED = 0.3;
+
+	// A new theme: the canvas reads its colors again.
+	$effect(() => {
+		if (themes.revision > 0 && wrapper) {
+			colors = themeColors(wrapper);
+			draw();
+		}
+	});
 
 	function draw(): void {
 		if (frame !== 0) {
