@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Tauri entry point: registers the commands called by the interface.
 
+mod assets;
 mod commands;
 mod links;
 mod reading;
@@ -34,6 +35,9 @@ pub fn run() {
 			links::search_notes,
 			links::search_sections,
 			links::search_text,
+			assets::import_image,
+			assets::paste_image,
+			assets::note_assets,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");

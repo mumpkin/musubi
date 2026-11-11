@@ -77,6 +77,7 @@
 				<p class="message">Loading…</p>
 			{:then saved}
 				<HelixEditor
+					notePath={pane.path}
 					text={pane.draft ?? saved}
 					savedText={saved}
 					{autosaveDelay}

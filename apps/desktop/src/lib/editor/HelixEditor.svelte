@@ -22,10 +22,15 @@
 	import { typst_lezer as typstLanguage } from 'codemirror-lang-typst/lezer';
 	import { onMount } from 'svelte';
 
+	import { noteAssets } from '../vault/assets.ts';
 	import { linkSource } from '../vault/links.ts';
-	import { runPrompt } from './prompt.ts';
+	import { imagePaste, type ImageTarget, listenForDrops } from './images.ts';
+	import { PROMPT_LABELS, runPrompt } from './prompt.ts';
+	import PromptLine from './PromptLine.svelte';
 
 	interface Props {
+		// Path of the note, from the vault root: images go to its folder.
+		notePath: string;
 		// Text to edit: the saved note, or unsaved changes kept by the pane.
 		text: string;
 		// The note as saved on disk, to tell unsaved changes.
@@ -47,6 +52,7 @@
 	}
 
 	const {
+		notePath,
 		text,
 		savedText,
 		onWrite,
@@ -61,12 +67,6 @@
 	}: Props = $props();
 
 	const MILLISECONDS_PER_SECOND = 1000;
-	const PROMPT_LABELS: Record<PromptKind, string> = {
-		command: ':',
-		select: 'select:',
-		search: 'search:',
-		reverseSearch: 'reverse-search:',
-	};
 	let autosaveTimer: ReturnType<typeof setTimeout> | undefined;
 
 	// Saves after a pause in typing, when autosave is on.
@@ -85,11 +85,16 @@
 	// svelte-ignore state_referenced_locally
 	let saved = savedText;
 
+	const images: ImageTarget = {
+		note: () => notePath,
+		onMessage: (message) => {
+			onMessage(message);
+		},
+	};
+
 	let parent = $state<HTMLElement>();
-	let promptInput = $state<HTMLInputElement>();
 	let view: EditorView | undefined;
 	let prompt = $state<PromptKind>();
-	let promptText = $state('');
 
 	const host: EditorHost = {
 		write: async () => {
@@ -103,7 +108,6 @@
 		},
 		openPrompt: (kind) => {
 			prompt = kind;
-			promptText = '';
 		},
 		// Through Tauri: the webview cannot read the system clipboard.
 		clipboard: { write: writeText, read: readText },
@@ -145,9 +149,13 @@
 			drawSelection(),
 			typstLanguage(),
 			EditorView.updateListener.of(reportChanges),
+			imagePaste(images),
 			helix({
 				host,
-				linkSource,
+				linkSource: {
+					...linkSource,
+					assets: async () => noteAssets(notePath),
+				},
 				onModeChange: (next) => {
 					onModeChange?.(next);
 				},
@@ -167,16 +175,14 @@
 		if (autofocus) {
 			view.focus();
 		}
+		const stopDrops = listenForDrops(view, images);
 		return () => {
 			clearTimeout(autosaveTimer);
+			stopDrops.then((stop) => {
+				stop();
+			}).catch(() => undefined);
 			view?.destroy();
 		};
-	});
-
-	$effect(() => {
-		if (prompt) {
-			promptInput?.focus();
-		}
 	});
 
 	function closePrompt(): void {
@@ -184,24 +190,21 @@
 		view?.focus();
 	}
 
-	function handlePromptKey(event: KeyboardEvent): void {
-		if (event.key === 'Escape') {
-			closePrompt();
-		} else if (event.key === 'Enter' && view && prompt) {
-			// The editor gets the focus back: `Enter` must not reach it.
-			event.preventDefault();
-			const kind = prompt;
-			closePrompt();
-			runPrompt({ view, host, kind, line: promptText })
-				.then((failure) => {
-					if (failure !== undefined) {
-						onMessage(failure);
-					}
-				})
-				.catch((error: unknown) => {
-					onMessage(String(error));
-				});
+	function submitPrompt(line: string): void {
+		const kind = prompt;
+		closePrompt();
+		if (!view || !kind) {
+			return;
 		}
+		runPrompt({ view, host, kind, line })
+			.then((failure) => {
+				if (failure !== undefined) {
+					onMessage(failure);
+				}
+			})
+			.catch((error: unknown) => {
+				onMessage(String(error));
+			});
 	}
 </script>
 
@@ -212,17 +215,11 @@
 	></div>
 	<!-- The mode shows in the status bar; this line is the command line. -->
 	{#if prompt}
-		<footer>
-			<label>
-				<span>{PROMPT_LABELS[prompt]}</span>
-				<input
-					bind:this={promptInput}
-					bind:value={promptText}
-					onkeydown={handlePromptKey}
-					spellcheck="false"
-				/>
-			</label>
-		</footer>
+		<PromptLine
+			label={PROMPT_LABELS[prompt]}
+			onSubmit={submitPrompt}
+			onCancel={closePrompt}
+		/>
 	{/if}
 </div>
 
@@ -271,28 +268,4 @@
 		color: var(--background);
 	}
 
-	footer {
-		display: flex;
-		gap: 0.75rem;
-		align-items: center;
-		padding: 0.25rem 0.75rem;
-		border-top: 1px solid var(--border);
-		font-family: ui-monospace, monospace;
-		font-size: 0.85rem;
-	}
-
-	label {
-		display: flex;
-		flex: 1;
-		gap: 0.25rem;
-	}
-
-	input {
-		flex: 1;
-		border: none;
-		outline: none;
-		background: none;
-		color: inherit;
-		font: inherit;
-	}
 </style>

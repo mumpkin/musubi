@@ -3,6 +3,8 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 
+	import { PROMPT_LABELS } from '../editor/prompt.ts';
+	import PromptLine from '../editor/PromptLine.svelte';
 	import {
 		blockAt,
 		type BlockScroll,
@@ -13,7 +15,6 @@
 	import { linkedNotePath } from './note-html.ts';
 	import { readingKeyHandler } from './reading-keys.ts';
 	import { ReadingNavigator } from './reading-navigator.ts';
-	import SearchBar from './SearchBar.svelte';
 
 	interface Props {
 		markup: NoteMarkup;
@@ -144,8 +145,8 @@
 	{@html markup.body}
 </article>
 {#if prompt}
-	<SearchBar
-		label={prompt === 'search' ? 'search:' : 'reverse-search:'}
+	<PromptLine
+		label={PROMPT_LABELS[prompt]}
 		onSubmit={submitSearch}
 		onCancel={closePrompt}
 	/>

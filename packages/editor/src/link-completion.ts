@@ -35,9 +35,13 @@ export interface LinkSuggestion {
 export interface LinkSource {
 	notes: (query: string) => Promise<LinkSuggestion[]>;
 	sections: (target: string, query: string) => Promise<string[]>;
+	// Files of the note, for paths typed in `#image("…")`.
+	assets?: () => Promise<string[]>;
 }
 
 const LINK_START = /\[\[[^[\]\n]*$/u;
+const IMAGE_START = /#image\("[^"\n]*$/u;
+const IMAGE_CALL = '#image("';
 const IMPORT = /^#import "@local\/musubi:[^"]*"(?<names>[^\n]*)$/mu;
 const IMPORT_LINE = '#import "@local/musubi:0.1.0": note-link\n';
 const OPENING = '[[';
@@ -168,6 +172,24 @@ async function linkOptions(
 	return { from: found.from + OPENING.length, options, filter: false };
 }
 
+// Paths of the files of the note inside `#image("…")`, filtered by what
+// was typed.
+async function imageOptions(
+	context: CompletionContext,
+	source: LinkSource,
+): Promise<CompletionResult | null> {
+	const found = context.matchBefore(IMAGE_START);
+	if (!found || !source.assets
+		|| context.state.field(modeField, false) !== 'insert') {
+		return null;
+	}
+	const paths = await source.assets();
+	return {
+		from: found.from + IMAGE_CALL.length,
+		options: paths.map((path) => ({ label: path })),
+	};
+}
+
 // Keys of the list, as the menus of Helix: `Escape` is left to the editor,
 // which leaves insert mode and closes the list.
 const listKeys = Prec.highest(keymap.of([
@@ -190,7 +212,10 @@ const closeOutsideInsert = EditorView.updateListener.of((update) => {
 export function linkCompletion(source: LinkSource): Extension {
 	return [
 		autocompletion({
-			override: [async (context) => linkOptions(context, source)],
+			override: [
+				async (context) => linkOptions(context, source),
+				async (context) => imageOptions(context, source),
+			],
 			defaultKeymap: false,
 			icons: false,
 		}),

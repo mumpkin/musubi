@@ -1,5 +1,6 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- The search line of the reading view, opened by `/` or `?`. -->
+<!-- The command line of the editor (`:`, `s`, `/`, `?`) and the search line
+     of the reading view. -->
 <script lang="ts">
 	interface Props {
 		label: string;

@@ -250,7 +250,10 @@ impl Vault {
 		Ok(paths::relative(&self.root, &path))
 	}
 
-	fn writable_folder(&self, folder: &str) -> Result<PathBuf, VaultError> {
+	pub(crate) fn writable_folder(
+		&self,
+		folder: &str,
+	) -> Result<PathBuf, VaultError> {
 		if self.read_only {
 			return Err(VaultError::NewerFormat(FORMAT + 1));
 		}
