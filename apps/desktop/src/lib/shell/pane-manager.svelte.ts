@@ -96,10 +96,13 @@ export class PaneManager {
 		}
 	}
 
-	saved(path: string): void {
-		this.bump(path);
+	saved(path: string, renamed = path): void {
+		for (const pane of this.panes.filter((entry) => entry.path === path)) {
+			pane.path = renamed;
+		}
+		this.bump(renamed);
 		this.saves += 1;
-		this.message = `Saved ${path}`;
+		this.message = `Saved ${renamed}`;
 	}
 
 	// Notes may have changed on disk while the window was in the background:
@@ -154,8 +157,8 @@ export class PaneManager {
 					pane.draft = text;
 				}
 			},
-			saved: (path) => {
-				this.saved(path);
+			saved: (path, renamed) => {
+				this.saved(path, renamed);
 			},
 			quit: (force) => {
 				this.quit(index, force);
