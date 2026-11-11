@@ -1,0 +1,29 @@
+{
+	"name": "GitHub Dark",
+	"colorScheme": "dark",
+	"credit": "Colors of GitHub Dark Default from primer/github-vscode-theme (MIT licence, see LICENSE-github-vscode-theme)",
+	"ui": {
+		"background": "#0d1117",
+		"foreground": "#c9d1d9",
+		"muted": "#8b949e",
+		"surface": "#161b22",
+		"border": "#30363d",
+		"accent": "#58a6ff",
+		"selection": "#58a6ff33",
+		"hover": "#21262d",
+		"error": "#f85149",
+		"warning": "#d29922",
+		"mark": "#bb800966"
+	},
+	"syntax": {
+		"comment": "#8b949e",
+		"keyword": "#ff7b72",
+		"string": "#a5d6ff",
+		"constant": "#79c0ff",
+		"function": "#d2a8ff",
+		"macro": "#7ee787",
+		"escape": "#7ee787",
+		"special": "#ffa657",
+		"raw": "#79c0ff"
+	}
+}

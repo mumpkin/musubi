@@ -4,6 +4,8 @@
 // note emit any element with `html.elem`: everything that could run code is
 // removed. The content security policy of the window is a second barrier.
 
+import { typstToken } from '@musubi/editor';
+
 export interface NoteMarkup {
 	body: string;
 	styles: string;
@@ -82,6 +84,21 @@ function markWebLinks(root: Element): void {
 	}
 }
 
+const INLINE_COLOR = /^color:\s*(#[\da-f]+);?$/iu;
+
+// Code blocks: Typst writes each color of its palette inline; the theme
+// replaces them through classes. Other styles stay as they are.
+function themeCodeColors(root: Element): void {
+	for (const span of root.querySelectorAll<HTMLElement>('code span[style]')) {
+		const color = INLINE_COLOR.exec(span.getAttribute('style') ?? '')?.[1];
+		const token = color === undefined ? undefined : typstToken(color);
+		if (token !== undefined) {
+			span.removeAttribute('style');
+			span.classList.add(`syntax-${token}`);
+		}
+	}
+}
+
 // `exists` tells whether a note path (from the vault root, with the
 // extension) is a note of the vault.
 export function toNoteMarkup(
@@ -92,6 +109,7 @@ export function toNoteMarkup(
 	sanitize(document.documentElement);
 	markMissingLinks(document.body, exists);
 	markWebLinks(document.body);
+	themeCodeColors(document.body);
 	const styles = [...document.head.querySelectorAll('style')]
 		.map((style) => style.textContent)
 		.join('\n');

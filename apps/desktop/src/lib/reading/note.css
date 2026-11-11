@@ -94,7 +94,7 @@
 .reading-view mark {
 	padding: 0 0.15em;
 	border-radius: 2px;
-	background: light-dark(#fff3a3, #5c5010);
+	background: var(--mark);
 	color: inherit;
 }
 
@@ -200,4 +200,52 @@ the icon is drawn as a mask, in the colour of the text around it. */
 .reading-view .musubi-task[data-done='true'] {
 	color: var(--muted);
 	text-decoration: line-through;
+}
+
+/* Code blocks: Typst colors them with its own palette, which the reading
+   view replaces with the syntax colors of the theme (`note-html.ts`). */
+.reading-view .syntax-comment {
+	color: var(--syntax-comment);
+}
+
+.reading-view .syntax-keyword {
+	color: var(--syntax-keyword);
+}
+
+.reading-view .syntax-string {
+	color: var(--syntax-string);
+}
+
+.reading-view .syntax-constant {
+	color: var(--syntax-constant);
+}
+
+.reading-view .syntax-function {
+	color: var(--syntax-function);
+}
+
+.reading-view .syntax-macro {
+	color: var(--syntax-macro);
+}
+
+.reading-view .syntax-escape {
+	color: var(--syntax-escape);
+}
+
+.reading-view .syntax-special {
+	color: var(--syntax-special);
+}
+
+.reading-view .syntax-raw {
+	color: var(--syntax-raw);
+}
+
+/* Shapes and their text, drawn by Typst as SVG, are black by default: they
+   take the color of the text instead. Colors set in the note stay. */
+.reading-view svg [fill='#000000'] {
+	fill: currentColor;
+}
+
+.reading-view svg [stroke='#000000'] {
+	stroke: currentColor;
 }

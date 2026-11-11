@@ -71,6 +71,10 @@ pub struct DeviceSettings {
 	/// Save notes automatically after a pause in typing.
 	pub autosave: bool,
 	pub autosave_delay_seconds: u32,
+	/// Id of the chosen color theme; without one, the theme follows the
+	/// light or dark preference of the system.
+	#[ts(type = "string | null")]
+	pub theme: Option<String>,
 	/// Recent notes of each vault, by vault root, newest first.
 	#[ts(skip)]
 	pub recent: BTreeMap<String, Vec<String>>,
@@ -84,6 +88,7 @@ impl Default for DeviceSettings {
 			last_vault: None,
 			autosave: false,
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
+			theme: None,
 			recent: BTreeMap::new(),
 		}
 	}

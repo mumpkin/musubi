@@ -7,21 +7,15 @@ mod explorer;
 mod links;
 mod reading;
 mod state;
+mod themes;
 mod trash;
 mod vault;
 
-/// Starts the desktop application.
-///
-/// # Panics
-///
-/// Panics if the Tauri runtime cannot start.
-pub fn run() {
-	tauri::Builder::default()
-		.plugin(tauri_plugin_clipboard_manager::init())
-		.plugin(tauri_plugin_dialog::init())
-		.plugin(tauri_plugin_opener::init())
-		.manage(state::AppState::default())
-		.invoke_handler(tauri::generate_handler![
+/// The commands called by the interface. A list, not logic: it stays out
+/// of `run` so that the function keeps to the length limit.
+macro_rules! commands {
+	() => {
+		tauri::generate_handler![
 			commands::app_info,
 			reading::render_note,
 			vault::open_vault,
@@ -50,7 +44,26 @@ pub fn run() {
 			explorer::pin_note,
 			explorer::recent_notes,
 			explorer::note_opened,
-		])
+			themes::imported_themes,
+			themes::import_theme,
+			themes::remove_theme,
+			themes::choose_theme,
+		]
+	};
+}
+
+/// Starts the desktop application.
+///
+/// # Panics
+///
+/// Panics if the Tauri runtime cannot start.
+pub fn run() {
+	tauri::Builder::default()
+		.plugin(tauri_plugin_clipboard_manager::init())
+		.plugin(tauri_plugin_dialog::init())
+		.plugin(tauri_plugin_opener::init())
+		.manage(state::AppState::default())
+		.invoke_handler(commands!())
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");
 }

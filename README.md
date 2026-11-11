@@ -65,3 +65,7 @@ Types shared between Rust and TypeScript are generated with
 ## License
 
 [GPL-3.0-or-later](LICENSE)
+
+The default color themes take their colors from
+[primer/github-vscode-theme](https://github.com/primer/github-vscode-theme)
+(MIT, see [docs/themes.md](docs/themes.md#credits)).

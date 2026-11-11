@@ -8,4 +8,9 @@ export type DeviceSettings = { lastVault: string | null,
 /**
  * Save notes automatically after a pause in typing.
  */
-autosave: boolean, autosaveDelaySeconds: number, };
+autosave: boolean, autosaveDelaySeconds: number, 
+/**
+ * Id of the chosen color theme; without one, the theme follows the
+ * light or dark preference of the system.
+ */
+theme: string | null, };

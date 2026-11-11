@@ -23,7 +23,6 @@
 		"@tauri-apps/plugin-dialog": "^2.8.4",
 		"@tauri-apps/plugin-opener": "^2.7.3",
 		"bits-ui": "^2.20.6",
-		"codemirror-lang-typst": "^0.6.0",
 		"d3-drag": "^3.0.1",
 		"d3-force": "^3.0.1",
 		"d3-selection": "^3.0.1",

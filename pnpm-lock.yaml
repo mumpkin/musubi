@@ -259,9 +259,6 @@ importers:
       bits-ui:
         specifier: ^2.20.6
         version: 2.20.6(@internationalized/date@3.12.4)(svelte@5.57.3(@typescript-eslint/types@8.72.1))
-      codemirror-lang-typst:
-        specifier: ^0.6.0
-        version: 0.6.0
       d3-drag:
         specifier: ^3.0.1
         version: 3.0.1
@@ -329,6 +326,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.43.15
         version: 6.43.15
+      '@lezer/highlight':
+        specifier: ^1.2.5
+        version: 1.2.5
       codemirror-lang-typst:
         specifier: ^0.6.0
         version: 0.6.0
