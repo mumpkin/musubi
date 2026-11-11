@@ -11,11 +11,11 @@ practise on the lines under each exercise.
 
 The status bar shows the mode:
 
-- `NOR`, normal: keys move and act on selections.
-- `INS`, insert: keys type text. `i` inserts before the selection, `a` after
+- `NORMAL`: keys move and act on selections.
+- `INSERT`: keys type text. `i` inserts before the selection, `a` after
   it, `o` and `O` open a new line below or above. `Escape` goes back to
   normal mode.
-- `SEL`, select: `v` makes every move extend the selection; `v` or `Escape`
+- `SELECT`: `v` makes every move extend the selection; `v` or `Escape`
   leaves it.
 
 == Moving

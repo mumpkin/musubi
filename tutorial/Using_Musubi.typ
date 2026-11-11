@@ -16,8 +16,8 @@ command palette (`Space ?`) lists the same commands.
   read or edited, or the graph. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space l`): the notes that link to the current
   one.
-- *Status bar*, at the bottom: the mode (`LEC` reading, `NOR`, `INS`, `SEL`
-  in the editor, `GRA` graph), the path of the note, messages, and a
+- *Status bar*, at the bottom: the mode (`READ`; `NORMAL`, `INSERT`,
+  `SELECT` in the editor; `GRAPH`), the path of the note, messages, and a
   reminder of the main keys.
 
 == Shortcuts of the window

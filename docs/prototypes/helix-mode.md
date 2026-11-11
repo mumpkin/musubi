@@ -28,7 +28,7 @@ selection-first editing well.
 
 The desktop app has a "Helix editor" tab: CodeMirror with `codemirror-lang-typst`
 for highlighting (its Lezer parser, without WebAssembly), a mode indicator
-(`NOR` / `INS` / `SEL`) and a command line.
+(`NORMAL` / `INSERT` / `SELECT`) and a command line.
 
 ## Checked against the real Helix
 

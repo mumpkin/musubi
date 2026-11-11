@@ -34,7 +34,4 @@ body {
 	cursor: col-resize;
 }
 
-.resizer:hover,
-.resizer[data-active] {
-	background: var(--accent);
-}
+/* The resize cursor is enough to show the handle: no colour on hover. */

@@ -7,17 +7,17 @@ interface libraries before building the real screens.
 
 `apps/desktop/src/lib/shell/`:
 
-| Component               | Role                                                                                        |
-| ----------------------- | ------------------------------------------------------------------------------------------- |
-| `Shell.svelte`          | Layout: title bar, explorer, one or two panes, backlinks, status bar; shortcuts below.      |
-| `TitleBar.svelte`       | Title bar in the app's style, replacing the system one: drag, double click, window buttons. |
-| `NotePane.svelte`       | A pane: any note, in reading or editing mode, switched from its header.                     |
-| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                  |
-| `ReadingPane.svelte`    | A pane in reading mode (`LEC`): the note rendered by the Rust core, block cursor `j` / `k`. |
-| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                          |
-| `StatusBar.svelte`      | Mode of the focused pane (`LEC`, `NOR`, `INS`, `SEL`) and its note.                         |
-| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                       |
-| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                           |
+| Component               | Role                                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------------------- |
+| `Shell.svelte`          | Layout: title bar, explorer, one or two panes, backlinks, status bar; shortcuts below.       |
+| `TitleBar.svelte`       | Title bar in the app's style, replacing the system one: drag, double click, window buttons.  |
+| `NotePane.svelte`       | A pane: any note, in reading or editing mode, switched from its header.                      |
+| `Explorer.svelte`       | Notes by **title**, folders that fold; the file path shows in the tooltip.                   |
+| `ReadingPane.svelte`    | A pane in reading mode (`READ`): the note rendered by the Rust core, block cursor `j` / `k`. |
+| `BacklinksPanel.svelte` | Notes linking to the current one, with an excerpt.                                           |
+| `StatusBar.svelte`      | Mode of the focused pane (`READ`, `NORMAL`, `INSERT`, `SELECT`) and its note.                |
+| `CommandPalette.svelte` | Fuzzy search over commands and notes.                                                        |
+| `PaneHeader.svelte`     | Title, mode and actions of a pane, with tooltips.                                            |
 
 The main area shows **one pane by default**; splitting it gives two panes
 side by side. Each pane shows any note, in reading or editing mode, and
