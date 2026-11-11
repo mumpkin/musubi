@@ -61,6 +61,9 @@ and this project adheres to
   links, table headers, images. What Typst cannot export to HTML (shapes,
   grids, rotations, placement…) is drawn as an SVG island instead of
   disappearing.
+- Graph of the notes and their links (`Space g` in a pane, or the command
+  palette): zoom and pan, drag notes, hover to read a title, click to open
+  the note. The current note is highlighted.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

@@ -18,7 +18,9 @@ mod vault;
 
 pub use crate::assets::{NewAsset, is_image};
 pub use crate::error::VaultError;
-pub use crate::index::{Backlink, TextMatch, VaultIndex};
+pub use crate::index::{
+	Backlink, Graph, GraphLink, GraphNode, TextMatch, VaultIndex,
+};
 pub use crate::rename::save_note;
 pub use crate::search::{NoteMatch, search_headings, search_titles};
 pub use crate::trash::TrashEntry;

@@ -2,7 +2,7 @@
 //! Commands of links and search: backlinks, following a link to a note
 //! that does not exist yet, searching titles, headings and text.
 
-use musubi_core::{Backlink, NoteMatch, TextMatch};
+use musubi_core::{Backlink, Graph, NoteMatch, TextMatch};
 use tauri::State;
 
 use crate::state::AppState;
@@ -79,4 +79,12 @@ pub fn search_text(
 	open.index
 		.search_text(text)
 		.map_err(|error| error.to_string())
+}
+
+/// Notes and links of the vault, for the graph view.
+#[tauri::command(async)]
+pub fn vault_graph(state: State<'_, AppState>) -> Result<Graph, String> {
+	let open = state.lock();
+	let open = open.as_ref().ok_or(NO_VAULT)?;
+	open.index.graph().map_err(|error| error.to_string())
 }
