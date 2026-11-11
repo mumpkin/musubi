@@ -4,7 +4,7 @@
      resize and fold with PaneForge. -->
 <script lang="ts">
 	import { Tooltip } from 'bits-ui';
-	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
+	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
@@ -15,11 +15,7 @@
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
-	import {
-		PANE_SIZES,
-		toggle,
-		TOOLTIP_DELAY_MILLISECONDS,
-	} from './layout.ts';
+	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
 	import NewEntryDialog from './NewEntryDialog.svelte';
 	import NotePane from './NotePane.svelte';
 	import { paletteCommands } from './palette.ts';
@@ -27,6 +23,7 @@
 	import SearchPicker from './SearchPicker.svelte';
 	import { shortcutHandler } from './shortcut-handler.ts';
 	import type { ShellAction } from './shortcuts.ts';
+	import { SidePanels } from './side-panels.svelte.ts';
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
@@ -49,8 +46,7 @@
 	let isPaletteOpen = $state(false);
 	let isTrashOpen = $state(false);
 	let search = $state<SearchKind>();
-	let explorer = $state<PaneAPI>();
-	let backlinks = $state<PaneAPI>();
+	const panels = new SidePanels(manager);
 
 	function loadTree(): void {
 		files.load().catch(() => undefined);
@@ -149,10 +145,10 @@
 			startCreation('note', parentOf(manager.currentPath));
 		},
 		toggleExplorer: () => {
-			toggle(explorer);
+			panels.toggleExplorer();
 		},
 		toggleBacklinks: () => {
-			toggle(backlinks);
+			panels.toggleBacklinks();
 		},
 		toggleMode: () => {
 			manager.toggleMode(manager.focusedIndex);
@@ -169,11 +165,11 @@
 		nextPane: () => {
 			manager.focusPane(manager.focusedIndex + 1);
 		},
-		leftPane: () => {
-			manager.focusPane(manager.focusedIndex - 1);
+		leftPanel: () => {
+			panels.move(-1);
 		},
-		rightPane: () => {
-			manager.focusPane(manager.focusedIndex + 1);
+		rightPanel: () => {
+			panels.move(1);
 		},
 	};
 
@@ -189,7 +185,8 @@
 			return isPaletteOpen || isTrashOpen || search !== undefined
 				|| isInsert || isInput;
 		},
-		isReading: () => manager.focused?.mode === 'reading',
+		isReading: () => manager.focused?.mode === 'reading'
+			&& panels.isInPane(),
 		run: (action) => {
 			ACTIONS[action]();
 		},
@@ -209,19 +206,23 @@
 			autoSaveId="musubi-shell"
 		>
 			<Pane
-				bind:this={explorer}
+				bind:this={panels.explorer}
 				defaultSize={PANE_SIZES.explorer.default}
 				minSize={PANE_SIZES.explorer.min}
 				collapsible
 				collapsedSize={0}
 			>
 				<Explorer
+					bind:this={panels.explorerList}
 					vaultName={vault.name}
 					root={files.root}
 					current={manager.currentPath}
 					onOpen={openNote}
 					onCreate={startCreation}
 					onDelete={deleteNote}
+					onLeave={() => {
+						panels.back();
+					}}
 				/>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -251,16 +252,20 @@
 			</Pane>
 			<PaneResizer class="resizer" />
 			<Pane
-				bind:this={backlinks}
+				bind:this={panels.backlinks}
 				defaultSize={PANE_SIZES.backlinks.default}
 				minSize={PANE_SIZES.backlinks.min}
 				collapsible
 				collapsedSize={0}
 			>
 				<BacklinksPanel
+					bind:this={panels.backlinksList}
 					path={manager.currentPath}
 					revision={files.loads}
 					onOpen={openNote}
+					onLeave={() => {
+						panels.back();
+					}}
 				/>
 			</Pane>
 		</PaneGroup>
@@ -303,6 +308,14 @@
 		display: grid;
 		grid-template-rows: auto 1fr auto;
 		height: 100vh;
+	}
+
+	/* A side panel has the focus: no pane shows it. */
+	.shell:has(
+		:global(.explorer:focus-within),
+		:global(.backlinks:focus-within)
+	) :global(.pane.focused) {
+		border-top-color: transparent;
 	}
 
 </style>

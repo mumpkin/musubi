@@ -123,6 +123,13 @@
 		background: var(--hover);
 	}
 
+	/* The entry reached with `j` and `k`. */
+	button:focus-visible {
+		outline: none;
+		background: var(--hover);
+		box-shadow: inset 2px 0 0 var(--accent);
+	}
+
 	.add {
 		display: flex;
 		align-items: center;
