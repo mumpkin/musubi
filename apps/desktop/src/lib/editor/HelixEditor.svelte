@@ -61,6 +61,12 @@
 	}: Props = $props();
 
 	const MILLISECONDS_PER_SECOND = 1000;
+	const PROMPT_LABELS: Record<PromptKind, string> = {
+		command: ':',
+		select: 'select:',
+		search: 'search:',
+		reverseSearch: 'reverse-search:',
+	};
 	let autosaveTimer: ReturnType<typeof setTimeout> | undefined;
 
 	// Saves after a pause in typing, when autosave is on.
@@ -208,7 +214,7 @@
 	{#if prompt}
 		<footer>
 			<label>
-				<span>{prompt === 'command' ? ':' : 'select:'}</span>
+				<span>{PROMPT_LABELS[prompt]}</span>
 				<input
 					bind:this={promptInput}
 					bind:value={promptText}

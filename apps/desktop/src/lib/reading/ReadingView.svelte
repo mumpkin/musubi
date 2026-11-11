@@ -1,17 +1,24 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- Native reading view: the HTML export of a note, styled by the app. -->
 <script lang="ts">
+	import { onDestroy } from 'svelte';
+
 	import {
 		blockAt,
+		type BlockScroll,
 		highlightBlock,
-		moveCursor,
 		renderedBlocks,
 	} from './block-cursor.ts';
 	import type { NoteMarkup } from './note-html.ts';
 	import { linkedNotePath } from './note-html.ts';
+	import { readingKeyHandler } from './reading-keys.ts';
+	import { ReadingNavigator } from './reading-navigator.ts';
+	import SearchBar from './SearchBar.svelte';
 
 	interface Props {
 		markup: NoteMarkup;
+		// Source lines of the blocks, by index.
+		sourceBlocks: readonly { startLine: number; endLine: number }[];
 		// Index of the block under the cursor, in the source blocks.
 		selectedBlock: number | undefined;
 		// Scrolls the selection into view without animation, for the first
@@ -26,6 +33,7 @@
 
 	const {
 		markup,
+		sourceBlocks,
 		selectedBlock,
 		isFirstDisplay = false,
 		onNavigate,
@@ -33,31 +41,55 @@
 		onEdit,
 	}: Props = $props();
 
-	const CURSOR_STEPS = new Map([
-		['j', 1],
-		['k', -1],
-	]);
-
 	let container = $state<HTMLElement>();
+	let prompt = $state<'search' | 'reverseSearch'>();
+	// How the next selection scrolls; the navigator scrolls by itself.
+	let nextScroll: BlockScroll = 'smooth';
 
 	$effect(() => {
 		if (container) {
-			highlightBlock(container, selectedBlock, !isFirstDisplay);
+			const scroll = isFirstDisplay ? 'instant' : nextScroll;
+			highlightBlock(container, selectedBlock, scroll);
+			nextScroll = 'smooth';
 		}
 	});
 
-	// `j` / `k` move the block cursor, `Escape` hides it.
-	function handleKeydown(event: KeyboardEvent): void {
-		if (!container || event.ctrlKey || event.altKey || event.metaKey) {
-			return;
-		}
-		const step = CURSOR_STEPS.get(event.key);
-		if (step !== undefined) {
-			const blocks = renderedBlocks(container);
-			onSelect(moveCursor(blocks, selectedBlock, step));
-		} else if (event.key === 'Escape') {
-			onSelect(undefined);
-		}
+	const navigator = $derived(container
+		? new ReadingNavigator({
+			container,
+			scroller: container.parentElement ?? container,
+			blocks: () => renderedBlocks(container),
+			sourceBlocks: () => sourceBlocks,
+			selected: () => selectedBlock,
+			select: (block, scroll) => {
+				nextScroll = scroll ? 'smooth' : 'none';
+				onSelect(block);
+			},
+			openPrompt: (kind) => {
+				prompt = kind;
+			},
+		})
+		: undefined);
+
+	onDestroy(() => {
+		navigator?.clear();
+	});
+
+	// Helix navigation keys; `Escape` hides the cursor and the matches.
+	const handleKeydown = readingKeyHandler(() => navigator, () => {
+		navigator?.clear();
+		onSelect(undefined);
+	});
+
+	function closePrompt(): void {
+		prompt = undefined;
+		container?.focus();
+	}
+
+	function submitSearch(text: string): void {
+		const isForward = prompt === 'search';
+		closePrompt();
+		navigator?.search(text, isForward);
 	}
 
 	function handleDoubleClick(event: MouseEvent): void {
@@ -109,6 +141,13 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitized -->
 	{@html markup.body}
 </article>
+{#if prompt}
+	<SearchBar
+		label={prompt === 'search' ? 'search:' : 'reverse-search:'}
+		onSubmit={submitSearch}
+		onCancel={closePrompt}
+	/>
+{/if}
 
 <style>
 	.reading-view:focus {
@@ -166,6 +205,15 @@
 	.reading-view :global(td) {
 		padding: 0.3rem 0.8rem;
 		border: 1px solid var(--border);
+	}
+
+	:global(::highlight(musubi-search)) {
+		background: var(--selection);
+	}
+
+	:global(::highlight(musubi-search-current)) {
+		background: var(--accent);
+		color: var(--background);
 	}
 
 	.reading-view :global(.selected-block) {

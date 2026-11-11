@@ -12,7 +12,7 @@ export type {
 } from './context.ts';
 export { selectMatches } from './editing.ts';
 export { helix, type HelixOptions } from './helix.ts';
-export { keymaps } from './keymap.ts';
+export { keymaps, type KeyResolution, resolveKey } from './keymap.ts';
 export {
 	importChange,
 	linkMarkup,
@@ -20,3 +20,4 @@ export {
 	type LinkSuggestion,
 } from './link-completion.ts';
 export { type EditorMode, editorModes, modeField, modeIndicator } from './mode.ts';
+export { runPatternPrompt } from './search.ts';

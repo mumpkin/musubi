@@ -51,7 +51,7 @@ export function asCharacters(
 }
 
 export function toRange(span: Span): SelectionRange {
-	return EditorSelection.range(span.anchor, span.head);
+	return EditorSelection.range(span.anchor, span.head, span.goal);
 }
 
 // In select mode, motions move the cursor and keep the anchor. As in Helix
@@ -66,7 +66,7 @@ export function extend(range: SelectionRange, span: Span): SelectionRange {
 		anchor -= 1;
 	}
 	const head = anchor <= cursor ? cursor + 1 : cursor;
-	return EditorSelection.range(anchor, head);
+	return EditorSelection.range(anchor, head, span.goal);
 }
 
 export function mapRanges(

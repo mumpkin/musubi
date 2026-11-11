@@ -13,6 +13,7 @@ import type { CommandContext, CommandTarget, EditorHost } from './context.ts';
 import { insertOrigins } from './insert.ts';
 import { jumpLabelsField } from './jump-labels.ts';
 import { type EditorMode, modeField } from './mode.ts';
+import { searchPatternField } from './search.ts';
 
 export class TestEditor implements CommandTarget {
 	state: EditorState;
@@ -28,6 +29,7 @@ export class TestEditor implements CommandTarget {
 				modeField,
 				insertOrigins,
 				jumpLabelsField,
+				searchPatternField,
 				history(),
 				EditorState.allowMultipleSelections.of(true),
 			],
@@ -50,8 +52,8 @@ export class TestEditor implements CommandTarget {
 		return this;
 	}
 
-	runWith(name: CommandName, argument: string): this {
-		runCommand(name, this.context(), argument);
+	runWith(name: CommandName, argument: string, count?: number): this {
+		runCommand(name, { ...this.context(), count }, argument);
 		return this;
 	}
 

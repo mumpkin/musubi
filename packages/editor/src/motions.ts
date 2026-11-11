@@ -18,9 +18,9 @@ import {
 	type Span,
 } from './text.ts';
 
-type Motion = (state: EditorState, range: SelectionRange) => Span;
+export type Motion = (state: EditorState, range: SelectionRange) => Span;
 
-function motion(move: Motion): Command {
+export function motion(move: Motion): Command {
 	return ({ target }) => {
 		const { state } = target;
 		const isSelecting = currentMode(state) === 'select';
@@ -36,17 +36,19 @@ function byCharacter(step: number): Motion {
 	return (state, range) => characterAt(state, cursorOf(range) + step);
 }
 
-function byLine(step: number): Motion {
+// `j` and `k` keep the column the cursor had before a shorter line.
+export function byLine(step: number): Motion {
 	return (state, range) => {
 		const cursor = cursorOf(range);
 		const line = state.doc.lineAt(cursor);
+		const goal = range.goalColumn ?? cursor - line.from;
 		const targetNumber = line.number + step;
 		if (targetNumber < 1 || targetNumber > state.doc.lines) {
-			return characterAt(state, cursor);
+			return { ...characterAt(state, cursor), goal };
 		}
 		const targetLine = state.doc.line(targetNumber);
-		const column = Math.min(cursor - line.from, targetLine.length);
-		return characterAt(state, targetLine.from + column);
+		const column = Math.min(goal, targetLine.length);
+		return { ...characterAt(state, targetLine.from + column), goal };
 	};
 }
 

@@ -25,6 +25,8 @@ function category(character: string | undefined): Category | undefined {
 export interface Span {
 	anchor: number;
 	head: number;
+	// Column that `j` and `k` keep, as in Helix (sticky column).
+	goal?: number | undefined;
 }
 
 function isBoundary(text: string, left: number): boolean {

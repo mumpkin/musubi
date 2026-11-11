@@ -121,6 +121,7 @@
 	{#if markup}
 		<ReadingView
 			{markup}
+			sourceBlocks={view?.note.blocks ?? []}
 			{selectedBlock}
 			{isFirstDisplay}
 			onNavigate={onOpen}

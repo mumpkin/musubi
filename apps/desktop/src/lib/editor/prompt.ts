@@ -6,7 +6,7 @@ import {
 	parseCommandLine,
 	type PromptKind,
 	runCommand,
-	selectMatches,
+	runPatternPrompt,
 } from '@musubi/editor';
 
 export interface PromptRequest {
@@ -21,8 +21,7 @@ export interface PromptRequest {
 export async function runPrompt(
 	{ view, host, kind, line }: PromptRequest,
 ): Promise<string | undefined> {
-	if (kind === 'select') {
-		selectMatches(view, line);
+	if (runPatternPrompt(view, kind, line)) {
 		return undefined;
 	}
 	const names = parseCommandLine(line);

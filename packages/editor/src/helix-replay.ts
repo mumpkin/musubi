@@ -2,9 +2,10 @@
 // Replays Helix key sequences on a `TestEditor`, and marks its selections
 // the way the reference recorder marks those of the real Helix.
 import { typeText } from './auto-pairs.ts';
-import { selectMatches } from './editing.ts';
+import type { PromptKind } from './context.ts';
 import { pressJumpLabel } from './jump-labels.ts';
 import { resolveKey } from './keymap.ts';
+import { runPatternPrompt } from './search.ts';
 import { cursorOf } from './selection.ts';
 import type { TestEditor } from './test-editor.ts';
 
@@ -15,42 +16,51 @@ const KEY_NAMES = new Map([
 	[ESCAPE, 'Escape'],
 	[BACKSPACE, 'Backspace'],
 ]);
-// Marks that the `s` prompt is open.
-const PROMPT = '\u0000prompt';
+// Commands that read a pattern up to Enter.
+const PROMPTS = new Map<string, PromptKind>([
+	['selectPrompt', 'select'],
+	['searchForward', 'search'],
+	['searchBackward', 'reverseSearch'],
+]);
+
+interface Pending {
+	keys: string;
+	prompt?: PromptKind | undefined;
+}
 
 // Applies one key, like the key handler of the editor. `pending` holds the
 // keys of a sequence being typed.
 function pressKey(
 	editor: TestEditor,
 	key: string,
-	pending: { keys: string },
+	pending: Pending,
 ): void {
 	if (pressJumpLabel(editor, key)) {
 		return;
 	}
 	const resolution = resolveKey(editor.mode, pending.keys, key);
 	pending.keys = resolution.pending ?? '';
-	if (resolution.command === 'selectPrompt') {
-		pending.keys = PROMPT;
-	} else if (resolution.command !== undefined) {
-		editor.runWith(resolution.command, resolution.argument ?? '');
+	const { command, argument, count } = resolution;
+	pending.prompt = command === undefined ? undefined : PROMPTS.get(command);
+	if (command !== undefined && pending.prompt === undefined) {
+		editor.runWith(command, argument ?? '', count);
 	} else if (resolution.pending === undefined && editor.mode === 'insert') {
 		editor.dispatch(typeText(editor.state, key));
 	}
 }
 
 export function replayKeys(editor: TestEditor, keys: string): void {
-	const pending = { keys: '' };
+	const pending: Pending = { keys: '' };
 	let index = 0;
 	while (index < keys.length) {
 		const key = KEY_NAMES.get(keys.charAt(index)) ?? keys.charAt(index);
 		index += 1;
-		if (pending.keys === PROMPT) {
-			// `s` reads a regex up to Enter.
+		if (pending.prompt) {
 			const end = keys.indexOf(ENTER, index - 1);
-			selectMatches(editor, keys.slice(index - 1, end));
+			const line = keys.slice(index - 1, end);
+			runPatternPrompt(editor, pending.prompt, line);
 			index = end + 1;
-			pending.keys = '';
+			pending.prompt = undefined;
 		} else {
 			pressKey(editor, key, pending);
 		}
