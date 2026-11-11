@@ -39,6 +39,10 @@ and this project adheres to
   `zt`, `zb`, `Ctrl-d`, `Ctrl-u`, `Ctrl-f`, `Ctrl-b`. `j` and `k` keep the
   column. In the reading view, `/` highlights the matches in the rendered
   text and moves the block cursor to them. Every scroll is smooth.
+- Paste (`Ctrl-v`) or drop an image in the editor: it is copied into the
+  `.assets` folder of the note, and `#image("Note.assets/…")` is inserted
+  on its own line. The same image pasted twice is stored once. Paths of
+  the note's files complete inside `#image("…")`.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

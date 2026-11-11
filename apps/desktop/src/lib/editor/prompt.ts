@@ -9,6 +9,14 @@ import {
 	runPatternPrompt,
 } from '@musubi/editor';
 
+// What the command line shows before the typed text, as in Helix.
+export const PROMPT_LABELS: Record<PromptKind, string> = {
+	command: ':',
+	select: 'select:',
+	search: 'search:',
+	reverseSearch: 'reverse-search:',
+};
+
 export interface PromptRequest {
 	view: EditorView;
 	host: EditorHost;

@@ -154,3 +154,38 @@ fn keeps_the_name_when_the_title_does_not_change() {
 		.expect("saved");
 	assert_eq!(path, "Note.typ");
 }
+
+#[test]
+fn copies_images_into_the_assets_folder_and_reuses_duplicates() {
+	use musubi_core::NewAsset;
+	let directory = vault_with(&[("Maths/Analyse.typ", "= Analyse\n")]);
+	let vault = open(directory.path());
+	let image = |name, bytes| NewAsset { name, bytes };
+	let first = vault
+		.add_asset("Maths/Analyse.typ", &image("Capture d’écran.PNG", b"one"))
+		.expect("copied");
+	assert_eq!(first, "Analyse.assets/Capture_d’écran.png");
+	let again = vault
+		.add_asset("Maths/Analyse.typ", &image("other.png", b"one"))
+		.expect("reused");
+	assert_eq!(again, first, "same content, same file");
+	let other = vault
+		.add_asset("Maths/Analyse.typ", &image("Capture d’écran.png", b"two"))
+		.expect("copied");
+	assert_eq!(other, "Analyse.assets/Capture_d’écran_2.png");
+	assert_eq!(
+		vault.assets("Maths/Analyse.typ").expect("assets"),
+		[
+			"Analyse.assets/Capture_d’écran.png",
+			"Analyse.assets/Capture_d’écran_2.png"
+		],
+	);
+	assert!(
+		fs::read(
+			directory
+				.path()
+				.join("Maths/Analyse.assets/Capture_d’écran.png")
+		)
+		.is_ok_and(|bytes| bytes == b"one")
+	);
+}
