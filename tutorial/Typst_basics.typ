@@ -18,7 +18,7 @@ file. `==` starts a section, `===` a subsection.
 - An empty line starts a new paragraph; a `\` at the end of a line breaks
   it.
 - Web links: `#link("https://typst.app")[Typst]` gives
-  #link("https://typst.app")[Typst].
+  #link("https://typst.app")[Typst], which opens in your browser.
 - A footnote: `#footnote[…]`#footnote[Footnotes go to the end of the note.].
 
 == Lists

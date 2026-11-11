@@ -61,7 +61,8 @@ They work everywhere except while typing text.
 )
 
 Click a link to open its note. Footnote numbers and the entries of an
-outline scroll to their place.
+outline scroll to their place. Web links, marked with a small arrow like
+#link("https://typst.app")[the Typst website], open in your browser.
 
 == Editor
 

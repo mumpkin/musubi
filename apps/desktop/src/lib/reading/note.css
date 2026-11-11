@@ -104,6 +104,16 @@
 	text-underline-offset: 2px;
 }
 
+/* Web links leave Musubi for the browser: a small arrow says so. */
+.reading-view a.web-link::after {
+	content: '↗';
+	margin-left: 0.1em;
+	color: var(--muted);
+	font-size: 0.75em;
+	vertical-align: super;
+	line-height: 0;
+}
+
 .reading-view sup[role='doc-noteref'] a,
 .reading-view sup[role='doc-backlink'] a {
 	text-decoration: none;

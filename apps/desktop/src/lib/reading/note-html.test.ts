@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { describe, expect, it } from 'vitest';
 
-import { linkedNotePath, toNoteMarkup } from './note-html.ts';
+import { linkedNotePath, toNoteMarkup, webLinkUrl } from './note-html.ts';
 
 function page(head: string, body: string): string {
 	return `<!DOCTYPE html><html><head>${head}</head><body>${body}</body></html>`;
@@ -39,7 +39,8 @@ describe('toNoteMarkup', () => {
 		);
 		expect(markup.body).toBe(
 			'<a>x</a><a href="musubi://note/Demo">y</a>'
-			+ '<a href="https://typst.app">z</a>',
+			+ '<a href="https://typst.app" class="web-link" '
+			+ 'title="https://typst.app (opens in the browser)">z</a>',
 		);
 	});
 });
@@ -80,5 +81,34 @@ describe('linkedNotePath', () => {
 	it('ignores elements outside note links', () => {
 		const paragraph = document.createElement('p');
 		expect(linkedNotePath(paragraph)).toBeUndefined();
+	});
+});
+
+describe('web links', () => {
+	it('marks the links that leave Musubi, with their address', () => {
+		const markup = toNoteMarkup(page('', [
+			'<a href="https://typst.app">Typst</a>',
+			'<a href="mailto:me@example.org">mail</a>',
+			'<a href="#intro">here</a>',
+			'<a class="musubi-link" href="musubi:x" data-target="x">x</a>',
+		].join('')));
+		const body = new DOMParser().parseFromString(markup.body, 'text/html');
+		const marked = [...body.querySelectorAll('a.web-link')];
+		expect(marked.map((link) => link.textContent)).toEqual(['Typst', 'mail']);
+		expect(marked[0]?.getAttribute('title')).toBe(
+			'https://typst.app (opens in the browser)',
+		);
+	});
+
+	it('gives the address of a web link only', () => {
+		const body = new DOMParser().parseFromString(
+			'<a href=" HTTPS://typst.app "><b>T</b></a><a href="#x">x</a>',
+			'text/html',
+		).body;
+		const [web, anchor] = body.querySelectorAll('a');
+		expect(webLinkUrl(web?.querySelector('b') ?? body)).toBe(
+			'HTTPS://typst.app',
+		);
+		expect(webLinkUrl(anchor ?? body)).toBeUndefined();
 	});
 });
