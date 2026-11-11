@@ -133,11 +133,11 @@ export class PaneManager {
 	}
 
 	// Notes may have changed on disk while the window was in the background:
-	// read them again, except those with unsaved changes.
+	// read them again, except those with unsaved changes. The panes stay as
+	// they are: cursor, editor and undo history.
 	reload(): void {
 		for (const pane of this.panes) {
 			if (pane.draft === undefined) {
-				pane.loads += 1;
 				this.bump(pane.path);
 			}
 		}

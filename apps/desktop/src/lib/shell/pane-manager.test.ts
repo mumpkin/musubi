@@ -40,14 +40,18 @@ describe('PaneManager', () => {
 			'New.typ',
 			'New.typ',
 		]);
+		// The same note stays open: the editor is kept, with its history.
+		expect(manager.panes.map((pane) => pane.loads)).toEqual([0, 0]);
 	});
 
 	it('reloads only the panes without unsaved changes', () => {
 		const manager = new PaneManager('Note.typ');
-		manager.split();
-		manager.events(1).draft('unsaved');
 		manager.reload();
-		expect(manager.panes[0]?.loads).toBe(1);
-		expect(manager.panes[1]?.loads).toBe(0);
+		expect(manager.revisions.get('Note.typ')).toBe(1);
+		// The pane is not opened again: an editor keeps its history.
+		expect(manager.panes[0]?.loads).toBe(0);
+		manager.events(0).draft('unsaved');
+		manager.reload();
+		expect(manager.revisions.get('Note.typ')).toBe(1);
 	});
 });

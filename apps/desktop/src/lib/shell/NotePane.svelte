@@ -3,10 +3,10 @@
 <script lang="ts">
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
-	import HelixEditor from '../editor/HelixEditor.svelte';
 	import GraphView from '../graph/GraphView.svelte';
-	import { readNote, writeNote } from '../vault/vault.ts';
+	import { writeNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
+	import EditingPane from './EditingPane.svelte';
 	import PaneHeader from './PaneHeader.svelte';
 	import { MODE_LABELS, type PaneEvents, type PaneState } from './panes.ts';
 	import ReadingPane from './ReadingPane.svelte';
@@ -88,28 +88,15 @@
 			{isFocused}
 		/>
 	{:else}
-		{#key `${pane.path}:${String(pane.loads)}`}
-			{#await readNote(pane.path)}
-				<p class="message">Loading…</p>
-			{:then saved}
-				<HelixEditor
-					notePath={pane.path}
-					text={pane.draft ?? saved}
-					savedText={saved}
-					{autosaveDelay}
-					autofocus={isFocused}
-					initialLine={pane.line}
-					onCursorLine={events.line}
-					onWrite={write}
-					onQuit={events.quit}
-					onDraft={events.draft}
-					onMessage={events.message}
-					onModeChange={setEditorMode}
-				/>
-			{:catch error}
-				<p class="message">{String(error)}</p>
-			{/await}
-		{/key}
+		<EditingPane
+			{pane}
+			{revision}
+			{autosaveDelay}
+			autofocus={isFocused}
+			{events}
+			onWrite={write}
+			onModeChange={setEditorMode}
+		/>
 	{/if}
 </section>
 
@@ -120,11 +107,6 @@
 		height: 100%;
 		min-height: 0;
 		border-top: 2px solid transparent;
-	}
-
-	.message {
-		margin: 2rem;
-		color: var(--muted);
 	}
 
 	.pane.focused {

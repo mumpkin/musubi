@@ -17,6 +17,10 @@ and this project adheres to
 
 ### Fixed
 
+- `u` and `U` keep working after a save renames the note by its new title,
+  and after coming back to the window. A note changed by another program
+  while it is open in the editor is updated as one change, which `u` undoes.
+
 - Back in the reading view after editing (`:q`, `Space r`), the keyboard
   works at once: `j` and `k` move without a click first.
 
