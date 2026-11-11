@@ -6,6 +6,7 @@ mod commands;
 mod links;
 mod reading;
 mod state;
+mod trash;
 mod vault;
 
 /// Starts the desktop application.
@@ -38,6 +39,10 @@ pub fn run() {
 			assets::import_image,
 			assets::paste_image,
 			assets::note_assets,
+			trash::trash_note,
+			trash::trash_entries,
+			trash::restore_note,
+			trash::delete_trash_entries,
 		])
 		.run(tauri::generate_context!())
 		.expect("failed to start the Tauri application");

@@ -6,14 +6,11 @@
 	import { Tooltip } from 'bits-ui';
 	import { Pane, type PaneAPI, PaneGroup, PaneResizer } from 'paneforge';
 
-	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
 	import type { VaultTree } from '../bindings/VaultTree.ts';
-	import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 	import type { SearchKind } from '../vault/search.ts';
-	import { buildTree, parentOf, titleIn } from '../vault/tree.ts';
-	import { deviceSettings, vaultTree } from '../vault/vault.ts';
-	import type { PaneAction } from './actions.ts';
+	import { trashNote } from '../vault/trash.ts';
+	import { parentOf, titleIn } from '../vault/tree.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import Explorer from './Explorer.svelte';
@@ -26,12 +23,13 @@
 	import NotePane from './NotePane.svelte';
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
-	import { paneActions, type PaneState } from './panes.ts';
 	import SearchPicker from './SearchPicker.svelte';
 	import { shortcutHandler } from './shortcut-handler.ts';
 	import type { ShellAction } from './shortcuts.ts';
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
+	import TrashDialog from './TrashDialog.svelte';
+	import { VaultState } from './vault-state.svelte.ts';
 
 	interface Props {
 		vault: VaultInfo;
@@ -40,38 +38,19 @@
 	const { vault }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
-	let tree = $state(vault.tree);
-	// Bumped on every read of the tree: the backlinks may have changed.
-	let treeLoads = $state(0);
-	const root = $derived(buildTree(tree));
-	const notePaths = $derived(new Set(tree.notes.map((note) => note.path)));
+	const files = new VaultState(vault.tree);
 	// svelte-ignore state_referenced_locally
 	const manager = new PaneManager(vault.tree.notes[0]?.path ?? '');
 	let creation = $state<{ kind: 'note' | 'folder'; folder: string }>();
 	let isCreating = $state(false);
 	let isPaletteOpen = $state(false);
+	let isTrashOpen = $state(false);
 	let search = $state<SearchKind>();
 	let explorer = $state<PaneAPI>();
 	let backlinks = $state<PaneAPI>();
-	let settings = $state<DeviceSettings>();
-
-	deviceSettings()
-		.then((loaded) => {
-			settings = loaded;
-		})
-		.catch(() => undefined);
-
-	const autosaveDelay = $derived(
-		settings?.autosave ? settings.autosaveDelaySeconds : undefined,
-	);
 
 	function loadTree(): void {
-		vaultTree()
-			.then((loaded) => {
-				tree = loaded;
-				treeLoads += 1;
-			})
-			.catch(() => undefined);
+		files.load().catch(() => undefined);
 	}
 
 	// Back in the window: notes and titles may have changed on disk.
@@ -93,7 +72,7 @@
 	}
 
 	function created(newTree: VaultTree, note: string | undefined): void {
-		tree = newTree;
+		files.setTree(newTree);
 		if (note !== undefined) {
 			manager.open(note);
 		}
@@ -107,13 +86,31 @@
 		manager.open(path, line);
 	}
 
+	function deleteNote(path: string): void {
+		const next = files.tree.notes.find((note) => note.path !== path);
+		trashNote(path)
+			.then(async (entry) => {
+				manager.forget(path, next?.path ?? '');
+				showMessage(`Moved ${entry.title} to the trash`);
+				await files.load();
+			})
+			.catch((error: unknown) => {
+				showMessage(String(error));
+			});
+	}
+
+	function restored(path: string): void {
+		files.load()
+			.then(() => {
+				openNote(path);
+				showMessage(`Restored ${path}`);
+			})
+			.catch(() => undefined);
+	}
+
 	// A link to a missing note creates it, titled from the link.
 	manager.followLink = (path, text) => {
-		const ready = notePaths.has(path)
-			? Promise.resolve()
-			: createLinkedNote(path, linkedNoteTitle(path, text))
-				.then(loadTree);
-		ready
+		files.prepareLink(path, text)
 			.then(() => {
 				openNote(path);
 			})
@@ -122,24 +119,15 @@
 			});
 	};
 
-	function actionsOf(index: number, pane: PaneState): PaneAction[] {
-		return paneActions(pane, {
-			canSplit: manager.canSplit,
-			toggleMode: () => {
-				manager.toggleMode(index);
-			},
-			split: () => {
-				manager.split();
-			},
-			close: () => {
-				manager.close(index);
-			},
-		});
-	}
-
 	const ACTIONS: Record<ShellAction, () => void> = {
 		palette: () => {
 			isPaletteOpen = true;
+		},
+		deleteNote: () => {
+			deleteNote(manager.currentPath);
+		},
+		showTrash: () => {
+			isTrashOpen = true;
 		},
 		findNote: () => {
 			search = 'titles';
@@ -176,14 +164,17 @@
 		},
 	};
 
-	const commands = $derived(paletteCommands(ACTIONS, tree.notes, openNote));
+	const commands = $derived(
+		paletteCommands(ACTIONS, files.tree.notes, openNote),
+	);
 
 	const handleShortcut = shortcutHandler({
 		isTyping: (event) => {
 			const isInsert = manager.focused?.mode === 'editing'
 				&& manager.editorMode === 'insert';
 			const isInput = event.target instanceof HTMLInputElement;
-			return isPaletteOpen || search !== undefined || isInsert || isInput;
+			return isPaletteOpen || isTrashOpen || search !== undefined
+				|| isInsert || isInput;
 		},
 		isReading: () => manager.focused?.mode === 'reading',
 		run: (action) => {
@@ -199,7 +190,7 @@
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">
-		<TitleBar title={titleIn(tree, manager.currentPath)} />
+		<TitleBar title={titleIn(files.tree, manager.currentPath)} />
 		<PaneGroup
 			direction="horizontal"
 			autoSaveId="musubi-shell"
@@ -213,10 +204,11 @@
 			>
 				<Explorer
 					vaultName={vault.name}
-					{root}
+					root={files.root}
 					current={manager.currentPath}
 					onOpen={openNote}
 					onCreate={startCreation}
+					onDelete={deleteNote}
 				/>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -232,12 +224,12 @@
 						<Pane minSize={PANE_SIZES.half.min}>
 							<NotePane
 								{pane}
-								title={titleIn(tree, pane.path)}
+								title={titleIn(files.tree, pane.path)}
 								isFocused={index === manager.focusedIndex}
-								actions={actionsOf(index, pane)}
+								actions={manager.actionsOf(index)}
 								revision={manager.revisions.get(pane.path) ?? 0}
-								{autosaveDelay}
-								notes={notePaths}
+								autosaveDelay={files.autosaveDelay}
+								notes={files.notePaths}
 								events={manager.events(index)}
 							/>
 						</Pane>
@@ -254,7 +246,7 @@
 			>
 				<BacklinksPanel
 					path={manager.currentPath}
-					revision={treeLoads}
+					revision={files.loads}
 					onOpen={openNote}
 				/>
 			</Pane>
@@ -270,6 +262,12 @@
 <CommandPalette
 	bind:open={isPaletteOpen}
 	{commands}
+/>
+
+<TrashDialog
+	bind:open={isTrashOpen}
+	onRestored={restored}
+	onError={showMessage}
 />
 
 <SearchPicker

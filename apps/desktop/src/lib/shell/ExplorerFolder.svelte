@@ -5,6 +5,7 @@
 
 	import type { FolderNode } from '../vault/tree.ts';
 	import Self from './ExplorerFolder.svelte';
+	import Icon from './Icon.svelte';
 
 	interface Props {
 		folder: FolderNode;
@@ -12,9 +13,17 @@
 		folded: SvelteSet<string>;
 		onOpen: (path: string) => void;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
+		onDelete: (path: string) => void;
 	}
 
-	const { folder, current, folded, onOpen, onCreate }: Props = $props();
+	const {
+		folder,
+		current,
+		folded,
+		onOpen,
+		onCreate,
+		onDelete,
+	}: Props = $props();
 
 	function toggle(path: string): void {
 		if (folded.has(path)) {
@@ -55,12 +64,13 @@
 					{folded}
 					{onOpen}
 					{onCreate}
+					{onDelete}
 				/>
 			{/if}
 		</li>
 	{/each}
 	{#each folder.notes as note (note.path)}
-		<li>
+		<li class="row">
 			<button
 				class="note"
 				class:current={note.path === current}
@@ -69,6 +79,13 @@
 					onOpen(note.path);
 				}}
 			>{note.title}</button>
+			<button
+				class="add"
+				title="Move {note.title} to the trash"
+				onclick={() => {
+					onDelete(note.path);
+				}}
+			><Icon name="trash" /></button>
 		</li>
 	{/each}
 </ul>
@@ -107,6 +124,8 @@
 	}
 
 	.add {
+		display: flex;
+		align-items: center;
 		width: auto;
 		color: var(--muted);
 		visibility: hidden;
@@ -118,6 +137,14 @@
 
 	.note.current {
 		background: var(--selection);
+	}
+
+	.add :global(svg) {
+		width: 0.9rem;
+		height: 0.9rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.2;
 	}
 
 	.chevron {

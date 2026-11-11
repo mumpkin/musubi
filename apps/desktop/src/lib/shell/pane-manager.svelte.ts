@@ -5,9 +5,11 @@ import { type EditorMode, modeIndicator } from '@musubi/editor';
 import { tick } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 
+import type { PaneAction } from './actions.ts';
 import {
 	MAX_PANES,
 	otherMode,
+	paneActions,
 	type PaneEvents,
 	type PaneState,
 } from './panes.ts';
@@ -123,6 +125,17 @@ export class PaneManager {
 		}
 	}
 
+	// The note at `path` is gone: its panes show `replacement` instead.
+	forget(path: string, replacement: string): void {
+		for (const pane of this.panes.filter((entry) => entry.path === path)) {
+			pane.path = replacement;
+			pane.mode = 'reading';
+			pane.draft = undefined;
+			pane.line = undefined;
+			pane.loads += 1;
+		}
+	}
+
 	setLine(index: number, line: number | undefined): void {
 		const pane = this.panes[index];
 		if (pane) {
@@ -138,6 +151,26 @@ export class PaneManager {
 			pane.mode = 'editing';
 			this.focusAfterRender(index);
 		}
+	}
+
+	// Buttons of the header of pane `index`.
+	actionsOf(index: number): PaneAction[] {
+		const pane = this.panes[index];
+		if (!pane) {
+			return [];
+		}
+		return paneActions(pane, {
+			canSplit: this.canSplit,
+			toggleMode: () => {
+				this.toggleMode(index);
+			},
+			split: () => {
+				this.split();
+			},
+			close: () => {
+				this.close(index);
+			},
+		});
 	}
 
 	private bump(path: string): void {

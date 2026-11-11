@@ -8,6 +8,8 @@ export type ShellAction
 		| 'findNote'
 		| 'searchText'
 		| 'newNote'
+		| 'deleteNote'
+		| 'showTrash'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
 		| 'toggleMode'
@@ -28,6 +30,8 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	findNote: { label: 'Find a note by title', group: 'Note' },
 	searchText: { label: 'Search the text of the notes', group: 'Note' },
 	newNote: { label: 'New note', group: 'Note' },
+	deleteNote: { label: 'Move the note to the trash', group: 'Note' },
+	showTrash: { label: 'Show the trash', group: 'Note' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },
 	toggleMode: { label: 'Switch between reading and editing', group: 'Pane' },

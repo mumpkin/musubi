@@ -43,6 +43,12 @@ and this project adheres to
   `.assets` folder of the note, and `#image("Note.assets/…")` is inserted
   on its own line. The same image pasted twice is stored once. Paths of
   the note's files complete inside `#image("…")`.
+- Deleting a note (trash button of the explorer, or the command palette)
+  moves it and its images to the trash of the vault. The trash (command
+  palette, "Show the trash") restores notes, under a free name if the path
+  is taken, and deletes them for good after a second click. Entries older
+  than `trashRetentionDays` (30 by default) are purged when the vault
+  opens.
 - Insert mode pairs `(`, `[`, `{` and quotes as Helix does, steps over a
   typed closing character and deletes an empty pair with `Backspace`.
 - Reading and editing panes, side by side, with Helix-style shortcuts

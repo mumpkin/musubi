@@ -33,6 +33,9 @@
 			class="filled"
 			d="M3 3h5v10H3z"
 		/>
+	{:else if name === 'trash'}
+		<!-- A bin with its lid. -->
+		<path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
 	{:else}
 		<path d="M4 4l8 8M12 4l-8 8" />
 	{/if}
