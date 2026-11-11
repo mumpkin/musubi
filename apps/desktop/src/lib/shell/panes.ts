@@ -16,6 +16,9 @@ export interface PaneState {
 	draft?: string | undefined;
 	// Bumped to load the note from disk again (changed by another program).
 	loads: number;
+	// Source line (from 0) of the reading cursor or the editor cursor, kept
+	// when switching between reading and editing.
+	line?: number | undefined;
 }
 
 // What a pane reports to the shell.
@@ -27,6 +30,9 @@ export interface PaneEvents {
 	draft: (text: string | undefined) => void;
 	saved: (path: string) => void;
 	quit: (force: boolean) => void;
+	line: (line: number | undefined) => void;
+	// Edit the note at a source line (double click on a block).
+	edit: (line: number) => void;
 }
 
 export const MAX_PANES = 2;

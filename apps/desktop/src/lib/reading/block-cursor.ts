@@ -37,9 +37,32 @@ export function blockAt(element: Element): number | undefined {
 	return block ? Number(block.dataset.block) : undefined;
 }
 
+// The rendered block to show for source line `line` (from 0): the one
+// that contains it, or the last one before it.
+export function blockForLine(
+	blocks: readonly { startLine: number; endLine: number }[],
+	rendered: readonly number[],
+	line: number,
+): number | undefined {
+	let found: number | undefined;
+	for (const index of rendered) {
+		const block = blocks[index];
+		if (block && block.startLine <= line) {
+			found = index;
+		}
+		if (block && block.startLine <= line && line <= block.endLine) {
+			return index;
+		}
+	}
+	return found ?? rendered[0];
+}
+
+// `smooth` animates the scroll (moves of the cursor); otherwise the block
+// is centred at once (opening a note on a block).
 export function highlightBlock(
 	container: Element,
 	block: number | undefined,
+	isSmooth = true,
 ): void {
 	for (const element of container.querySelectorAll('.selected-block')) {
 		element.classList.remove('selected-block');
@@ -51,5 +74,7 @@ export function highlightBlock(
 	for (const element of elements) {
 		element.classList.add('selected-block');
 	}
-	elements[0]?.scrollIntoView({ block: 'nearest' });
+	elements[0]?.scrollIntoView(isSmooth
+		? { block: 'nearest', behavior: 'smooth' }
+		: { block: 'center' });
 }

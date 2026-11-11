@@ -2,8 +2,13 @@
 <!-- CodeMirror 6 with the Helix profile, a status bar and a command line. -->
 <script lang="ts">
 	import { history } from '@codemirror/commands';
-	import { EditorState } from '@codemirror/state';
-	import { drawSelection, EditorView, lineNumbers } from '@codemirror/view';
+	import { EditorState, type Extension } from '@codemirror/state';
+	import {
+		drawSelection,
+		EditorView,
+		lineNumbers,
+		type ViewUpdate,
+	} from '@codemirror/view';
 	import {
 		type EditorHost,
 		type EditorMode,
@@ -34,6 +39,10 @@
 		autosaveDelay?: number | undefined;
 		// Takes the keyboard focus once on screen.
 		autofocus?: boolean;
+		// Source line (from 0) to start on.
+		initialLine?: number | undefined;
+		// The line of the cursor, as it moves.
+		onCursorLine?: (line: number) => void;
 	}
 
 	const {
@@ -46,6 +55,8 @@
 		onModeChange,
 		autosaveDelay,
 		autofocus = false,
+		initialLine,
+		onCursorLine,
 	}: Props = $props();
 
 	const MILLISECONDS_PER_SECOND = 1000;
@@ -91,38 +102,60 @@
 		clipboard: { write: writeText, read: readText },
 	};
 
+	// Puts the cursor on the first character of `line` (from 0), centred.
+	function startAt(editor: EditorView, line: number | undefined): void {
+		const { doc } = editor.state;
+		const number = Math.min(Math.max((line ?? 0) + 1, 1), doc.lines);
+		const from = doc.line(number).from;
+		editor.dispatch({
+			selection: { anchor: from, head: Math.min(from + 1, doc.length) },
+			// `y` is the name of the CodeMirror option.
+			// eslint-disable-next-line id-length
+			effects: EditorView.scrollIntoView(from, { y: 'center' }),
+		});
+	}
+
+	// Reports the cursor line and unsaved changes to the pane.
+	function reportChanges(update: ViewUpdate): void {
+		const { state } = update;
+		if (update.selectionSet) {
+			const cursor = state.selection.main.head;
+			onCursorLine?.(state.doc.lineAt(cursor).number - 1);
+		}
+		if (update.docChanged) {
+			const current = state.doc.toString();
+			onDraft(current === saved ? undefined : current);
+			scheduleAutosave();
+		}
+	}
+
+	function extensions(): Extension[] {
+		return [
+			lineNumbers(),
+			// Notes are prose: long lines wrap.
+			EditorView.lineWrapping,
+			history(),
+			drawSelection(),
+			typstLanguage(),
+			EditorView.updateListener.of(reportChanges),
+			helix({
+				host,
+				onModeChange: (next) => {
+					onModeChange?.(next);
+				},
+			}),
+		];
+	}
+
 	onMount(() => {
 		if (!parent) {
 			return undefined;
 		}
 		view = new EditorView({
 			parent,
-			state: EditorState.create({
-				doc: text,
-				extensions: [
-					lineNumbers(),
-					// Notes are prose: long lines wrap.
-					EditorView.lineWrapping,
-					history(),
-					drawSelection(),
-					typstLanguage(),
-					EditorView.updateListener.of((update) => {
-						if (update.docChanged) {
-							const current = update.state.doc.toString();
-							onDraft(current === saved ? undefined : current);
-							scheduleAutosave();
-						}
-					}),
-					helix({
-						host,
-						onModeChange: (next) => {
-							onModeChange?.(next);
-						},
-					}),
-				],
-			}),
+			state: EditorState.create({ doc: text, extensions: extensions() }),
 		});
-		view.dispatch({ selection: { anchor: 0, head: 1 } });
+		startAt(view, initialLine);
 		if (autofocus) {
 			view.focus();
 		}

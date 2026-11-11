@@ -61,7 +61,10 @@
 		<ReadingPane
 			path={pane.path}
 			{revision}
+			line={pane.line}
 			onOpen={events.open}
+			onLine={events.line}
+			onEdit={events.edit}
 		/>
 	{:else}
 		{#key `${pane.path}:${String(pane.loads)}`}
@@ -73,6 +76,8 @@
 					savedText={saved}
 					{autosaveDelay}
 					autofocus={isFocused}
+					initialLine={pane.line}
+					onCursorLine={events.line}
 					onWrite={write}
 					onQuit={events.quit}
 					onDraft={events.draft}

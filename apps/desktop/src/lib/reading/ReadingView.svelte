@@ -14,11 +14,23 @@
 		markup: NoteMarkup;
 		// Index of the block under the cursor, in the source blocks.
 		selectedBlock: number | undefined;
+		// Scrolls the selection into view without animation, for the first
+		// display of a note.
+		isFirstDisplay?: boolean;
 		onNavigate: (path: string) => void;
 		onSelect: (block: number | undefined) => void;
+		// Double click on a block: edit the note there.
+		onEdit: (block: number) => void;
 	}
 
-	const { markup, selectedBlock, onNavigate, onSelect }: Props = $props();
+	const {
+		markup,
+		selectedBlock,
+		isFirstDisplay = false,
+		onNavigate,
+		onSelect,
+		onEdit,
+	}: Props = $props();
 
 	const CURSOR_STEPS = new Map([
 		['j', 1],
@@ -29,7 +41,7 @@
 
 	$effect(() => {
 		if (container) {
-			highlightBlock(container, selectedBlock);
+			highlightBlock(container, selectedBlock, !isFirstDisplay);
 		}
 	});
 
@@ -44,6 +56,15 @@
 			onSelect(moveCursor(blocks, selectedBlock, step));
 		} else if (event.key === 'Escape') {
 			onSelect(undefined);
+		}
+	}
+
+	function handleDoubleClick(event: MouseEvent): void {
+		const block = event.target instanceof Element
+			? blockAt(event.target)
+			: undefined;
+		if (block !== undefined) {
+			onEdit(block);
 		}
 	}
 
@@ -81,6 +102,7 @@
 	class="reading-view"
 	tabindex="0"
 	onclick={handleClick}
+	ondblclick={handleDoubleClick}
 	onkeydown={handleKeydown}
 >
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitized -->

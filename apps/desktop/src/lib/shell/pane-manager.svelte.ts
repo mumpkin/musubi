@@ -43,6 +43,7 @@ export class PaneManager {
 		if (pane) {
 			pane.path = path;
 			pane.draft = undefined;
+			pane.line = undefined;
 		}
 	}
 
@@ -112,6 +113,23 @@ export class PaneManager {
 		}
 	}
 
+	setLine(index: number, line: number | undefined): void {
+		const pane = this.panes[index];
+		if (pane) {
+			pane.line = line;
+		}
+	}
+
+	// Double click on a block: edit the note there.
+	edit(index: number, line: number): void {
+		const pane = this.panes[index];
+		if (pane) {
+			pane.line = line;
+			pane.mode = 'editing';
+			this.focusAfterRender(index);
+		}
+	}
+
 	private bump(path: string): void {
 		this.revisions.set(path, (this.revisions.get(path) ?? 0) + 1);
 	}
@@ -141,6 +159,12 @@ export class PaneManager {
 			},
 			quit: (force) => {
 				this.quit(index, force);
+			},
+			line: (line) => {
+				this.setLine(index, line);
+			},
+			edit: (line) => {
+				this.edit(index, line);
 			},
 		};
 	}
