@@ -104,14 +104,20 @@
 	text-underline-offset: 2px;
 }
 
-/* Web links leave Musubi for the browser: a small arrow says so. */
+/* Web links leave Musubi for the browser: the `external-link` icon of
+Lucide (ISC licence) says so. The HTML of a note is not made by Svelte, so
+the icon is drawn as a mask, in the colour of the text around it. */
 .reading-view a.web-link::after {
-	content: '↗';
-	margin-left: 0.1em;
-	color: var(--muted);
-	font-size: 0.75em;
-	vertical-align: super;
-	line-height: 0;
+	--external-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 3h6v6'/%3E%3Cpath d='M10 14 21 3'/%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3C/svg%3E");
+
+	content: '';
+	display: inline-block;
+	width: 0.7em;
+	height: 0.7em;
+	margin-left: 0.15em;
+	background: var(--muted);
+	vertical-align: 0.05em;
+	mask: var(--external-link) center / contain no-repeat;
 }
 
 .reading-view sup[role='doc-noteref'] a,

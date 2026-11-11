@@ -54,7 +54,9 @@
 						toggle(child.path);
 					}}
 				>
-					<span class="chevron">{folded.has(child.path) ? '▸' : '▾'}</span>
+					<span class="chevron">
+						<Icon name={folded.has(child.path) ? 'folded' : 'unfolded'} />
+					</span>
 					{child.name}
 				</button>
 				{#if onCreate}
@@ -64,7 +66,7 @@
 						onclick={() => {
 							onCreate('note', child.path);
 						}}
-					>+</button>
+					><Icon name="newNote" /></button>
 				{/if}
 			</div>
 			{#if !folded.has(child.path)}
@@ -163,16 +165,17 @@
 		background: var(--selection);
 	}
 
-	.row :global(.add svg) {
-		width: 0.9rem;
-		height: 0.9rem;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.2;
+	/* More specific than the button rule above, which would make it a
+	block. */
+	.row .folder {
+		display: flex;
+		gap: 0.15rem;
+		align-items: center;
 	}
 
 	.chevron {
-		display: inline-block;
+		display: grid;
+		place-items: center;
 		width: 1rem;
 		color: var(--muted);
 	}

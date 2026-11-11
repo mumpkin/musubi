@@ -17,6 +17,10 @@ and this project adheres to
 
 ### Changed
 
+- The icons of the interface come from Lucide, with one size and stroke
+  width: pane headers, explorer, title bar, the mark of web links. A note
+  with unsaved changes shows a dot next to its title.
+
 - Pane commands use `Space w`, as in Helix, instead of `Ctrl-w`: `Space w v`
   splits, `Space w w` goes to the next pane, `Space w q` closes it. The
   backlinks toggle moves from `Space l` to `Space b`.
@@ -39,7 +43,7 @@ and this project adheres to
   leave with the trash.
 
 - Web links (`http`, `https`, `mailto`) open in the default browser, never
-  inside the window. In the reading view a small arrow tells them from note
+  inside the window. In the reading view a small icon tells them from note
   links, and their address shows on hover.
 
 - Every panel is reached the same way with the keyboard: `Space h` and

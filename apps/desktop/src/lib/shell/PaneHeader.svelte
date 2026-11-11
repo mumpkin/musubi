@@ -9,16 +9,26 @@
 
 	interface Props {
 		title: string;
+		// Unsaved changes: a dot after the title.
+		isModified?: boolean;
 		mode: string;
 		actions: PaneAction[];
 	}
 
-	const { title, mode, actions }: Props = $props();
+	const { title, isModified = false, mode, actions }: Props = $props();
 </script>
 
 <header class="pane-header">
 	<span class="mode">{mode}</span>
-	<span class="title">{title}</span>
+	<span class="title">
+		{title}
+		{#if isModified}
+			<span
+				class="modified"
+				title="Unsaved changes"
+			><Icon name="modified" /></span>
+		{/if}
+	</span>
 	{#each actions as action (action.label)}
 		<Tooltip.Root>
 			<Tooltip.Trigger
@@ -56,12 +66,29 @@
 	}
 
 	.title {
+		display: flex;
 		flex: 1;
+		gap: 0.35rem;
+		align-items: center;
 		font-weight: 600;
 	}
 
+	/* A small filled dot, as in most editors. */
+	.modified {
+		display: grid;
+		place-items: center;
+	}
+
+	.modified :global(svg) {
+		width: 0.5rem;
+		height: 0.5rem;
+		fill: currentColor;
+	}
+
 	:global(.pane-action) {
-		padding: 0.1rem 0.4rem;
+		display: grid;
+		place-items: center;
+		padding: 0.15rem 0.3rem;
 		border: none;
 		border-radius: 4px;
 		background: none;

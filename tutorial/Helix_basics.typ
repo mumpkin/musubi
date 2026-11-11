@@ -87,7 +87,7 @@ Remove (all of this) text.
 == Saving and leaving
 
 `:w` saves, `:q` goes back to reading, `:wq` (or `:x`) does both, `:q!`
-leaves without saving. A note with unsaved changes shows `●` next to its
+leaves without saving. A note with unsaved changes shows a dot next to its
 title.
 
 Next: #note-link("Welcome/Typst_basics")[Typst basics].

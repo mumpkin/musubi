@@ -5,6 +5,8 @@
 <script lang="ts">
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 
+	import Icon from './Icon.svelte';
+
 	interface Props {
 		title: string;
 	}
@@ -36,25 +38,20 @@
 			aria-label="Minimize"
 			onclick={windowAction('minimize')}
 		>
-			<svg viewBox="0 0 10 10"><path d="M1 5h8" /></svg>
+			<Icon name="minimize" />
 		</button>
 		<button
 			aria-label="Maximize"
 			onclick={windowAction('toggleMaximize')}
 		>
-			<svg viewBox="0 0 10 10"><rect
-				x="1.5"
-				y="1.5"
-				width="7"
-				height="7"
-			/></svg>
+			<Icon name="maximize" />
 		</button>
 		<button
 			class="close"
 			aria-label="Close"
 			onclick={windowAction('close')}
 		>
-			<svg viewBox="0 0 10 10"><path d="M2 2l6 6M8 2l-6 6" /></svg>
+			<Icon name="close" />
 		</button>
 	</div>
 </header>
@@ -87,6 +84,8 @@
 	}
 
 	button {
+		display: grid;
+		place-items: center;
 		width: 2.75rem;
 		height: 100%;
 		border: none;
@@ -102,13 +101,5 @@
 	button.close:hover {
 		background: var(--error);
 		color: var(--background);
-	}
-
-	svg {
-		width: 10px;
-		height: 10px;
-		fill: none;
-		stroke: currentColor;
-		stroke-width: 1.2;
 	}
 </style>

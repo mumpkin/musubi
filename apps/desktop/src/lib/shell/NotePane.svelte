@@ -62,7 +62,8 @@
 	onfocusin={events.focus}
 >
 	<PaneHeader
-		title={isModified ? `${title} ●` : title}
+		{title}
+		{isModified}
 		mode={pane.mode === 'editing'
 			? modeIndicator(editorMode)
 			: MODE_LABELS[pane.mode]}
