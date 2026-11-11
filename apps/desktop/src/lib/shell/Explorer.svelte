@@ -8,6 +8,7 @@
 	import type { FolderNode } from '../vault/tree.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
+	import Icon from './Icon.svelte';
 	import { focusFirst, listKeydown } from './list-keys.ts';
 
 	interface Props {
@@ -66,13 +67,13 @@
 			onclick={() => {
 				onCreate('note', '');
 			}}
-		>+</button>
+		><Icon name="newNote" /></button>
 		<button
 			title="New folder"
 			onclick={() => {
 				onCreate('folder', '');
 			}}
-		>▤</button>
+		><Icon name="newFolder" /></button>
 	</header>
 	<ExplorerSection
 		name="Pinned"
@@ -126,7 +127,9 @@
 	}
 
 	header button {
-		padding: 0 0.35rem;
+		display: grid;
+		place-items: center;
+		padding: 0.15rem 0.3rem;
 		border: none;
 		border-radius: 4px;
 		background: none;

@@ -16,6 +16,7 @@
 		"@codemirror/state": "^6.7.6",
 		"@codemirror/view": "^6.43.15",
 		"@internationalized/date": "^3.12.4",
+		"@lucide/svelte": "^1.71.0",
 		"@musubi/editor": "workspace:*",
 		"@tauri-apps/api": "^2.12.4",
 		"@tauri-apps/plugin-clipboard-manager": "^2.5.0",

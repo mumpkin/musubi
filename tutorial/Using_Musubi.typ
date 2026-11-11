@@ -8,12 +8,12 @@ command palette (`Space ?`) lists the same commands.
 == The window
 
 - *Title bar*: the title of the current note, and the buttons of the window.
-- *Explorer*, on the left (`Space e`): folders and notes by title. `+` next
-  to the vault name creates a note, the folder button a folder; `+` next to
-  a folder creates a note in it. The pin and trash buttons of a note show
-  when the pointer is over it. On top, *Pinned* lists the notes you pinned
-  and *Recent* the last 10 notes opened on this computer; both fold like
-  folders.
+- *Explorer*, on the left (`Space e`): folders and notes by title. The
+  buttons next to the vault name create a note and a folder; the new note
+  button next to a folder creates a note in it. The pin and trash buttons of
+  a note show when the pointer is over it. On top, *Pinned* lists the notes
+  you pinned and *Recent* the last 10 notes opened on this computer; both
+  fold like folders.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
   read or edited, or the graph. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current
@@ -63,7 +63,7 @@ They work everywhere except while typing text.
 )
 
 Click a link to open its note. Footnote numbers and the entries of an
-outline scroll to their place. Web links, marked with a small arrow like
+outline scroll to their place. Web links, marked with a small external link icon like
 #link("https://typst.app")[the Typst website], open in your browser.
 
 == Editor

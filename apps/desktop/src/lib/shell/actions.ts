@@ -9,7 +9,19 @@ export interface PaletteCommand {
 }
 
 export type IconName
-	= 'edit' | 'read' | 'split' | 'close' | 'trash' | 'pin';
+	= | 'edit'
+		| 'read'
+		| 'split'
+		| 'close'
+		| 'trash'
+		| 'newNote'
+		| 'newFolder'
+		| 'folded'
+		| 'unfolded'
+		| 'minimize'
+		| 'maximize'
+		| 'modified'
+		| 'pin';
 
 export interface PaneAction {
 	label: string;
