@@ -13,6 +13,7 @@ mod rename;
 mod search;
 pub mod title;
 pub mod trash;
+pub mod tutorial;
 mod utc;
 mod vault;
 

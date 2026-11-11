@@ -19,6 +19,8 @@ pub struct VaultInfo {
 	pub name: String,
 	pub read_only: bool,
 	pub tree: VaultTree,
+	/// The note to show first: the tutorial of a new vault.
+	pub first_note: Option<String>,
 }
 
 const NO_VAULT: &str = "no vault is open";
@@ -33,6 +35,7 @@ fn info(open: &OpenVault) -> Result<VaultInfo, String> {
 			.unwrap_or_default(),
 		read_only: open.vault.read_only,
 		tree: open.vault.tree().map_err(|error| error.to_string())?,
+		first_note: None,
 	})
 }
 
@@ -56,14 +59,47 @@ pub fn open_vault(
 	app: AppHandle,
 	state: State<'_, AppState>,
 ) -> Result<VaultInfo, String> {
-	let open = OpenVault::open(root, &data_dir(&app)?)?;
-	let vault_info = info(&open)?;
+	let mut open = OpenVault::open(root, &data_dir(&app)?)?;
+	let first_note = welcome(&mut open)?;
+	let vault_info = VaultInfo {
+		first_note,
+		..info(&open)?
+	};
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
 	settings.last_vault = Some(open.vault.root().to_path_buf());
 	settings.save(&config)?;
 	*state.lock() = Some(open);
 	Ok(vault_info)
+}
+
+/// A new vault, without any note, starts with the tutorial. Returns its
+/// first note.
+fn welcome(open: &mut OpenVault) -> Result<Option<String>, String> {
+	let tree = open.vault.tree().map_err(|error| error.to_string())?;
+	if !tree.notes.is_empty() || open.vault.read_only {
+		return Ok(None);
+	}
+	let start = open
+		.vault
+		.install_tutorial()
+		.map_err(|error| error.to_string())?;
+	open.refresh_index()?;
+	Ok(Some(start.to_owned()))
+}
+
+/// Writes the notes of the tutorial that are missing; returns the path of
+/// its first note.
+#[tauri::command(async)]
+pub fn open_tutorial(state: State<'_, AppState>) -> Result<String, String> {
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let start = open
+		.vault
+		.install_tutorial()
+		.map_err(|error| error.to_string())?;
+	open.refresh_index()?;
+	Ok(start.to_owned())
 }
 
 /// The vault already open, or the one of the last session if it still

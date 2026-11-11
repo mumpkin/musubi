@@ -17,6 +17,10 @@ and this project adheres to
 
 ### Added
 
+- A new vault starts with a tutorial in a `Welcome` folder: _Start here_,
+  _Helix basics_ with exercises, _Typst basics_, _Musubi features_ and
+  _Using Musubi_, a guide to the whole app. "Open the tutorial" in the
+  command palette brings back the missing notes without touching the others.
 - Open a folder as a vault; the last vault reopens at launch.
 - Note explorer listing notes by title, with folders that fold.
 - Create notes and folders (`Space n`), named from their title.
