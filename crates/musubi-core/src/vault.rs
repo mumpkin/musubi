@@ -16,8 +16,8 @@ use crate::title;
 
 /// Version of the vault format this build reads and writes.
 pub const FORMAT: u64 = 0;
-const MUSUBI_FOLDER: &str = ".musubi";
-const SETTINGS_FILE: &str = "vault.json";
+pub(crate) const MUSUBI_FOLDER: &str = ".musubi";
+pub(crate) const SETTINGS_FILE: &str = "vault.json";
 const NOTE_EXTENSION: &str = "typ";
 const ASSETS_EXTENSION: &str = "assets";
 const DEFAULT_RETENTION_DAYS: u64 = 30;
@@ -33,13 +33,15 @@ pub struct NoteEntry {
 	pub title: String,
 }
 
-/// Folders and notes of a vault, sorted by path.
+/// Folders and notes of a vault, sorted by path, and the pinned notes.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, TS)]
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
 pub struct VaultTree {
 	pub folders: Vec<String>,
 	pub notes: Vec<NoteEntry>,
+	/// Paths of the pinned notes that exist, in the order of the pins.
+	pub pinned: Vec<String>,
 }
 
 pub struct Vault {
@@ -94,6 +96,11 @@ impl Vault {
 		self.collect(&self.root, &mut tree)?;
 		tree.folders.sort();
 		tree.notes.sort_by(|left, right| left.path.cmp(&right.path));
+		tree.pinned = self
+			.pinned()
+			.into_iter()
+			.filter(|pin| tree.notes.iter().any(|note| note.path == *pin))
+			.collect();
 		Ok(tree)
 	}
 
@@ -290,7 +297,7 @@ fn names_in(directory: &Path) -> Result<Vec<String>, VaultError> {
 
 /// Fields of `vault.json`; a missing or unreadable file has none, which
 /// means the default values.
-fn read_settings(settings: &Path) -> serde_json::Value {
+pub(crate) fn read_settings(settings: &Path) -> serde_json::Value {
 	fs::read_to_string(settings)
 		.ok()
 		.and_then(|text| serde_json::from_str(&text).ok())

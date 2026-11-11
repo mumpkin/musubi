@@ -181,14 +181,22 @@ synced with the notes.
 ```json
 {
 	"format": 0,
+	"pinned": ["Maths/Mes_cours_de_maths.typ"],
 	"trashRetentionDays": 30
 }
 ```
 
-| Field                | Type    | Default | Meaning                                                   |
-| -------------------- | ------- | ------- | --------------------------------------------------------- |
-| `format`             | integer | `0`     | Vault format version.                                     |
-| `trashRetentionDays` | integer | `30`    | Days before trash entries are purged; `0` disables purge. |
+| Field                | Type             | Default | Meaning                                                   |
+| -------------------- | ---------------- | ------- | --------------------------------------------------------- |
+| `format`             | integer          | `0`     | Vault format version.                                     |
+| `pinned`             | array of strings | `[]`    | Pinned notes, in order (see below).                       |
+| `trashRetentionDays` | integer          | `30`    | Days before trash entries are purged; `0` disables purge. |
+
+`pinned` lists notes by their path from the vault root, with `/` separators
+and the extension, in the order the explorer shows them. Paths that lead to
+no note are ignored but kept. Renaming a note updates its path; moving it to
+the trash removes it, and restoring it does not pin it again. The recent
+notes are not stored in the vault: they belong to each device.
 
 Unknown fields are kept when Musubi rewrites the file. A missing file means
 format `0` with default values.

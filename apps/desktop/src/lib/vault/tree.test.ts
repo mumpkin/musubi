@@ -11,6 +11,7 @@ const TREE = {
 		{ path: 'Maths/Analyse.typ', title: 'Analyse' },
 		{ path: 'Maths/Algèbre/Groupes.typ', title: 'Groupes' },
 	],
+	pinned: [],
 };
 
 describe('buildTree', () => {

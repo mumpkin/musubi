@@ -2,6 +2,10 @@
 import type { NoteEntry } from "./NoteEntry";
 
 /**
- * Folders and notes of a vault, sorted by path.
+ * Folders and notes of a vault, sorted by path, and the pinned notes.
  */
-export type VaultTree = { folders: Array<string>, notes: Array<NoteEntry>, };
+export type VaultTree = { folders: Array<string>, notes: Array<NoteEntry>, 
+/**
+ * Paths of the pinned notes that exist, in the order of the pins.
+ */
+pinned: Array<string>, };

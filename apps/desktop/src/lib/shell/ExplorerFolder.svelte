@@ -6,13 +6,19 @@
 	import type { FolderNode } from '../vault/tree.ts';
 	import Self from './ExplorerFolder.svelte';
 	import Icon from './Icon.svelte';
+	import PinButton from './PinButton.svelte';
 
 	interface Props {
 		folder: FolderNode;
 		current: string;
 		folded: SvelteSet<string>;
+		pinnedPaths: ReadonlySet<string>;
 		onOpen: (path: string) => void;
-		onCreate: (kind: 'note' | 'folder', folder: string) => void;
+		onPin: (path: string) => void;
+		// Without it, as in the pinned and recent sections, folders have no
+		// button to create a note.
+		onCreate?: ((kind: 'note' | 'folder', folder: string) => void)
+			| undefined;
 		onDelete: (path: string) => void;
 	}
 
@@ -20,7 +26,9 @@
 		folder,
 		current,
 		folded,
+		pinnedPaths,
 		onOpen,
+		onPin,
 		onCreate,
 		onDelete,
 	}: Props = $props();
@@ -49,20 +57,24 @@
 					<span class="chevron">{folded.has(child.path) ? '▸' : '▾'}</span>
 					{child.name}
 				</button>
-				<button
-					class="add"
-					title="New note in {child.name}"
-					onclick={() => {
-						onCreate('note', child.path);
-					}}
-				>+</button>
+				{#if onCreate}
+					<button
+						class="add"
+						title="New note in {child.name}"
+						onclick={() => {
+							onCreate('note', child.path);
+						}}
+					>+</button>
+				{/if}
 			</div>
 			{#if !folded.has(child.path)}
 				<Self
 					folder={child}
 					{current}
 					{folded}
+					{pinnedPaths}
 					{onOpen}
+					{onPin}
 					{onCreate}
 					{onDelete}
 				/>
@@ -79,6 +91,11 @@
 					onOpen(note.path);
 				}}
 			>{note.title}</button>
+			<PinButton
+				{note}
+				isPinned={pinnedPaths.has(note.path)}
+				{onPin}
+			/>
 			<button
 				class="add"
 				title="Move {note.title} to the trash"
@@ -105,7 +122,7 @@
 		display: flex;
 	}
 
-	button {
+	.row :global(button) {
 		display: block;
 		width: 100%;
 		padding: 0.2rem 0.5rem;
@@ -119,18 +136,18 @@
 		cursor: pointer;
 	}
 
-	button:hover {
+	.row :global(button:hover) {
 		background: var(--hover);
 	}
 
 	/* The entry reached with `j` and `k`. */
-	button:focus-visible {
+	.row :global(button:focus-visible) {
 		outline: none;
 		background: var(--hover);
 		box-shadow: inset 2px 0 0 var(--accent);
 	}
 
-	.add {
+	.row :global(.add) {
 		display: flex;
 		align-items: center;
 		width: auto;
@@ -138,7 +155,7 @@
 		visibility: hidden;
 	}
 
-	.row:hover .add {
+	.row:hover :global(.add) {
 		visibility: visible;
 	}
 
@@ -146,7 +163,7 @@
 		background: var(--selection);
 	}
 
-	.add :global(svg) {
+	.row :global(.add svg) {
 		width: 0.9rem;
 		height: 0.9rem;
 		fill: none;

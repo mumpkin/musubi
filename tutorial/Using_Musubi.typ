@@ -10,8 +10,10 @@ command palette (`Space ?`) lists the same commands.
 - *Title bar*: the title of the current note, and the buttons of the window.
 - *Explorer*, on the left (`Space e`): folders and notes by title. `+` next
   to the vault name creates a note, the folder button a folder; `+` next to
-  a folder creates a note in it. The trash button of a note shows when the
-  pointer is over it.
+  a folder creates a note in it. The pin and trash buttons of a note show
+  when the pointer is over it. On top, *Pinned* lists the notes you pinned
+  and *Recent* the last 10 notes opened on this computer; both fold like
+  folders.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
   read or edited, or the graph. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current
@@ -87,6 +89,9 @@ image on the editor inserts it too.
   title.
 - *Rename*: change the first `=` heading and save. The file, its images and
   every link to it follow.
+- *Pin*: the pin button in the explorer, or "Pin or unpin the note" in the
+  palette. Pins are saved in the vault: every copy of it shows them. A
+  renamed note stays pinned; a note moved to the trash is unpinned.
 - *Delete*: the trash button in the explorer, or "Move the note to the
   trash" in the palette. "Show the trash" restores notes or deletes them for
   good. Notes stay 30 days in the trash.
@@ -99,9 +104,10 @@ Your vault is an ordinary folder; Musubi only reads and writes files in it.
 
 - Each note is a `.typ` file, readable and compilable with Typst itself.
 - The images of a note are in a folder next to it, `Note.assets/`.
-- `.musubi/` holds the settings of the vault and the trash.
-- The search index and the window layout stay on this computer, outside the
-  vault: deleting them loses nothing.
+- `.musubi/` holds the settings of the vault, its pinned notes and the
+  trash.
+- The search index, the recent notes and the window layout stay on this
+  computer, outside the vault: deleting them loses nothing.
 
 Musubi has no sync of its own. To use your notes on several devices, sync
 the folder with the tool you like: Syncthing, Nextcloud, git…

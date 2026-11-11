@@ -111,6 +111,8 @@ impl Vault {
 	) -> Result<TrashEntry, VaultError> {
 		let source = self.read_note(note)?;
 		self.writable_folder("")?;
+		// Before moving anything: a restored note is not pinned again.
+		self.unpin(note)?;
 		let id = format!("{}-{}", utc::compact(deleted_at), random_part(note));
 		let entry = self.entry_dir(&id)?;
 		let assets = assets_of(note);

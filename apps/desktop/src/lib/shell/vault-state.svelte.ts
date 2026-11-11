@@ -4,13 +4,17 @@
 import { SvelteSet } from 'svelte/reactivity';
 
 import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
+import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
+import { noteOpened, pinNote, recentNotes } from '../vault/explorer.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 import { buildTree } from '../vault/tree.ts';
 import { deviceSettings, vaultTree } from '../vault/vault.ts';
 
 export class VaultState {
-	tree = $state<VaultTree>({ folders: [], notes: [] });
+	tree = $state<VaultTree>({ folders: [], notes: [], pinned: [] });
+	// Paths of the notes opened last on this device, newest first.
+	recent = $state<string[]>([]);
 	// Bumped on every read of the tree: the backlinks may have changed.
 	loads = $state(0);
 	settings = $state<DeviceSettings>();
@@ -19,6 +23,14 @@ export class VaultState {
 	readonly notePaths: ReadonlySet<string> = $derived(
 		new SvelteSet(this.tree.notes.map((note) => note.path)),
 	);
+
+	readonly pinnedPaths: ReadonlySet<string> = $derived(
+		new SvelteSet(this.tree.pinned),
+	);
+
+	// The sections of the explorer, as notes with their titles.
+	readonly pinnedNotes = $derived(this.entries(this.tree.pinned));
+	readonly recentNotes = $derived(this.entries(this.recent));
 
 	// Seconds of pause before saving, or `undefined` without autosave.
 	readonly autosaveDelay = $derived(
@@ -34,6 +46,29 @@ export class VaultState {
 				this.settings = loaded;
 			})
 			.catch(() => undefined);
+		this.loadRecent();
+	}
+
+	private entries(paths: string[]): NoteEntry[] {
+		return paths.flatMap((path) =>
+			this.tree.notes.filter((note) => note.path === path));
+	}
+
+	private loadRecent(): void {
+		recentNotes()
+			.then((recent) => {
+				this.recent = recent;
+			})
+			.catch(() => undefined);
+	}
+
+	// A note shown in the focused pane becomes the most recent.
+	async opened(path: string): Promise<void> {
+		this.recent = await noteOpened(path);
+	}
+
+	async togglePin(path: string): Promise<void> {
+		this.setTree(await pinNote(path, !this.pinnedPaths.has(path)));
 	}
 
 	setTree(tree: VaultTree): void {
@@ -42,8 +77,10 @@ export class VaultState {
 	}
 
 	// Reads the tree again; the Rust core refreshes its index first.
+	// The recent notes too: a rename or the trash may have changed them.
 	async load(): Promise<void> {
 		this.setTree(await vaultTree());
+		this.loadRecent();
 	}
 
 	// Before following a link: creates the note if it is missing, titled
