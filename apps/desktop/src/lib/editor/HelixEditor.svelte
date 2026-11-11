@@ -20,10 +20,11 @@
 		writeText,
 	} from '@tauri-apps/plugin-clipboard-manager';
 	import { typst_lezer as typstLanguage } from 'codemirror-lang-typst/lezer';
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 
 	import { noteAssets } from '../vault/assets.ts';
 	import { linkSource } from '../vault/links.ts';
+	import { diskChange } from './disk-change.ts';
 	import { imagePaste, type ImageTarget, listenForDrops } from './images.ts';
 	import { PROMPT_LABELS, runPrompt } from './prompt.ts';
 	import PromptLine from './PromptLine.svelte';
@@ -183,6 +184,29 @@
 			}).catch(() => undefined);
 			view?.destroy();
 		};
+	});
+
+	// The note changed on disk (saved, or changed by another program): an
+	// unmodified editor takes the new text as one change, which `u` undoes.
+	function syncWithDisk(disk: string): void {
+		if (!view || disk === saved) {
+			return;
+		}
+		const current = view.state.doc.toString();
+		const isUnmodified = current === saved;
+		saved = disk;
+		if (isUnmodified) {
+			view.dispatch({ changes: diskChange(current, disk) });
+		} else {
+			onDraft(current === disk ? undefined : current);
+		}
+	}
+
+	$effect(() => {
+		const disk = savedText;
+		untrack(() => {
+			syncWithDisk(disk);
+		});
 	});
 
 	function closePrompt(): void {
