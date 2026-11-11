@@ -3,6 +3,7 @@
 <script lang="ts">
 	import './note.css';
 
+	import { openUrl } from '@tauri-apps/plugin-opener';
 	import { onDestroy } from 'svelte';
 
 	import { PROMPT_LABELS } from '../editor/prompt.ts';
@@ -14,7 +15,7 @@
 		renderedBlocks,
 	} from './block-cursor.ts';
 	import type { NoteMarkup } from './note-html.ts';
-	import { linkedNotePath } from './note-html.ts';
+	import { linkedNotePath, webLinkUrl } from './note-html.ts';
 	import { readingKeyHandler } from './reading-keys.ts';
 	import { ReadingNavigator } from './reading-navigator.ts';
 
@@ -140,10 +141,15 @@
 			onSelect(blockAt(event.target));
 			return;
 		}
-		// Links never open inside the window; web links will open in the
-		// system browser later.
+		// Links never open inside the window: web links open in the system
+		// browser.
 		event.preventDefault();
 		if (scrollToAnchor(anchor)) {
+			return;
+		}
+		const url = webLinkUrl(anchor);
+		if (url !== undefined) {
+			openUrl(url).catch(() => undefined);
 			return;
 		}
 		const path = linkedNotePath(anchor);

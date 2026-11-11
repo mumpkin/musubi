@@ -32,6 +32,10 @@ and this project adheres to
 
 ### Added
 
+- Web links (`http`, `https`, `mailto`) open in the default browser, never
+  inside the window. In the reading view a small arrow tells them from note
+  links, and their address shows on hover.
+
 - Every panel is reached the same way with the keyboard: `Space h` and
   `Space l` move to the panel on the left and on the right (explorer, panes,
   backlinks). In the explorer and the backlinks, `j` and `k` move, `Enter`

@@ -61,6 +61,27 @@ function markMissingLinks(
 	}
 }
 
+// Class of the links that leave Musubi for the system browser.
+export const WEB_LINK_CLASS = 'web-link';
+const WEB_URL = /^(?:https?|mailto):/iu;
+
+// The address of a web link, or `undefined` for any other link.
+export function webLinkUrl(element: Element): string | undefined {
+	const href = element.closest('a')?.getAttribute('href')?.trim();
+	return href !== undefined && WEB_URL.test(href) ? href : undefined;
+}
+
+// Marks web links, which show an external mark and their address on hover.
+function markWebLinks(root: Element): void {
+	for (const link of root.querySelectorAll<HTMLElement>('a[href]')) {
+		const url = webLinkUrl(link);
+		if (url !== undefined) {
+			link.classList.add(WEB_LINK_CLASS);
+			link.title = `${url} (opens in the browser)`;
+		}
+	}
+}
+
 // `exists` tells whether a note path (from the vault root, with the
 // extension) is a note of the vault.
 export function toNoteMarkup(
@@ -70,6 +91,7 @@ export function toNoteMarkup(
 	const document = new DOMParser().parseFromString(html, 'text/html');
 	sanitize(document.documentElement);
 	markMissingLinks(document.body, exists);
+	markWebLinks(document.body);
 	const styles = [...document.head.querySelectorAll('style')]
 		.map((style) => style.textContent)
 		.join('\n');
