@@ -43,7 +43,8 @@ They work everywhere except while typing text.
   [`Space b`], [Show or hide the backlinks],
   [`Space h`, `Space l`], [Panel on the left, on the right],
   [`Space g`], [Graph of the links, or back to the note],
-  [`Space r`], [Switch between reading and editing],
+  [`Space r`], [Switch between reading and editing; in the explorer, edit
+  the tree as text],
   [`Space w v`], [Split the pane],
   [`Space w w`], [Next pane],
   [`Space w q`], [Close the pane],
@@ -109,6 +110,26 @@ image on the editor inserts it too.
   note makes it work again. Notes stay 30 days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
+
+== Edit the tree as text
+
+`Space r` in the explorer, or its pencil button, turns it into an editor
+holding every folder and note of the vault, one per line, as in the
+oil.nvim plugin of Neovim. Folders end with `/`; what a folder holds is
+indented under it. Edit it with the Helix keys, then `:w`:
+
+- change a title to rename the note, a folder name to rename the folder;
+- cut a line (`x` then `d`) and paste it (`p`) under another folder to move
+  it, or change its indentation with `>` and `<`;
+- add a line to create a note, or a folder if it ends with `/`;
+  `Projects/Ideas/` creates both folders;
+- delete a line to move the note or the folder to the trash.
+
+Before anything changes, a window lists what will happen: `y` applies it,
+`n` goes back to the text. Links follow renamed and moved notes. A line
+that cannot work is underlined, with the reason, and nothing changes.
+`Enter` opens the note of the line; `:q` goes back to the explorer, `:q!`
+drops the changes.
 
 == Settings and themes
 

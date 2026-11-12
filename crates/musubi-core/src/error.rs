@@ -18,6 +18,8 @@ pub enum VaultError {
 	AlreadyExists(String),
 	/// A path typed by the user has an empty, `.` or `..` part.
 	InvalidPath(String),
+	/// A folder cannot move into one of its own folders.
+	IntoItself(String),
 	Io(io::Error),
 	/// The index could not be read or written.
 	Index(rusqlite::Error),
@@ -41,6 +43,9 @@ impl Display for VaultError {
 				formatter,
 				"{path}: each folder of the path needs a name"
 			),
+			Self::IntoItself(path) => {
+				write!(formatter, "the folder {path} cannot move into itself")
+			}
 			Self::Io(error) => write!(formatter, "{error}"),
 			Self::Index(error) => write!(formatter, "index: {error}"),
 		}

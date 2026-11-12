@@ -18,6 +18,7 @@ pub mod title;
 pub mod trash;
 mod trash_folder;
 mod trash_purge;
+mod tree_edit;
 pub mod tutorial;
 mod utc;
 mod vault;

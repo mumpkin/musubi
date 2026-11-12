@@ -57,6 +57,11 @@ export class SidePanels {
 		return typeof this.current() === 'number';
 	}
 
+	// Whether the keyboard focus is in the explorer.
+	isInExplorer(): boolean {
+		return this.current() === 'explorer';
+	}
+
 	private current(): Panel {
 		return panelOf(document.activeElement) ?? this.manager.focusedIndex;
 	}

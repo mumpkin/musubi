@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Edit the vault tree as text in the explorer, as with oil.nvim: `Space r`
+  in the explorer shows every folder and note as an indented line. Changing
+  a title renames the note, moving a line moves the entry, a new line
+  creates a note or a folder, a deleted line moves it to the trash. `:w`
+  lists the changes and applies them once confirmed; links follow.
+- `>` and `<` in the editor indent and unindent the selected lines, as in
+  Helix.
+
 ## [0.1.0] - 2026-11-12
 
 ### Security
