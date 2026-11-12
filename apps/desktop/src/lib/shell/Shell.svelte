@@ -114,6 +114,9 @@
 		newNote: () => {
 			dialogs.startCreation('note', parentOf(manager.currentPath));
 		},
+		toggleArchive: () => {
+			notes.toggleArchive(manager.currentPath);
+		},
 		togglePin: () => {
 			notes.togglePin(manager.currentPath);
 		},
@@ -188,13 +191,15 @@
 				<Explorer
 					bind:this={panels.explorerList}
 					vaultName={vault.name}
-					root={files.root}
+					root={files.sections.notebook}
+					archive={files.sections.archive}
 					pinned={files.pinnedNotes}
 					recent={files.recentNotes}
 					pinnedPaths={files.pinnedPaths}
 					current={manager.currentPath}
 					onOpen={openNote}
 					onPin={notes.togglePin}
+					onArchive={notes.toggleArchive}
 					onCreate={dialogs.startCreation}
 					onDelete={notes.deleteNote}
 					onLeave={() => {

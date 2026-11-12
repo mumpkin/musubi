@@ -46,6 +46,7 @@ macro_rules! commands {
 			explorer::pin_note,
 			explorer::recent_notes,
 			explorer::note_opened,
+			explorer::archive_entry,
 			themes::imported_themes,
 			themes::import_theme,
 			themes::remove_theme,

@@ -8,7 +8,7 @@ import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { noteOpened, pinNote, recentNotes } from '../vault/explorer.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
-import { buildTree } from '../vault/tree.ts';
+import { buildTree, splitArchive } from '../vault/tree.ts';
 import { deviceSettings, vaultTree } from '../vault/vault.ts';
 
 export class VaultState {
@@ -20,6 +20,8 @@ export class VaultState {
 	settings = $state<DeviceSettings>();
 
 	readonly root = $derived(buildTree(this.tree));
+	// Notebook and Archive sections of the explorer.
+	readonly sections = $derived(splitArchive(this.root));
 	readonly notePaths: ReadonlySet<string> = $derived(
 		new SvelteSet(this.tree.notes.map((note) => note.path)),
 	);
