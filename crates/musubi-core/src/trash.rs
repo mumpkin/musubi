@@ -16,22 +16,25 @@ use crate::links;
 use crate::naming::{Folder, NOTE_EXTENSIONS};
 use crate::paths;
 use crate::title;
+use crate::trash_folder::folder_entry;
 use crate::utc;
 use crate::vault::Vault;
 
 const TRASH_FOLDER: &str = ".musubi/trash";
 const ENTRY_FILE: &str = "entry.json";
 const ASSETS_SUFFIX: &str = ".assets";
-const SECONDS_PER_DAY: i64 = 86_400;
 /// Hex digits of the random part of an entry name.
 const RANDOM_BYTES: usize = 4;
 
 /// `entry.json`.
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct EntryFile {
-	original_path: String,
-	deleted_at: String,
+pub(crate) struct EntryFile {
+	pub(crate) original_path: String,
+	pub(crate) deleted_at: String,
+	/// The entry holds a folder, not a note.
+	#[serde(default, skip_serializing_if = "std::ops::Not::not")]
+	pub(crate) folder: bool,
 }
 
 /// A note in the trash.
@@ -45,7 +48,11 @@ pub struct TrashEntry {
 	pub original_path: String,
 	/// Deletion time, UTC, RFC 3339.
 	pub deleted_at: String,
+	/// Title of the note, or name of the folder.
 	pub title: String,
+	pub is_folder: bool,
+	/// Notes in the entry: 1 for a note.
+	pub note_count: u32,
 }
 
 /// Seconds since the Unix epoch.
@@ -58,7 +65,7 @@ pub fn now() -> i64 {
 
 /// Hex digits that differ between devices and deletions: a hash of the
 /// time in nanoseconds, the process and the note.
-fn random_part(note: &str) -> String {
+pub(crate) fn random_part(note: &str) -> String {
 	let nanos = SystemTime::now()
 		.duration_since(UNIX_EPOCH)
 		.map_or(0, |time| time.as_nanos());
@@ -77,7 +84,7 @@ fn assets_of(note: &str) -> String {
 	)
 }
 
-fn move_into(from: &Path, to: &Path) -> Result<(), VaultError> {
+pub(crate) fn move_into(from: &Path, to: &Path) -> Result<(), VaultError> {
 	if let Some(parent) = to.parent() {
 		fs::create_dir_all(parent)?;
 	}
@@ -90,7 +97,7 @@ impl Vault {
 		self.root().join(TRASH_FOLDER)
 	}
 
-	fn entry_dir(&self, id: &str) -> Result<PathBuf, VaultError> {
+	pub(crate) fn entry_dir(&self, id: &str) -> Result<PathBuf, VaultError> {
 		if id.is_empty() || id.contains(['/', '\\']) || id.starts_with('.') {
 			return Err(VaultError::OutsideVault(id.to_owned()));
 		}
@@ -124,16 +131,17 @@ impl Vault {
 		let file = EntryFile {
 			original_path: note.to_owned(),
 			deleted_at: utc::rfc3339(deleted_at),
+			folder: false,
 		};
-		let json = serde_json::to_string_pretty(&file)
-			.map_err(|error| VaultError::Io(error.into()))?;
-		fs::write(entry.join(ENTRY_FILE), json + "\n")?;
+		write_entry_file(&entry, &file)?;
 		Ok(TrashEntry {
 			id,
 			original_path: file.original_path,
 			deleted_at: file.deleted_at,
 			title: title::heading_title(&source)
 				.unwrap_or_else(|| title::stem_title(&stem_of(note))),
+			is_folder: false,
+			note_count: 1,
 		})
 	}
 
@@ -141,6 +149,9 @@ impl Vault {
 		let entry = self.entry_dir(id).ok()?;
 		let text = fs::read_to_string(entry.join(ENTRY_FILE)).ok()?;
 		let file: EntryFile = serde_json::from_str(&text).ok()?;
+		if file.folder {
+			return Some(folder_entry(id, &entry, file));
+		}
 		let source = fs::read_to_string(entry.join(&file.original_path)).ok();
 		let title = source
 			.as_deref()
@@ -153,6 +164,8 @@ impl Vault {
 			original_path: file.original_path,
 			deleted_at: file.deleted_at,
 			title,
+			is_folder: false,
+			note_count: 1,
 		})
 	}
 
@@ -190,6 +203,9 @@ impl Vault {
 			.read_entry(id)
 			.ok_or_else(|| VaultError::NotANote(id.to_owned()))?;
 		let original = entry.original_path;
+		if entry.is_folder {
+			return self.restore_folder(id, &original);
+		}
 		let folder = original.rfind('/').map_or("", |slash| &original[..slash]);
 		let directory = self.writable_folder(folder)?;
 		let restored = free_path(&directory, folder, &original)?;
@@ -225,58 +241,16 @@ impl Vault {
 		}
 		Ok(())
 	}
+}
 
-	/// Deletes entry `id` for good.
-	///
-	/// # Errors
-	///
-	/// A read-only vault or an I/O error.
-	pub fn delete_trash_entry(&self, id: &str) -> Result<(), VaultError> {
-		self.writable_folder("")?;
-		fs::remove_dir_all(self.entry_dir(id)?)?;
-		Ok(())
-	}
-
-	/// Deletes every entry for good.
-	///
-	/// # Errors
-	///
-	/// A read-only vault or an I/O error.
-	pub fn empty_trash(&self) -> Result<(), VaultError> {
-		for entry in self.trash_entries()? {
-			self.delete_trash_entry(&entry.id)?;
-		}
-		Ok(())
-	}
-
-	/// Deletes the entries older than `retention_days` at `now` (seconds
-	/// since the epoch); `0` keeps everything. Returns how many went.
-	///
-	/// # Errors
-	///
-	/// A read-only vault or an I/O error.
-	pub fn purge_trash(
-		&self,
-		now: i64,
-		retention_days: u64,
-	) -> Result<usize, VaultError> {
-		if retention_days == 0 || self.read_only {
-			return Ok(0);
-		}
-		let limit = i64::try_from(retention_days)
-			.unwrap_or(i64::MAX)
-			.saturating_mul(SECONDS_PER_DAY);
-		let mut purged = 0;
-		for entry in self.trash_entries()? {
-			let is_old = utc::parse_rfc3339(&entry.deleted_at)
-				.is_some_and(|deleted| now - deleted > limit);
-			if is_old {
-				self.delete_trash_entry(&entry.id)?;
-				purged += 1;
-			}
-		}
-		Ok(purged)
-	}
+pub(crate) fn write_entry_file(
+	entry: &Path,
+	file: &EntryFile,
+) -> Result<(), VaultError> {
+	let json = serde_json::to_string_pretty(file)
+		.map_err(|error| VaultError::Io(error.into()))?;
+	fs::write(entry.join(ENTRY_FILE), json + "\n")?;
+	Ok(())
 }
 
 fn stem_of(note: &str) -> String {

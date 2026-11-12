@@ -88,6 +88,15 @@ impl Recent {
 		.map(|_| ())
 	}
 
+	/// The notes of `folder` leave the recent notes.
+	pub fn forget_folder(&self, folder: &str) -> Result<(), String> {
+		let prefix = format!("{folder}/");
+		self.update(|recent| {
+			recent.retain(|note| !note.starts_with(&prefix));
+		})
+		.map(|_| ())
+	}
+
 	/// Applies `change` to the list and saves it; returns the list.
 	fn update(
 		&self,

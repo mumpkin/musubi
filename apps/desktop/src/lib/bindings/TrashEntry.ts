@@ -15,4 +15,12 @@ originalPath: string,
 /**
  * Deletion time, UTC, RFC 3339.
  */
-deletedAt: string, title: string, };
+deletedAt: string, 
+/**
+ * Title of the note, or name of the folder.
+ */
+title: string, isFolder: boolean, 
+/**
+ * Notes in the entry: 1 for a note.
+ */
+noteCount: number, };

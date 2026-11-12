@@ -28,6 +28,24 @@ pub fn trash_note(
 	Ok(entry)
 }
 
+/// Moves the folder at `path` and everything in it to the trash.
+#[tauri::command(async)]
+pub fn trash_folder(
+	path: &str,
+	app: AppHandle,
+	state: State<'_, AppState>,
+) -> Result<TrashEntry, String> {
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let entry = open
+		.vault
+		.trash_folder(path, now())
+		.map_err(|error| error.to_string())?;
+	Recent::of(&app, open.vault.root())?.forget_folder(path)?;
+	open.refresh_index()?;
+	Ok(entry)
+}
+
 /// Entries of the trash, newest first.
 #[tauri::command(async)]
 pub fn trash_entries(

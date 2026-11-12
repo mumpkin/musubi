@@ -52,6 +52,9 @@
 			});
 	}
 
+	const notesLabel = (count: number): string =>
+		count === 1 ? '1 note' : `${String(count)} notes`;
+
 	// First click asks, second click deletes.
 	function remove(id: string): void {
 		if (confirming !== id) {
@@ -98,7 +101,9 @@
 						<div class="entry">
 							<span>{entry.title}</span>
 							<span class="detail">
-								{entry.originalPath} ·
+								{entry.originalPath}{entry.isFolder
+									? ` · folder, ${notesLabel(entry.noteCount)}`
+									: ''} ·
 								{deletionTime(entry.deletedAt)}
 							</span>
 						</div>

@@ -105,3 +105,42 @@ fn refuses_entry_names_that_leave_the_trash() {
 	assert!(vault.delete_trash_entry("../..").is_err());
 	assert!(vault.restore("..").is_err());
 }
+
+#[test]
+fn trashes_and_restores_a_whole_folder() {
+	let (directory, vault) = vault_with(&[
+		("Le caca/A.typ", "= A\n"),
+		("Le caca/Sub/B.typ", "= B\n"),
+		("Le caca/A.assets/x.png", "png"),
+		("Other.typ", "= Other\n"),
+	]);
+	let root = directory.path();
+	vault.pin("Le caca/A.typ", true).expect("pinned");
+	vault.pin("Other.typ", true).expect("pinned");
+	let entry = vault.trash_folder("Le caca", 0).expect("trashed");
+	assert!(entry.is_folder);
+	assert_eq!((entry.title.as_str(), entry.note_count), ("Le caca", 2));
+	assert!(!exists(root, "Le caca"));
+	assert_eq!(vault.pinned(), ["Other.typ"]);
+	let listed = vault.trash_entries().expect("entries");
+	assert_eq!(listed, std::slice::from_ref(&entry));
+	fs::create_dir(root.join("Le caca")).expect("taken");
+	let restored = vault.restore(&entry.id).expect("restored");
+	assert_eq!(restored, "Le caca_2");
+	for path in [
+		"Le caca_2/A.typ",
+		"Le caca_2/Sub/B.typ",
+		"Le caca_2/A.assets/x.png",
+	] {
+		assert!(exists(root, path), "{path}");
+	}
+	assert!(vault.trash_entries().expect("entries").is_empty());
+}
+
+#[test]
+fn refuses_to_trash_the_root_or_the_settings() {
+	let (_directory, vault) = vault_with(&[("A.typ", "= A\n")]);
+	for folder in ["", "/", ".musubi", "../x", "A.typ"] {
+		assert!(vault.trash_folder(folder, 0).is_err(), "{folder}");
+	}
+}

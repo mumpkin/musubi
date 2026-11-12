@@ -15,6 +15,8 @@ mod search;
 mod settings;
 pub mod title;
 pub mod trash;
+mod trash_folder;
+mod trash_purge;
 pub mod tutorial;
 mod utc;
 mod vault;

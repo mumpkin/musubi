@@ -93,6 +93,9 @@
 		deleteNote: () => {
 			notes.deleteNote(manager.currentPath);
 		},
+		deleteFolder: () => {
+			notes.deleteFolder(parentOf(manager.currentPath));
+		},
 		showTrash: () => {
 			dialogs.isTrashOpen = true;
 		},

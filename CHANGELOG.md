@@ -44,6 +44,10 @@ and this project adheres to
 
 ### Added
 
+- Folders go to the trash with everything in them (button on hover in
+  the explorer, or "Move the folder of the note to the trash"), and come
+  back the same way.
+
 - In the reading view, `l` and `h` move between the links of the selected
   block and `Enter` follows the selected one.
 
