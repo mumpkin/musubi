@@ -37,6 +37,20 @@ pub fn set_autosave(
 	Ok(settings)
 }
 
+/// Shows or hides the trash section of the explorer. Returns the settings
+/// of the device.
+#[tauri::command(async)]
+pub fn set_trash_section(
+	show: bool,
+	app: AppHandle,
+) -> Result<DeviceSettings, String> {
+	let config = config_dir(&app)?;
+	let mut settings = DeviceSettings::load(&config);
+	settings.show_trash_section = show;
+	settings.save(&config)?;
+	Ok(settings)
+}
+
 /// Days before trash entries are purged; `0` keeps them.
 #[tauri::command(async)]
 pub fn set_trash_retention(

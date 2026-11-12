@@ -52,6 +52,7 @@ macro_rules! commands {
 			themes::remove_theme,
 			themes::choose_theme,
 			settings::set_autosave,
+			settings::set_trash_section,
 			settings::set_trash_retention,
 		]
 	};

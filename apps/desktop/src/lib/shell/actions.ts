@@ -33,3 +33,11 @@ export interface PaneAction {
 	shortcut: string;
 	run: () => void;
 }
+
+// What the trash section of the explorer needs.
+export interface TrashActions {
+	// Bumped when the vault may have changed: the trash is read again.
+	revision: number;
+	onRestored: (path: Promise<string>) => void;
+	onError: (message: string) => void;
+}

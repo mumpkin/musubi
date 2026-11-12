@@ -10,6 +10,7 @@
 		boundedNumber,
 		setAutosave,
 		setTrashRetention,
+		setTrashSection,
 		TRASH_RETENTION,
 	} from './commands.ts';
 	import ThemeSetting from './ThemeSetting.svelte';
@@ -42,6 +43,12 @@
 		if (settings) {
 			saveAutosave(enabled, settings.autosaveDelaySeconds);
 		}
+	}
+
+	function showTrashSection(show: boolean): void {
+		setTrashSection(show).then(onSettings).catch((error: unknown) => {
+			onError(String(error));
+		});
 	}
 
 	function changeDelay(input: HTMLInputElement): void {
@@ -112,9 +119,21 @@
 				</section>
 			{/if}
 			<section aria-labelledby="trash-heading">
-				<h3 id="trash-heading">Trash of this vault</h3>
+				<h3 id="trash-heading">Trash</h3>
+				{#if settings}
+					<label class="line">
+						<Switch.Root
+							class="switch"
+							checked={settings.showTrashSection}
+							onCheckedChange={showTrashSection}
+						>
+							<Switch.Thumb class="thumb" />
+						</Switch.Root>
+						Show the trash in the explorer
+					</label>
+				{/if}
 				<label class="line">
-					Keep deleted notes
+					Keep deleted notes of this vault
 					<input
 						type="number"
 						min={TRASH_RETENTION.min}

@@ -75,6 +75,8 @@ pub struct DeviceSettings {
 	/// light or dark preference of the system.
 	#[ts(type = "string | null")]
 	pub theme: Option<String>,
+	/// The trash shows as the last section of the explorer.
+	pub show_trash_section: bool,
 	/// Recent notes of each vault, by vault root, newest first.
 	#[ts(skip)]
 	pub recent: BTreeMap<String, Vec<String>>,
@@ -89,6 +91,7 @@ impl Default for DeviceSettings {
 			autosave: false,
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
 			theme: None,
+			show_trash_section: true,
 			recent: BTreeMap::new(),
 		}
 	}
