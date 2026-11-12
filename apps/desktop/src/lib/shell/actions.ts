@@ -23,7 +23,9 @@ export type IconName
 		| 'modified'
 		| 'pin'
 		| 'recent'
-		| 'notebook';
+		| 'notebook'
+		| 'archive'
+		| 'unarchive';
 
 export interface PaneAction {
 	label: string;

@@ -5,7 +5,7 @@
 use std::path::{Path, PathBuf};
 
 use musubi_core::VaultTree;
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Manager, State};
 
 use crate::state::{AppState, DeviceSettings};
 use crate::vault::config_dir;
@@ -97,6 +97,22 @@ impl Recent {
 		.map(|_| ())
 	}
 
+	/// After a move of `old` to `new` (a note or a folder), the recent
+	/// notes follow.
+	pub fn moved(&self, old: &str, new: &str) -> Result<(), String> {
+		let prefix = format!("{old}/");
+		self.update(|recent| {
+			for note in recent.iter_mut() {
+				if note == old {
+					new.clone_into(note);
+				} else if let Some(rest) = note.strip_prefix(&prefix) {
+					*note = format!("{new}/{rest}");
+				}
+			}
+		})
+		.map(|_| ())
+	}
+
 	/// Applies `change` to the list and saves it; returns the list.
 	fn update(
 		&self,
@@ -112,4 +128,26 @@ impl Recent {
 		}
 		Ok(result)
 	}
+}
+
+/// Archives the note or folder at `path` (`unarchive`: puts it back).
+/// Returns its new path.
+#[tauri::command(async)]
+pub fn archive_entry(
+	path: &str,
+	unarchive: bool,
+	app: AppHandle,
+) -> Result<String, String> {
+	let state = app.state::<AppState>();
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let moved = if unarchive {
+		open.vault.unarchive(path)
+	} else {
+		open.vault.archive(path)
+	}
+	.map_err(|error| error.to_string())?;
+	Recent::of(&app, open.vault.root())?.moved(path, &moved)?;
+	open.refresh_index()?;
+	Ok(moved)
 }

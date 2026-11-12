@@ -3,6 +3,8 @@
      imported by itself, so that only the icons used are bundled. They all
      share one size and stroke width, and take the colour of the text. -->
 <script lang="ts">
+	import Archive from '@lucide/svelte/icons/archive';
+	import ArchiveArrowUp from '@lucide/svelte/icons/archive-arrow-up';
 	import BookOpen from '@lucide/svelte/icons/book-open';
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
@@ -43,6 +45,8 @@
 		pin: Pin,
 		recent: Clock,
 		notebook: Notebook,
+		archive: Archive,
+		unarchive: ArchiveArrowUp,
 	} as const;
 
 	const SIZE_PIXELS = 15;

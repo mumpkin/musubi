@@ -47,6 +47,10 @@ and this project adheres to
 
 ### Added
 
+- Notes and folders can be archived: they move to `Archive/`, shown in
+  an Archive section of the explorer, keeping their path, and links to them
+  follow. The same button, or the palette, puts them back.
+
 - Folders go to the trash with everything in them (button on hover in
   the explorer, or "Move the folder of the note to the trash"), and come
   back the same way.

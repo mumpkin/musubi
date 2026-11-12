@@ -16,7 +16,7 @@ use crate::vault::Vault;
 const ASSETS_SUFFIX: &str = ".assets";
 
 /// `path` without its `.typ` extension: the target of a `note-link`.
-fn target_of(path: &str) -> &str {
+pub(crate) fn target_of(path: &str) -> &str {
 	path.strip_suffix(".typ").unwrap_or(path)
 }
 
@@ -116,7 +116,7 @@ fn rename(from: &Path, to: &Path) -> Result<(), VaultError> {
 	Ok(())
 }
 
-fn move_files(
+pub(crate) fn move_files(
 	vault: &Vault,
 	note: &str,
 	renamed: &str,
@@ -134,7 +134,7 @@ fn move_files(
 }
 
 /// Rewrites links and image paths in every note after a renaming.
-fn update_notes(
+pub(crate) fn update_notes(
 	vault: &Vault,
 	renaming: &Renaming<'_>,
 ) -> Result<(), VaultError> {

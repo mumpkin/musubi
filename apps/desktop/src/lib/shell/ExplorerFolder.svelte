@@ -4,6 +4,7 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import type { FolderNode } from '../vault/tree.ts';
+	import ArchiveButton from './ArchiveButton.svelte';
 	import Self from './ExplorerFolder.svelte';
 	import Icon from './Icon.svelte';
 	import PinButton from './PinButton.svelte';
@@ -15,6 +16,7 @@
 		pinnedPaths: ReadonlySet<string>;
 		onOpen: (path: string) => void;
 		onPin: (path: string) => void;
+		onArchive: (path: string) => void;
 		// Without it, as in the pinned and recent sections, folders have no
 		// button to create a note.
 		onCreate?: ((kind: 'note' | 'folder', folder: string) => void)
@@ -29,6 +31,7 @@
 		pinnedPaths,
 		onOpen,
 		onPin,
+		onArchive,
 		onCreate,
 		onDelete,
 	}: Props = $props();
@@ -75,6 +78,11 @@
 						}}
 					><Icon name="trash" /></button>
 				{/if}
+				<ArchiveButton
+					path={child.path}
+					name={child.name}
+					{onArchive}
+				/>
 			</div>
 			{#if !folded.has(child.path)}
 				<Self
@@ -84,6 +92,7 @@
 					{pinnedPaths}
 					{onOpen}
 					{onPin}
+					{onArchive}
 					{onCreate}
 					{onDelete}
 				/>
@@ -104,6 +113,11 @@
 				{note}
 				isPinned={pinnedPaths.has(note.path)}
 				{onPin}
+			/>
+			<ArchiveButton
+				path={note.path}
+				name={note.title}
+				{onArchive}
 			/>
 			<button
 				class="add"

@@ -96,6 +96,10 @@ image on the editor inserts it too.
 - *Pin*: the pin button in the explorer, or "Pin or unpin the note" in the
   palette. Pins are saved in the vault: every copy of it shows them. A
   renamed note stays pinned; a note moved to the trash is unpinned.
+- *Archive*: the archive button of a note or a folder in the explorer, or
+  "Archive or unarchive the note" in the palette. It moves to the `Archive`
+  folder, shown in the *Archive* section, and links to it follow; the same
+  button puts it back.
 - *Delete*: the trash button in the explorer, or "Move the note to the
   trash" in the palette. Folders go to the trash the same way, with
   everything in them. "Show the trash" restores notes and folders or deletes
