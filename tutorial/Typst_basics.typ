@@ -73,4 +73,4 @@ Everything else Typst can do works too: functions, variables, shapes,
 grids. What the reading view cannot show as text is drawn as an image. The
 #link("https://typst.app/docs/tutorial/")[Typst tutorial] explains it all.
 
-Next: #note-link("Welcome/Musubi_features")[Musubi features].
+Back to #note-link("Welcome/Writing_Typst")[Writing Typst].

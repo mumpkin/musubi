@@ -36,6 +36,12 @@ and this project adheres to
 
 ### Added
 
+- The tutorial is a treasure hunt: six steps, each with a challenge that
+  uses a feature (the source of a note, search, backlinks, Helix multiple
+  selections, pins, themes, panes, the graph, renaming, the trash) and
+  leads to the next. _Helix basics_, _Typst basics_ and _Using Musubi_ stay
+  as references; _Musubi features_ is folded into the steps.
+
 - A settings screen (`Space ,` or "Open the settings" in the palette): the
   theme, autosave and its delay, which belong to the device, and the number
   of days deleted notes stay in the trash, stored in the vault. Changes
