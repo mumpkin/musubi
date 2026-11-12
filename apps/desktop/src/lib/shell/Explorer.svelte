@@ -10,6 +10,13 @@
 	import TreeEditor from '../tree-edit/TreeEditor.svelte';
 	import type { FolderNode } from '../vault/tree.ts';
 	import type { TrashActions } from './actions.ts';
+	import ContextMenu from './ContextMenu.svelte';
+	import {
+		type EntryActions,
+		isMenuKey,
+		menuAt,
+		type MenuItem,
+	} from './explorer-menu.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
 	import Icon from './Icon.svelte';
@@ -44,11 +51,18 @@
 		trash,
 		pinned,
 		recent,
+		pinnedPaths,
+		current,
+		onOpen,
+		onPin,
+		onArchive,
 		onCreate,
+		onDelete,
 		onLeave,
 		editing,
-		...rows
 	}: Props = $props();
+
+	const rows = $derived({ current, pinnedPaths, onOpen });
 
 	// The notes of a section, as a folder without sub-folders.
 	function flat(notes: NoteEntry[]): FolderNode {
@@ -62,6 +76,46 @@
 	const ITEMS = '.folder, .note';
 	let element = $state<HTMLElement>();
 	let editor = $state<{ focus: () => void }>();
+	type ShowMenu = (
+		event: Event,
+		items: MenuItem[],
+		origin?: HTMLElement,
+	) => void;
+	let menu = $state<{ show: ShowMenu }>();
+
+	const actions: EntryActions = {
+		onOpen: (path) => {
+			onOpen(path);
+		},
+		onPin: (path) => {
+			onPin(path);
+		},
+		onArchive: (path) => {
+			onArchive(path);
+		},
+		onCreate: (kind, folder) => {
+			onCreate(kind, folder);
+		},
+		onDelete: (path) => {
+			onDelete(path);
+		},
+		onRename: (path) => {
+			editing.start(path);
+		},
+	};
+
+	const showMenu: ShowMenu = (event, items, origin) => {
+		menu?.show(event, items, origin);
+	};
+
+	// A right click, or the menu key on the focused entry.
+	function openMenu(event: Event): void {
+		if (editing.isActive) {
+			return;
+		}
+		const { items, origin } = menuAt(event.target, pinnedPaths, actions);
+		menu?.show(event, items, origin);
+	}
 
 	// `Space h` / `Space l`: the focus goes to the current note, or to the
 	// tree editor.
@@ -82,8 +136,11 @@
 	class:editing={editing.isActive}
 	aria-label="Notes"
 	tabindex="-1"
+	oncontextmenu={openMenu}
 	onkeydown={(event) => {
-		if (!editing.isActive) {
+		if (isMenuKey(event)) {
+			openMenu(event);
+		} else if (!editing.isActive) {
 			const list = { container: element, selector: ITEMS, onLeave };
 			listKeydown(event, list);
 		}
@@ -97,7 +154,7 @@
 				: 'Edit the tree as text (Space r)'}
 			aria-pressed={editing.isActive}
 			onclick={() => {
-				editing.toggle(rows.current);
+				editing.toggle(current);
 			}}
 		><Icon name={editing.isActive ? 'read' : 'edit'} /></button>
 		<button
@@ -166,7 +223,6 @@
 				<ExplorerFolder
 					folder={root}
 					{folded}
-					{onCreate}
 					{...rows}
 				/>
 			</div>
@@ -188,10 +244,13 @@
 			<TrashSection
 				{folded}
 				actions={trash}
+				onMenu={showMenu}
 			/>
 		{/if}
 	{/if}
 </nav>
+
+<ContextMenu bind:this={menu} />
 
 <TreeChangesDialog
 	changes={editing.changes}

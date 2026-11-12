@@ -9,9 +9,11 @@ command palette (`Space ?`) lists the same commands.
 
 - *Title bar*: the title of the current note, and the buttons of the window.
 - *Explorer*, on the left (`Space e`): folders and notes by title. The
-  buttons next to the vault name create a note and a folder; the new note
-  button next to a folder creates a note in it. The pin and trash buttons of
-  a note show when the pointer is over it. Three sections fold like folders:
+  buttons next to the vault name edit the tree as text, create a note and a
+  folder. A right click on a note or a folder, or `Shift-F10` on the entry
+  under the keyboard, opens its menu: open, pin, new note or folder in it,
+  rename or move, archive, trash. Long titles end with "…": the tooltip
+  shows the full path. Three sections fold like folders:
   *Recent*, the last 10 notes opened on this computer; *Pinned*, the notes
   you pinned; *Notebook*, all your folders and notes. Below come *Archive*
   and *Trash*, when they are not empty; the settings can hide the trash.
@@ -89,23 +91,25 @@ image on the editor inserts it too.
 
 == Notes
 
-- *Create*: `Space n`, or the new note button in the explorer. The file is
+- *Create*: `Space n`, the new note button of the explorer, or the menu of
+  a folder. The file is
   named from the title. Type a path to choose the folder:
   `Projects/Ideas/My note` creates _My note_ in `Projects/Ideas`, and the
   missing folders with it.
 - *Rename*: change the first `=` heading and save. The file, its images and
   every link to it follow.
-- *Pin*: the pin button in the explorer, or "Pin or unpin the note" in the
+- *Pin*: the menu of the note in the explorer, or "Pin or unpin the note" in the
   palette. Pins are saved in the vault: every copy of it shows them. A
   renamed note stays pinned; a note moved to the trash is unpinned.
-- *Archive*: the archive button of a note or a folder in the explorer, or
+- *Archive*: the menu of a note or a folder in the explorer, or
   "Archive or unarchive the note" in the palette. It moves to the `Archive`
   folder, shown in the *Archive* section, and links to it follow; the same
-  button puts it back.
-- *Delete*: the trash button in the explorer, or "Move the note to the
+  menu puts it back.
+- *Delete*: the menu of the note in the explorer, or "Move the note to the
   trash" in the palette. Folders go to the trash the same way, with
   everything in them. "Show the trash", or the *Trash* section of the
-  explorer, restores notes and folders or deletes them for good. A link to a
+  explorer (a click restores an entry, its menu deletes it for good),
+  restores notes and folders or deletes them for good. A link to a
   note in the trash shows greyed, as a link to a missing note: restoring the
   note makes it work again. Notes stay 30 days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
