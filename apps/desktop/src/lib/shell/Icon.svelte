@@ -7,10 +7,12 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import Circle from '@lucide/svelte/icons/circle';
+	import Clock from '@lucide/svelte/icons/clock';
 	import Columns2 from '@lucide/svelte/icons/columns-2';
 	import FilePlus from '@lucide/svelte/icons/file-plus';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import Minus from '@lucide/svelte/icons/minus';
+	import Notebook from '@lucide/svelte/icons/notebook';
 	import Pencil from '@lucide/svelte/icons/pencil';
 	import Pin from '@lucide/svelte/icons/pin';
 	import Square from '@lucide/svelte/icons/square';
@@ -39,6 +41,8 @@
 		maximize: Square,
 		modified: Circle,
 		pin: Pin,
+		recent: Clock,
+		notebook: Notebook,
 	} as const;
 
 	const SIZE_PIXELS = 15;

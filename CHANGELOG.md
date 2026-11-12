@@ -17,6 +17,9 @@ and this project adheres to
 
 ### Changed
 
+- The explorer has three foldable sections with icons: Recent, Pinned and
+  Notebook, which holds every folder and note.
+
 - In the reading view, the block selected with `j` and `k` shows with a
   faint background instead of a blue outline.
 

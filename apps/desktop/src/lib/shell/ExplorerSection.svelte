@@ -1,54 +1,81 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- A flat section at the top of the explorer (pinned or recent notes). It
-     folds like a folder and is hidden when empty. -->
+<!-- A section of the explorer (Recent, Pinned, Notebook…): a header with an
+     icon that folds it like a folder, then its entries. -->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { SvelteSet } from 'svelte/reactivity';
 
-	import type { NoteEntry } from '../bindings/NoteEntry.ts';
-	import ExplorerFolder from './ExplorerFolder.svelte';
+	import type { IconName } from './actions.ts';
+	import Icon from './Icon.svelte';
 
 	interface Props {
 		name: string;
-		notes: NoteEntry[];
-		current: string;
+		icon: IconName;
 		folded: SvelteSet<string>;
-		pinnedPaths: ReadonlySet<string>;
-		onOpen: (path: string) => void;
-		onPin: (path: string) => void;
-		onDelete: (path: string) => void;
+		children: Snippet;
 	}
 
-	const { name, notes, ...rest }: Props = $props();
+	const { name, icon, folded, children }: Props = $props();
 
 	// Folder paths never start with `/`: the key cannot clash with one.
-	const folder = $derived({
-		name,
-		path: `/${name}`,
-		folders: [],
-		notes,
-	});
+	const key = $derived(`/${name}`);
+	const isFolded = $derived(folded.has(key));
 </script>
 
-{#if notes.length > 0}
-	<section aria-label={name}>
-		<ExplorerFolder
-			folder={{ name: '', path: '', folders: [folder], notes: [] }}
-			{...rest}
-		/>
-	</section>
-{/if}
+<section aria-label={name}>
+	<button
+		class="folder section-header"
+		aria-expanded={!isFolded}
+		onclick={() => {
+			if (isFolded) {
+				folded.delete(key);
+			} else {
+				folded.add(key);
+			}
+		}}
+	>
+		<Icon name={isFolded ? 'folded' : 'unfolded'} />
+		<Icon name={icon} />
+		{name}
+	</button>
+	{#if !isFolded}
+		<div class="entries">
+			{@render children()}
+		</div>
+	{/if}
+</section>
 
 <style>
 	section {
 		margin-bottom: 0.5rem;
 	}
 
-	/* The name of the section, set apart from the folders. */
-	section :global(.folder) {
+	.entries {
+		padding-left: 0.6rem;
+	}
+
+	.section-header {
+		display: flex;
+		gap: 0.3rem;
+		align-items: center;
+		width: 100%;
+		padding: 0.2rem 0.5rem;
+		border: none;
+		border-radius: 4px;
+		background: none;
 		color: var(--muted);
+		font: inherit;
 		font-size: 0.75rem;
 		font-weight: 600;
 		letter-spacing: 0.05em;
+		text-align: left;
 		text-transform: uppercase;
+		cursor: pointer;
+	}
+
+	.section-header:hover,
+	.section-header:focus-visible {
+		outline: none;
+		background: var(--hover);
 	}
 </style>
