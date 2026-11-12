@@ -30,6 +30,7 @@
 	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
+	import { treeEditing } from './tree-editing-host.ts';
 	import { VaultState } from './vault-state.svelte.ts';
 
 	interface Props {
@@ -48,6 +49,7 @@
 	// svelte-ignore state_referenced_locally
 	let trashRetentionDays = $state(vault.trashRetentionDays);
 	const panels = new SidePanels(manager);
+	const editing = treeEditing(files, manager, panels);
 
 	function loadTree(): void {
 		files.load().catch(() => undefined);
@@ -127,7 +129,11 @@
 			panels.toggleBacklinks();
 		},
 		toggleMode: () => {
-			manager.toggleMode(manager.focusedIndex);
+			if (panels.isInExplorer()) {
+				editing.toggle(manager.currentPath);
+			} else {
+				manager.toggleMode(manager.focusedIndex);
+			}
 		},
 		toggleGraph: () => {
 			manager.toggleGraph(manager.focusedIndex);
@@ -156,8 +162,10 @@
 
 	const handleShortcut = shortcutHandler({
 		isTyping: (event) => {
-			const isInsert = manager.focused?.mode === 'editing'
-				&& manager.editorMode === 'insert';
+			const isInsert = editing.hasFocus
+				? editing.mode === 'insert'
+				: manager.focused?.mode === 'editing'
+					&& manager.editorMode === 'insert';
 			const isInput = event.target instanceof HTMLInputElement;
 			return dialogs.isOpen || isInsert || isInput;
 		},
@@ -208,6 +216,7 @@
 					onLeave={() => {
 						panels.back();
 					}}
+					{editing}
 				/>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -255,7 +264,7 @@
 			</Pane>
 		</PaneGroup>
 		<StatusBar
-			mode={manager.statusMode}
+			mode={editing.statusMode ?? manager.statusMode}
 			path={manager.currentPath}
 			message={manager.message}
 		/>

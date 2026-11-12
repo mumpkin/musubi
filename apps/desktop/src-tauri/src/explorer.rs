@@ -151,3 +151,43 @@ pub fn archive_entry(
 	open.refresh_index()?;
 	Ok(moved)
 }
+
+/// Gives the note at `path` a new title (heading and file name); returns
+/// its new path.
+#[tauri::command(async)]
+pub fn retitle_note(
+	path: &str,
+	title: &str,
+	app: AppHandle,
+) -> Result<String, String> {
+	let state = app.state::<AppState>();
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let renamed = open
+		.vault
+		.retitle_note(path, title)
+		.map_err(|error| error.to_string())?;
+	Recent::of(&app, open.vault.root())?.moved(path, &renamed)?;
+	open.refresh_index()?;
+	Ok(renamed)
+}
+
+/// Moves the note or folder at `path` to `to` (a note keeps its file
+/// name); returns its new path.
+#[tauri::command(async)]
+pub fn move_entry(
+	path: &str,
+	to: &str,
+	app: AppHandle,
+) -> Result<String, String> {
+	let state = app.state::<AppState>();
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	let moved = open
+		.vault
+		.move_entry(path, to)
+		.map_err(|error| error.to_string())?;
+	Recent::of(&app, open.vault.root())?.moved(path, &moved)?;
+	open.refresh_index()?;
+	Ok(moved)
+}

@@ -5,6 +5,9 @@
 	import { SvelteSet } from 'svelte/reactivity';
 
 	import type { NoteEntry } from '../bindings/NoteEntry.ts';
+	import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
+	import TreeChangesDialog from '../tree-edit/TreeChangesDialog.svelte';
+	import TreeEditor from '../tree-edit/TreeEditor.svelte';
 	import type { FolderNode } from '../vault/tree.ts';
 	import type { TrashActions } from './actions.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
@@ -30,6 +33,8 @@
 		onDelete: (path: string) => void;
 		// `Escape`: the focus goes back to the pane.
 		onLeave: () => void;
+		// The tree as text, edited as in oil.nvim.
+		editing: TreeEditing;
 	}
 
 	const {
@@ -41,6 +46,7 @@
 		recent,
 		onCreate,
 		onLeave,
+		editing,
 		...rows
 	}: Props = $props();
 
@@ -55,9 +61,15 @@
 	// The entries that `j` and `k` move between.
 	const ITEMS = '.folder, .note';
 	let element = $state<HTMLElement>();
+	let editor = $state<{ focus: () => void }>();
 
-	// `Space h` / `Space l`: the focus goes to the current note.
+	// `Space h` / `Space l`: the focus goes to the current note, or to the
+	// tree editor.
 	export function focusList(): void {
+		if (editing.isActive) {
+			editor?.focus();
+			return;
+		}
 		focusFirst(element, ITEMS, '.tree .note.current');
 	}
 </script>
@@ -67,14 +79,27 @@
 <nav
 	bind:this={element}
 	class="explorer"
+	class:editing={editing.isActive}
 	aria-label="Notes"
 	tabindex="-1"
 	onkeydown={(event) => {
-		listKeydown(event, { container: element, selector: ITEMS, onLeave });
+		if (!editing.isActive) {
+			const list = { container: element, selector: ITEMS, onLeave };
+			listKeydown(event, list);
+		}
 	}}
 >
 	<header>
 		<h2 title={vaultName}>{vaultName}</h2>
+		<button
+			title={editing.isActive
+				? 'Back to the tree (:q)'
+				: 'Edit the tree as text (Space r)'}
+			aria-pressed={editing.isActive}
+			onclick={() => {
+				editing.toggle(rows.current);
+			}}
+		><Icon name={editing.isActive ? 'read' : 'edit'} /></button>
 		<button
 			title="New note"
 			onclick={() => {
@@ -88,69 +113,95 @@
 			}}
 		><Icon name="newFolder" /></button>
 	</header>
-	{#if recent.length > 0}
+	{#if editing.isActive}
+		{#key editing.tree}
+			<div class="tree-text">
+				<TreeEditor
+					bind:this={editor}
+					text={editing.tree.text}
+					startLine={editing.startLine}
+					onWrite={editing.write}
+					onQuit={editing.quit}
+					onChange={editing.changed}
+					onOpenLine={editing.openLine}
+					onModeChange={editing.modeChanged}
+					onFocusChange={editing.focusChanged}
+					onMessage={editing.message}
+				/>
+			</div>
+		{/key}
+	{:else}
+		{#if recent.length > 0}
+			<ExplorerSection
+				name="Recent"
+				icon="recent"
+				{folded}
+			>
+				<ExplorerFolder
+					folder={flat(recent)}
+					{folded}
+					{...rows}
+				/>
+			</ExplorerSection>
+		{/if}
+		{#if pinned.length > 0}
+			<ExplorerSection
+				name="Pinned"
+				icon="pin"
+				{folded}
+			>
+				<ExplorerFolder
+					folder={flat(pinned)}
+					{folded}
+					{...rows}
+				/>
+			</ExplorerSection>
+		{/if}
 		<ExplorerSection
-			name="Recent"
-			icon="recent"
+			name="Notebook"
+			icon="notebook"
 			{folded}
 		>
-			<ExplorerFolder
-				folder={flat(recent)}
-				{folded}
-				{...rows}
-			/>
+			<div class="tree">
+				<ExplorerFolder
+					folder={root}
+					{folded}
+					{onCreate}
+					{...rows}
+				/>
+			</div>
 		</ExplorerSection>
-	{/if}
-	{#if pinned.length > 0}
-		<ExplorerSection
-			name="Pinned"
-			icon="pin"
-			{folded}
-		>
-			<ExplorerFolder
-				folder={flat(pinned)}
+		{#if archive}
+			<ExplorerSection
+				name="Archive"
+				icon="archive"
 				{folded}
-				{...rows}
-			/>
-		</ExplorerSection>
-	{/if}
-	<ExplorerSection
-		name="Notebook"
-		icon="notebook"
-		{folded}
-	>
-		<div class="tree">
-			<ExplorerFolder
-				folder={root}
+			>
+				<ExplorerFolder
+					folder={archive}
+					{folded}
+					{...rows}
+				/>
+			</ExplorerSection>
+		{/if}
+		{#if trash}
+			<TrashSection
 				{folded}
-				{onCreate}
-				{...rows}
+				actions={trash}
 			/>
-		</div>
-	</ExplorerSection>
-	{#if archive}
-		<ExplorerSection
-			name="Archive"
-			icon="archive"
-			{folded}
-		>
-			<ExplorerFolder
-				folder={archive}
-				{folded}
-				{...rows}
-			/>
-		</ExplorerSection>
-	{/if}
-	{#if trash}
-		<TrashSection
-			{folded}
-			actions={trash}
-		/>
+		{/if}
 	{/if}
 </nav>
 
+<TreeChangesDialog
+	changes={editing.changes}
+	onAnswer={editing.answerChanges}
+/>
+
 <style>
 	.explorer {
+		display: flex;
+		flex-direction: column;
 		height: 100%;
 		outline: none;
 		overflow: auto;
@@ -158,7 +209,18 @@
 		background: var(--surface);
 	}
 
+	/* The tree editor scrolls by itself. */
+	.explorer.editing {
+		overflow: hidden;
+	}
+
+	.tree-text {
+		flex: 1;
+		min-height: 0;
+	}
+
 	header {
+		flex: none;
 		display: flex;
 		gap: 0.25rem;
 		align-items: center;

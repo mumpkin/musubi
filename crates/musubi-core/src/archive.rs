@@ -16,12 +16,12 @@ use crate::vault::Vault;
 /// The folder of archived notes, at the vault root.
 pub const ARCHIVE_FOLDER: &str = "Archive";
 
-fn split(path: &str) -> (&str, &str) {
+pub(crate) fn split(path: &str) -> (&str, &str) {
 	path.rfind('/')
 		.map_or(("", path), |slash| (&path[..slash], &path[slash + 1..]))
 }
 
-fn join(folder: &str, name: &str) -> String {
+pub(crate) fn join(folder: &str, name: &str) -> String {
 	if folder.is_empty() {
 		name.to_owned()
 	} else {
@@ -76,8 +76,17 @@ impl Vault {
 		}
 	}
 
-	/// Moves `from` to `to`, or to a free name next to it.
-	fn relocate(&self, from: &str, to: &str) -> Result<String, VaultError> {
+	/// Moves `from` to `to`, or to a free name next to it. Within the same
+	/// folder, `from` does not take a free name to avoid itself: a change
+	/// of case keeps the name.
+	pub(crate) fn relocate(
+		&self,
+		from: &str,
+		to: &str,
+	) -> Result<String, VaultError> {
+		if to.starts_with(&format!("{from}/")) {
+			return Err(VaultError::IntoItself(from.to_owned()));
+		}
 		let source = paths::resolve(self.root(), from)?;
 		let (folder, name) = split(to);
 		let directory = self.writable_folder(folder)?;
@@ -85,9 +94,10 @@ impl Vault {
 			.filter_map(Result::ok)
 			.map(|entry| entry.file_name().to_string_lossy().into_owned())
 			.collect();
+		let (from_folder, from_name) = split(from);
 		let names = Folder {
 			existing: &existing,
-			own: None,
+			own: (from_folder == folder).then_some(from_name),
 		};
 		if source.is_dir() {
 			let moved = join(folder, &names.unique(name, &[""]));
