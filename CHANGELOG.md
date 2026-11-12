@@ -47,6 +47,9 @@ and this project adheres to
 
 ### Added
 
+- The trash shows as the last section of the explorer: click an entry to
+  restore it, or delete it for good. A setting hides the section.
+
 - Notes and folders can be archived: they move to `Archive/`, shown in
   an Archive section of the explorer, keeping their path, and links to them
   follow. The same button, or the palette, puts them back.

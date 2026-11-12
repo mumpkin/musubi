@@ -13,7 +13,8 @@ command palette (`Space ?`) lists the same commands.
   button next to a folder creates a note in it. The pin and trash buttons of
   a note show when the pointer is over it. Three sections fold like folders:
   *Recent*, the last 10 notes opened on this computer; *Pinned*, the notes
-  you pinned; *Notebook*, all your folders and notes.
+  you pinned; *Notebook*, all your folders and notes. Below come *Archive*
+  and *Trash*, when they are not empty; the settings can hide the trash.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
   read or edited, or the graph. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current
@@ -102,8 +103,10 @@ image on the editor inserts it too.
   button puts it back.
 - *Delete*: the trash button in the explorer, or "Move the note to the
   trash" in the palette. Folders go to the trash the same way, with
-  everything in them. "Show the trash" restores notes and folders or deletes
-  them for good. Notes stay 30 days in the trash; the settings change the delay.
+  everything in them. "Show the trash", or the *Trash* section of the
+  explorer, restores notes and folders or deletes them for good. A link to a
+  note in the trash shows greyed, as a link to a missing note: restoring the
+  note makes it work again. Notes stay 30 days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
 

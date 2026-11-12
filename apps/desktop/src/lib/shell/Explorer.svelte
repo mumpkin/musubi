@@ -6,15 +6,19 @@
 
 	import type { NoteEntry } from '../bindings/NoteEntry.ts';
 	import type { FolderNode } from '../vault/tree.ts';
+	import type { TrashActions } from './actions.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
 	import Icon from './Icon.svelte';
 	import { focusFirst, listKeydown } from './list-keys.ts';
+	import TrashSection from './TrashSection.svelte';
 
 	interface Props {
 		vaultName: string;
 		root: FolderNode;
 		archive: FolderNode | undefined;
+		// Without it, the trash section is hidden (a setting).
+		trash: TrashActions | undefined;
 		pinned: NoteEntry[];
 		recent: NoteEntry[];
 		pinnedPaths: ReadonlySet<string>;
@@ -32,6 +36,7 @@
 		vaultName,
 		root,
 		archive,
+		trash,
 		pinned,
 		recent,
 		onCreate,
@@ -135,6 +140,12 @@
 				{...rows}
 			/>
 		</ExplorerSection>
+	{/if}
+	{#if trash}
+		<TrashSection
+			{folded}
+			actions={trash}
+		/>
 	{/if}
 </nav>
 
