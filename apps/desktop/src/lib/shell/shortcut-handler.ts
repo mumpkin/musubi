@@ -7,6 +7,17 @@ import {
 	type ShortcutResolution,
 } from './shortcuts.ts';
 
+// Keys that only modify another one: `Shift` before `?` must not end the
+// `Space` sequence.
+const MODIFIER_KEYS = new Set([
+	'Shift',
+	'Control',
+	'Alt',
+	'AltGraph',
+	'Meta',
+	'CapsLock',
+]);
+
 export interface ShortcutContext {
 	// Keys are text while typing: insert mode, the command line, a picker.
 	isTyping: (event: KeyboardEvent) => boolean;
@@ -19,7 +30,7 @@ export interface ShortcutContext {
 export function shortcutHandler(context: ShortcutContext) {
 	let pendingKeys = '';
 	return (event: KeyboardEvent): void => {
-		if (context.isTyping(event)) {
+		if (MODIFIER_KEYS.has(event.key) || context.isTyping(event)) {
 			return;
 		}
 		// `i` edits the note of a reading pane, as in the editor.
