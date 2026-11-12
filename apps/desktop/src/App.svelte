@@ -20,7 +20,20 @@
 	function show(opened: VaultInfo): void {
 		vault = opened;
 	}
+
+	// The menu of the webview (reload, inspect…) is not part of the app;
+	// text fields keep theirs, for copy and paste.
+	function blockNativeMenu(event: MouseEvent): void {
+		const { target } = event;
+		const isText = target instanceof Element
+			&& target.closest('input, textarea, [contenteditable=true]') !== null;
+		if (!isText) {
+			event.preventDefault();
+		}
+	}
 </script>
+
+<svelte:window oncontextmenu={blockNativeMenu} />
 
 {#if vault}
 	{#key vault.root}

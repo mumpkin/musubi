@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- The trash as the last section of the explorer: each entry restores on
-     click (or `Enter`); its delete button asks for a second click. Hidden
-     when the trash is empty. -->
+     click (or `Enter`); its context menu restores it or deletes it for
+     good, after a second click. Hidden when the trash is empty. -->
 <script lang="ts">
 	import type { SvelteSet } from 'svelte/reactivity';
 
@@ -12,18 +12,18 @@
 		trashEntries,
 	} from '../vault/trash.ts';
 	import type { TrashActions } from './actions.ts';
+	import { isMenuKey, type MenuItem } from './explorer-menu.ts';
 	import ExplorerSection from './ExplorerSection.svelte';
-	import Icon from './Icon.svelte';
 
 	interface Props {
 		folded: SvelteSet<string>;
 		actions: TrashActions;
+		onMenu: (event: Event, items: MenuItem[], origin: HTMLElement) => void;
 	}
 
-	const { folded, actions }: Props = $props();
+	const { folded, actions, onMenu }: Props = $props();
 
 	let entries = $state<TrashEntry[]>([]);
-	let confirming = $state<string>();
 
 	$effect(() => {
 		if (actions.revision >= 0) {
@@ -38,11 +38,6 @@
 	});
 
 	function remove(id: string): void {
-		if (confirming !== id) {
-			confirming = id;
-			return;
-		}
-		confirming = undefined;
 		deleteForGood(id)
 			.then(() => {
 				entries = entries.filter((entry) => entry.id !== id);
@@ -50,6 +45,26 @@
 			.catch((error: unknown) => {
 				actions.onError(String(error));
 			});
+	}
+
+	function menuOf(entry: TrashEntry): MenuItem[] {
+		return [
+			{
+				label: 'Restore',
+				icon: 'unarchive',
+				run: () => {
+					actions.onRestored(restoreNote(entry.id));
+				},
+			},
+			{
+				label: 'Delete for good',
+				icon: 'close',
+				confirmation: 'Click again to delete for good',
+				run: () => {
+					remove(entry.id);
+				},
+			},
+		];
 	}
 </script>
 
@@ -61,24 +76,25 @@
 	>
 		<ul>
 			{#each entries as entry (entry.id)}
-				<li class="row">
+				<li>
 					<button
 						class="note"
 						title="Restore {entry.originalPath}"
 						onclick={() => {
 							actions.onRestored(restoreNote(entry.id));
 						}}
-					>{entry.isFolder ? `${entry.title}/` : entry.title}</button>
-					<button
-						class="add"
-						class:confirming={confirming === entry.id}
-						title={confirming === entry.id
-							? 'Click again to delete for good'
-							: `Delete ${entry.title} for good`}
-						onclick={() => {
-							remove(entry.id);
+						oncontextmenu={(event) => {
+							onMenu(event, menuOf(entry), event.currentTarget);
 						}}
-					><Icon name="close" /></button>
+						onkeydown={(event) => {
+							const row = event.currentTarget;
+							if (isMenuKey(event)) {
+								onMenu(event, menuOf(entry), row);
+							}
+						}}
+					><span class="name">
+						{entry.isFolder ? `${entry.title}/` : entry.title}
+					</span></button>
 				</li>
 			{/each}
 		</ul>
@@ -92,11 +108,10 @@
 		list-style: none;
 	}
 
-	.row {
-		display: flex;
-	}
-
 	button {
+		display: flex;
+		width: 100%;
+		min-width: 0;
 		padding: 0.2rem 0.5rem;
 		border: none;
 		border-radius: 4px;
@@ -108,28 +123,16 @@
 		cursor: pointer;
 	}
 
-	.note {
-		flex: 1;
-	}
-
 	button:hover,
 	button:focus-visible {
 		outline: none;
 		background: var(--hover);
 	}
 
-	.add {
-		display: flex;
-		align-items: center;
-		visibility: hidden;
-	}
-
-	.row:hover .add,
-	.confirming {
-		visibility: visible;
-	}
-
-	.confirming {
-		color: var(--error);
+	.name {
+		overflow: hidden;
+		min-width: 0;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 </style>

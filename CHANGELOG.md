@@ -15,8 +15,18 @@ and this project adheres to
   a title renames the note, moving a line moves the entry, a new line
   creates a note or a folder, a deleted line moves it to the trash. `:w`
   lists the changes and applies them once confirmed; links follow.
+- A context menu in the explorer, with a right click or `Shift-F10`: open,
+  pin, new note or folder, rename or move, archive, trash; restore or delete
+  for good in the Trash section. The menu of the webview no longer shows,
+  except in text fields.
 - `>` and `<` in the editor indent and unindent the selected lines, as in
   Helix.
+
+### Changed
+
+- The explorer no longer shows buttons next to its entries: their actions
+  are in the context menu. Long titles end with an ellipsis instead of
+  wrapping.
 
 ## [0.1.0] - 2026-11-12
 

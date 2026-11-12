@@ -1,13 +1,13 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- The content of one folder of the explorer: sub-folders, then notes. -->
+<!-- The content of one folder of the explorer: sub-folders, then notes.
+     Actions on an entry are in its context menu: the rows carry its path
+     and kind for it. Long names end with an ellipsis. -->
 <script lang="ts">
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import type { FolderNode } from '../vault/tree.ts';
-	import ArchiveButton from './ArchiveButton.svelte';
 	import Self from './ExplorerFolder.svelte';
 	import Icon from './Icon.svelte';
-	import PinButton from './PinButton.svelte';
 
 	interface Props {
 		folder: FolderNode;
@@ -15,26 +15,9 @@
 		folded: SvelteSet<string>;
 		pinnedPaths: ReadonlySet<string>;
 		onOpen: (path: string) => void;
-		onPin: (path: string) => void;
-		onArchive: (path: string) => void;
-		// Without it, as in the pinned and recent sections, folders have no
-		// button to create a note.
-		onCreate?: ((kind: 'note' | 'folder', folder: string) => void)
-			| undefined;
-		onDelete: (path: string) => void;
 	}
 
-	const {
-		folder,
-		current,
-		folded,
-		pinnedPaths,
-		onOpen,
-		onPin,
-		onArchive,
-		onCreate,
-		onDelete,
-	}: Props = $props();
+	const { folder, current, folded, pinnedPaths, onOpen }: Props = $props();
 
 	function toggle(path: string): void {
 		if (folded.has(path)) {
@@ -48,42 +31,21 @@
 <ul>
 	{#each folder.folders as child (child.path)}
 		<li>
-			<div class="row">
-				<button
-					class="folder"
-					aria-expanded={!folded.has(child.path)}
-					title={child.path}
-					onclick={() => {
-						toggle(child.path);
-					}}
-				>
-					<span class="chevron">
-						<Icon name={folded.has(child.path) ? 'folded' : 'unfolded'} />
-					</span>
-					{child.name}
-				</button>
-				{#if onCreate}
-					<button
-						class="add"
-						title="New note in {child.name}"
-						onclick={() => {
-							onCreate('note', child.path);
-						}}
-					><Icon name="newNote" /></button>
-					<button
-						class="add"
-						title="Move the folder {child.name} to the trash"
-						onclick={() => {
-							onDelete(child.path);
-						}}
-					><Icon name="trash" /></button>
-				{/if}
-				<ArchiveButton
-					path={child.path}
-					name={child.name}
-					{onArchive}
-				/>
-			</div>
+			<button
+				class="folder"
+				aria-expanded={!folded.has(child.path)}
+				title={child.path}
+				data-path={child.path}
+				data-kind="folder"
+				onclick={() => {
+					toggle(child.path);
+				}}
+			>
+				<span class="chevron">
+					<Icon name={folded.has(child.path) ? 'folded' : 'unfolded'} />
+				</span>
+				<span class="name">{child.name}</span>
+			</button>
 			{#if !folded.has(child.path)}
 				<Self
 					folder={child}
@@ -91,41 +53,23 @@
 					{folded}
 					{pinnedPaths}
 					{onOpen}
-					{onPin}
-					{onArchive}
-					{onCreate}
-					{onDelete}
 				/>
 			{/if}
 		</li>
 	{/each}
 	{#each folder.notes as note (note.path)}
-		<li class="row">
+		<li>
 			<button
 				class="note"
 				class:current={note.path === current}
+				class:pinned={pinnedPaths.has(note.path)}
 				title={note.path}
+				data-path={note.path}
+				data-kind="note"
 				onclick={() => {
 					onOpen(note.path);
 				}}
-			>{note.title}</button>
-			<PinButton
-				{note}
-				isPinned={pinnedPaths.has(note.path)}
-				{onPin}
-			/>
-			<ArchiveButton
-				path={note.path}
-				name={note.title}
-				{onArchive}
-			/>
-			<button
-				class="add"
-				title="Move {note.title} to the trash"
-				onclick={() => {
-					onDelete(note.path);
-				}}
-			><Icon name="trash" /></button>
+			><span class="name">{note.title}</span></button>
 		</li>
 	{/each}
 </ul>
@@ -141,13 +85,11 @@
 		padding-left: 1rem;
 	}
 
-	.row {
+	button {
 		display: flex;
-	}
-
-	.row :global(button) {
-		display: block;
+		align-items: center;
 		width: 100%;
+		min-width: 0;
 		padding: 0.2rem 0.5rem;
 		border: none;
 		border-radius: 4px;
@@ -159,43 +101,36 @@
 		cursor: pointer;
 	}
 
-	.row :global(button:hover) {
+	button:hover {
 		background: var(--hover);
 	}
 
 	/* The entry reached with `j` and `k`. */
-	.row :global(button:focus-visible) {
+	button:focus-visible {
 		outline: none;
 		background: var(--hover);
 		box-shadow: inset 2px 0 0 var(--accent);
 	}
 
-	.row :global(.add) {
-		display: flex;
-		align-items: center;
-		width: auto;
-		color: var(--muted);
-		visibility: hidden;
-	}
-
-	.row:hover :global(.add) {
-		visibility: visible;
+	/* A long name ends with an ellipsis instead of wrapping. */
+	.name {
+		overflow: hidden;
+		min-width: 0;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.note.current {
 		background: var(--selection);
 	}
 
-	/* More specific than the button rule above, which would make it a
-	block. */
-	.row .folder {
-		display: flex;
+	.folder {
 		gap: 0.15rem;
-		align-items: center;
 	}
 
 	.chevron {
 		display: grid;
+		flex: none;
 		place-items: center;
 		width: 1rem;
 		color: var(--muted);
