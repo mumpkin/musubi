@@ -264,7 +264,7 @@ impl Vault {
 			own: None,
 		};
 		let path =
-			directory.join(folder.unique(&naming::base_stem(name), &[""]));
+			directory.join(folder.unique(&naming::folder_stem(name), &[""]));
 		fs::create_dir(&path)?;
 		Ok(paths::relative(&self.root, &path))
 	}

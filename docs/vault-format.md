@@ -71,7 +71,9 @@ Musubi derives a file name from the title when it **creates a note** and when
 the **title changes** inside Musubi. It never renames a file just because it
 was opened: names given outside Musubi are kept until the title is edited.
 
-The same rules apply to folders created in Musubi (without the extension).
+The same rules apply to folders created in Musubi (without the extension),
+except that whitespace becomes a single space instead of `_`: a folder has
+no title, its name is what the explorer shows (`Le caca` stays `Le caca`).
 
 ### Naming algorithm
 

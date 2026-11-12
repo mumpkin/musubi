@@ -74,7 +74,7 @@ fn creates_folders() {
 	let directory = vault_with(&[]);
 	let vault = open(directory.path());
 	let folder = vault.create_folder("", "Cours de philo").expect("created");
-	assert_eq!(folder, "Cours_de_philo");
+	assert_eq!(folder, "Cours de philo");
 	assert!(directory.path().join(folder).is_dir());
 }
 
