@@ -2070,5 +2070,85 @@
 		"starts": "[cat dog cat\nbird cat dog\nfish\n",
 		"ends": "cat] dog cat\nbird cat dog\nfish\n",
 		"cursors": "ca|t dog cat\nbird cat dog\nfish\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": ">",
+		"text": "  root\n  child\n  other\nlast\n\nend\n",
+		"starts": "  [root\n  child\n  other\nlast\n\nend\n",
+		"ends": "  r]oot\n  child\n  other\nlast\n\nend\n",
+		"cursors": "  |root\n  child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "ll>",
+		"text": "  root\n  child\n  other\nlast\n\nend\n",
+		"starts": "  ro[ot\n  child\n  other\nlast\n\nend\n",
+		"ends": "  roo]t\n  child\n  other\nlast\n\nend\n",
+		"cursors": "  ro|ot\n  child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "j>",
+		"text": "root\n    child\n  other\nlast\n\nend\n",
+		"starts": "root\n  [  child\n  other\nlast\n\nend\n",
+		"ends": "root\n   ] child\n  other\nlast\n\nend\n",
+		"cursors": "root\n  |  child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "j<",
+		"text": "root\nchild\n  other\nlast\n\nend\n",
+		"starts": "root\n[child\n  other\nlast\n\nend\n",
+		"ends": "root\nc]hild\n  other\nlast\n\nend\n",
+		"cursors": "root\n|child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "jll<",
+		"text": "root\nchild\n  other\nlast\n\nend\n",
+		"starts": "root\n[child\n  other\nlast\n\nend\n",
+		"ends": "root\nc]hild\n  other\nlast\n\nend\n",
+		"cursors": "root\n|child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "<",
+		"text": "root\n  child\n  other\nlast\n\nend\n",
+		"starts": "[root\n  child\n  other\nlast\n\nend\n",
+		"ends": "r]oot\n  child\n  other\nlast\n\nend\n",
+		"cursors": "|root\n  child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "j<<",
+		"text": "root\nchild\n  other\nlast\n\nend\n",
+		"starts": "root\n[child\n  other\nlast\n\nend\n",
+		"ends": "root\nc]hild\n  other\nlast\n\nend\n",
+		"cursors": "root\n|child\n  other\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "xxx>",
+		"text": "  root\n    child\n    other\nlast\n\nend\n",
+		"starts": "  [root\n    child\n    other\nlast\n\nend\n",
+		"ends": "  root\n    child\n    other\n]last\n\nend\n",
+		"cursors": "  root\n    child\n    other|\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "jxx<",
+		"text": "root\nchild\nother\nlast\n\nend\n",
+		"starts": "root\n[child\nother\nlast\n\nend\n",
+		"ends": "root\nchild\nother\n]last\n\nend\n",
+		"cursors": "root\nchild\nother|\nlast\n\nend\n"
+	},
+	{
+		"initialText": "root\n  child\n  other\nlast\n\nend\n",
+		"keys": "xxxxx>",
+		"text": "  root\n    child\n    other\n  last\n\nend\n",
+		"starts": "  [root\n    child\n    other\n  last\n\nend\n",
+		"ends": "  root\n    child\n    other\n  last\n\n]end\n",
+		"cursors": "  root\n    child\n    other\n  last\n|\nend\n"
 	}
 ]

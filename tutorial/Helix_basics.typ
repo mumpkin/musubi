@@ -41,6 +41,7 @@ one two three four five
 - `d`: delete the selection. `c`: delete it and type instead (insert mode).
 - `y`: copy the selection, `p` and `P`: paste after or before it.
 - `u`: undo, `U`: redo.
+- `>` and `<`: indent or unindent the selected lines.
 - `;`: reduce the selection to the cursor.
 
 *Exercise*: on the line below, select `wrong` with `w` and replace it with

@@ -4,6 +4,7 @@
 import { pairCommands } from './auto-pairs.ts';
 import type { Command, CommandContext } from './context.ts';
 import { editingCommands } from './editing.ts';
+import { indentCommands } from './indent.ts';
 import { showJumpLabels } from './jump-labels.ts';
 import { modeCommands } from './modes.ts';
 import { motionCommands } from './motions.ts';
@@ -14,6 +15,7 @@ import { searchCommands } from './search.ts';
 export const commands = {
 	...motionCommands,
 	...editingCommands,
+	...indentCommands,
 	...modeCommands,
 	...objectCommands,
 	...pairCommands,
