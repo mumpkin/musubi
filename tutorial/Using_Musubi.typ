@@ -86,8 +86,10 @@ image on the editor inserts it too.
 
 == Notes
 
-- *Create*: `Space n`, or `+` in the explorer. The file is named from the
-  title.
+- *Create*: `Space n`, or the new note button in the explorer. The file is
+  named from the title. Type a path to choose the folder:
+  `Projects/Ideas/My note` creates _My note_ in `Projects/Ideas`, and the
+  missing folders with it.
 - *Rename*: change the first `=` heading and save. The file, its images and
   every link to it follow.
 - *Pin*: the pin button in the explorer, or "Pin or unpin the note" in the

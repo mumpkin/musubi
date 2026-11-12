@@ -59,7 +59,7 @@
 					<input
 						class="palette-input"
 						bind:value={name}
-						placeholder={kind === 'note' ? 'Title' : 'Folder name'}
+						placeholder={kind === 'note' ? 'Title, or Folder/Title' : 'Folder name'}
 					/>
 				</label>
 			</form>

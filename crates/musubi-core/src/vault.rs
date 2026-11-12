@@ -190,7 +190,9 @@ impl Vault {
 	}
 
 	/// Creates a note titled `title` in `folder` (`""` for the root), named
-	/// from the title. Returns its path.
+	/// from the title. Returns its path. A `title` with `/` is a path from
+	/// `folder`: `Ideas/My note` creates `My note` in `Ideas`, which is
+	/// created if missing.
 	///
 	/// # Errors
 	///
@@ -200,10 +202,11 @@ impl Vault {
 		folder: &str,
 		title: &str,
 	) -> Result<String, VaultError> {
-		let directory = self.writable_folder(folder)?;
+		let (folder, title) = naming::split_note_path(folder, title)?;
+		let directory = self.writable_folder(&folder)?;
 		let existing = names_in(&directory)?;
 		let name = naming::note_file_name(
-			title,
+			&title,
 			&Folder {
 				existing: &existing,
 				own: None,
