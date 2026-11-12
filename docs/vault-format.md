@@ -205,6 +205,22 @@ notes are not stored in the vault: they belong to each device.
 Unknown fields are kept when Musubi rewrites the file. A missing file means
 format `0` with default values.
 
+### Archive
+
+Archiving a note or a folder moves it to the `Archive/` folder at the vault
+root, keeping its path: `Maths/Analyse.typ` becomes
+`Archive/Maths/Analyse.typ`, with its `.assets/` folder.
+
+- `Archive/` is an ordinary folder: its notes stay notes of the vault, in
+  search, links, backlinks and the graph. The explorer shows it in its own
+  section.
+- Links to the moved notes and their pins follow, as for a rename.
+- **Unarchiving** moves the note or folder back to the path without the
+  `Archive/` prefix, with the collision suffix if that path is taken.
+  Folders of the archive left empty are removed, `Archive/` included.
+- Image paths that a moved note writes relative to its own folder, outside
+  its `.assets/` folder, are not rewritten.
+
 ### Trash
 
 Deleting a note or a folder moves it to the trash instead of removing it.

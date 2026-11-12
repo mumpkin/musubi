@@ -2,7 +2,9 @@
 // What the shell does to notes beyond opening them: trash, pin, open a
 // note just written, follow a link to a missing note. Errors show in the
 // status bar.
+import { archiveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
+import { isArchived } from '../vault/tree.ts';
 import type { PaneManager } from './pane-manager.svelte.ts';
 import type { VaultState } from './vault-state.svelte.ts';
 
@@ -57,6 +59,26 @@ export class NoteActions {
 				this.manager.forget(pane.path, next?.path ?? '');
 			}
 			this.showMessage(`Moved the folder ${entry.title} to the trash`);
+			await this.files.load();
+		});
+	};
+
+	// Archives a note or a folder, or puts it back from the archive. The
+	// panes that show it follow it.
+	readonly toggleArchive = (path: string): void => {
+		this.run(async () => {
+			const moved = await archiveEntry(path, isArchived(path));
+			for (const pane of [...this.manager.panes]) {
+				if (pane.path === path) {
+					this.manager.forget(pane.path, moved);
+				} else if (pane.path.startsWith(`${path}/`)) {
+					const rest = pane.path.slice(path.length);
+					this.manager.forget(pane.path, `${moved}${rest}`);
+				}
+			}
+			this.showMessage(isArchived(moved)
+				? `Archived ${moved}`
+				: `Moved back to ${moved}`);
 			await this.files.load();
 		});
 	};

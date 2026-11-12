@@ -13,6 +13,14 @@ export async function pinNote(
 	return invoke<VaultTree>('pin_note', { path, pinned });
 }
 
+// Archives a note or a folder, or puts it back; resolves to its new path.
+export async function archiveEntry(
+	path: string,
+	unarchive: boolean,
+): Promise<string> {
+	return invoke<string>('archive_entry', { path, unarchive });
+}
+
 // Recent notes of the open vault, newest first.
 export async function recentNotes(): Promise<string[]> {
 	return invoke<string[]>('recent_notes');

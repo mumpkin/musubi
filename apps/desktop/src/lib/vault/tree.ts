@@ -50,6 +50,28 @@ export function buildTree(tree: VaultTree): FolderNode {
 	return root;
 }
 
+// The folder of archived notes, at the vault root (`docs/vault-format.md`).
+export const ARCHIVE_FOLDER = 'Archive';
+
+export function isArchived(path: string): boolean {
+	return path.startsWith(`${ARCHIVE_FOLDER}/`) || path === ARCHIVE_FOLDER;
+}
+
+// The tree without the archive, and the archive alone (`undefined` when
+// nothing is archived).
+export function splitArchive(root: FolderNode): {
+	notebook: FolderNode;
+	archive: FolderNode | undefined;
+} {
+	return {
+		notebook: {
+			...root,
+			folders: root.folders.filter((folder) => !isArchived(folder.path)),
+		},
+		archive: root.folders.find((folder) => folder.path === ARCHIVE_FOLDER),
+	};
+}
+
 export function titleIn(tree: VaultTree, path: string): string {
 	return tree.notes.find((note) => note.path === path)?.title ?? path;
 }

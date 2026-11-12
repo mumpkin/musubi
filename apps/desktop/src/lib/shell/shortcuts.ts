@@ -13,6 +13,7 @@ export type ShellAction
 		| 'showTrash'
 		| 'openTutorial'
 		| 'togglePin'
+		| 'toggleArchive'
 		| 'settings'
 		| 'toggleExplorer'
 		| 'toggleBacklinks'
@@ -43,6 +44,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	showTrash: { label: 'Show the trash', group: 'Note' },
 	openTutorial: { label: 'Open the tutorial', group: 'Help' },
 	togglePin: { label: 'Pin or unpin the note', group: 'Note' },
+	toggleArchive: { label: 'Archive or unarchive the note', group: 'Note' },
 	settings: { label: 'Open the settings', group: 'View' },
 	toggleExplorer: { label: 'Toggle the note explorer', group: 'View' },
 	toggleBacklinks: { label: 'Toggle backlinks', group: 'View' },

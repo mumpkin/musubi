@@ -14,12 +14,14 @@
 	interface Props {
 		vaultName: string;
 		root: FolderNode;
+		archive: FolderNode | undefined;
 		pinned: NoteEntry[];
 		recent: NoteEntry[];
 		pinnedPaths: ReadonlySet<string>;
 		current: string;
 		onOpen: (path: string) => void;
 		onPin: (path: string) => void;
+		onArchive: (path: string) => void;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
 		onDelete: (path: string) => void;
 		// `Escape`: the focus goes back to the pane.
@@ -29,6 +31,7 @@
 	const {
 		vaultName,
 		root,
+		archive,
 		pinned,
 		recent,
 		onCreate,
@@ -120,6 +123,19 @@
 			/>
 		</div>
 	</ExplorerSection>
+	{#if archive}
+		<ExplorerSection
+			name="Archive"
+			icon="archive"
+			{folded}
+		>
+			<ExplorerFolder
+				folder={archive}
+				{folded}
+				{...rows}
+			/>
+		</ExplorerSection>
+	{/if}
 </nav>
 
 <style>
