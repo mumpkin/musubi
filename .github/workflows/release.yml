@@ -1,0 +1,39 @@
+name: Release
+
+# A `v*` tag builds the Linux bundles and publishes them as a pre-release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    name: Linux bundles
+    # The oldest supported Ubuntu: its glibc keeps the bundles working on
+    # more distributions.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the Tauri system dependencies
+        timeout-minutes: 5
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: apps/desktop
+          tauriScript: pnpm tauri
+          tagName: ${{ github.ref_name }}
+          releaseName: Musubi ${{ github.ref_name }}
+          releaseBody: |
+            Linux builds of Musubi. Download the `.AppImage` (any distribution: make it executable and run it) or the `.deb` (Debian, Ubuntu). See the CHANGELOG for what is in this release.
+          releaseDraft: false
+          prerelease: true
+          uploadUpdaterJson: false

@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-12
+
 ### Security
 
 - The HTML of notes is cleaned in the Rust core before it reaches the
@@ -162,3 +164,6 @@ and this project adheres to
 - `musubi` Typst package: `note-link` for links between notes, `card` for
   flashcards, `todo` and `done` for tasks. Notes using it still compile with
   the Typst command-line tool.
+
+[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mumpkin/musubi/releases/tag/v0.1.0
