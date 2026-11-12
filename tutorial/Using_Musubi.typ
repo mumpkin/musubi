@@ -55,6 +55,7 @@ They work everywhere except while typing text.
   [*Keys*], [*Action*],
   [`i`, double click], [Edit the note at the selected block],
   [`j`, `k`], [Next, previous block],
+  [`l`, `h`, `Enter`], [Next, previous link of the block; follow it],
   [`gg`, `ge`, `12G`], [First block, last block, block of line 12],
   [`/`, `?`, `n`, `N`], [Search in the note, next and previous match],
   [`Ctrl-d`, `Ctrl-u`], [Half a screen down, up],

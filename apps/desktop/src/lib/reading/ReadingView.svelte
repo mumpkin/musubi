@@ -14,6 +14,7 @@
 		highlightBlock,
 		renderedBlocks,
 	} from './block-cursor.ts';
+	import { LinkCursor } from './link-cursor.ts';
 	import type { NoteMarkup } from './note-html.ts';
 	import { linkedNotePath, webLinkUrl } from './note-html.ts';
 	import { readingKeyHandler } from './reading-keys.ts';
@@ -94,10 +95,11 @@
 	});
 
 	// Helix navigation keys; `Escape` hides the cursor and the matches.
+	const links = new LinkCursor(() => container);
 	const handleKeydown = readingKeyHandler(() => navigator, () => {
 		navigator?.clear();
 		onSelect(undefined);
-	});
+	}, links);
 
 	// Footnotes and the outline link to elements of the note: they scroll
 	// there smoothly.
