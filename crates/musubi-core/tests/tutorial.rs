@@ -8,6 +8,19 @@ use musubi_core::{Vault, VaultIndex};
 use musubi_typst::NoteCompiler;
 use tempfile::TempDir;
 
+/// Titles of the tutorial notes, by path, once `Start_here.typ` is mine.
+const TITLES: [&str; 9] = [
+	"Find anything",
+	"Helix basics",
+	"Helix workshop",
+	"Pins and themes",
+	"Mine",
+	"The lighthouse",
+	"Typst basics",
+	"Using Musubi",
+	"Writing Typst",
+];
+
 #[test]
 fn installs_the_missing_files_only() {
 	let directory = TempDir::new().expect("temporary directory");
@@ -31,16 +44,7 @@ fn installs_the_missing_files_only() {
 		.into_iter()
 		.map(|note| note.title)
 		.collect();
-	assert_eq!(
-		titles,
-		[
-			"Helix basics",
-			"Musubi features",
-			"Mine",
-			"Typst basics",
-			"Using Musubi"
-		]
-	);
+	assert_eq!(titles, TITLES);
 	assert!(
 		directory
 			.path()
@@ -68,6 +72,6 @@ fn every_note_compiles_without_warnings_and_links_to_existing_notes() {
 	let mut index = VaultIndex::in_memory().expect("index");
 	index.refresh(&vault, &mut compiler).expect("indexed");
 	let graph = index.graph().expect("graph");
-	assert_eq!(graph.nodes.len(), 5);
+	assert_eq!(graph.nodes.len(), 9);
 	assert!(graph.links.len() >= 8, "the notes link to each other");
 }

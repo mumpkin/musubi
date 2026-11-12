@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! The tutorial: notes in a `Welcome` folder, embedded in the binary
+//! The tutorial, a treasure hunt: notes in a `Welcome` folder, embedded in the binary
 //! (`tutorial/` in the repository) and written into a vault on request.
 
 use std::fs;
@@ -12,10 +12,30 @@ use crate::vault::Vault;
 const FOLDER: &str = "Welcome";
 
 /// Files of the tutorial, by path inside its folder. Text files only.
-const FILES: [(&str, &str); 6] = [
+const FILES: [(&str, &str); 10] = [
 	(
 		"Start_here.typ",
 		include_str!("../../../tutorial/Start_here.typ"),
+	),
+	(
+		"Find_anything.typ",
+		include_str!("../../../tutorial/Find_anything.typ"),
+	),
+	(
+		"The_lighthouse.typ",
+		include_str!("../../../tutorial/The_lighthouse.typ"),
+	),
+	(
+		"Helix_workshop.typ",
+		include_str!("../../../tutorial/Helix_workshop.typ"),
+	),
+	(
+		"Pins_and_themes.typ",
+		include_str!("../../../tutorial/Pins_and_themes.typ"),
+	),
+	(
+		"Writing_Typst.typ",
+		include_str!("../../../tutorial/Writing_Typst.typ"),
 	),
 	(
 		"Helix_basics.typ",
@@ -24,10 +44,6 @@ const FILES: [(&str, &str); 6] = [
 	(
 		"Typst_basics.typ",
 		include_str!("../../../tutorial/Typst_basics.typ"),
-	),
-	(
-		"Musubi_features.typ",
-		include_str!("../../../tutorial/Musubi_features.typ"),
 	),
 	(
 		"Using_Musubi.typ",
