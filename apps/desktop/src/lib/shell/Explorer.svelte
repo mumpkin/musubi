@@ -36,6 +36,11 @@
 		...rows
 	}: Props = $props();
 
+	// The notes of a section, as a folder without sub-folders.
+	function flat(notes: NoteEntry[]): FolderNode {
+		return { name: '', path: '', folders: [], notes };
+	}
+
 	// Folded folders, by path.
 	const folded = new SvelteSet<string>();
 
@@ -75,26 +80,46 @@
 			}}
 		><Icon name="newFolder" /></button>
 	</header>
-	<ExplorerSection
-		name="Pinned"
-		notes={pinned}
-		{folded}
-		{...rows}
-	/>
-	<ExplorerSection
-		name="Recent"
-		notes={recent}
-		{folded}
-		{...rows}
-	/>
-	<div class="tree">
-		<ExplorerFolder
-			folder={root}
+	{#if recent.length > 0}
+		<ExplorerSection
+			name="Recent"
+			icon="recent"
 			{folded}
-			{onCreate}
-			{...rows}
-		/>
-	</div>
+		>
+			<ExplorerFolder
+				folder={flat(recent)}
+				{folded}
+				{...rows}
+			/>
+		</ExplorerSection>
+	{/if}
+	{#if pinned.length > 0}
+		<ExplorerSection
+			name="Pinned"
+			icon="pin"
+			{folded}
+		>
+			<ExplorerFolder
+				folder={flat(pinned)}
+				{folded}
+				{...rows}
+			/>
+		</ExplorerSection>
+	{/if}
+	<ExplorerSection
+		name="Notebook"
+		icon="notebook"
+		{folded}
+	>
+		<div class="tree">
+			<ExplorerFolder
+				folder={root}
+				{folded}
+				{onCreate}
+				{...rows}
+			/>
+		</div>
+	</ExplorerSection>
 </nav>
 
 <style>

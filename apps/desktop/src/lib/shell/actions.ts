@@ -21,7 +21,9 @@ export type IconName
 		| 'minimize'
 		| 'maximize'
 		| 'modified'
-		| 'pin';
+		| 'pin'
+		| 'recent'
+		| 'notebook';
 
 export interface PaneAction {
 	label: string;
