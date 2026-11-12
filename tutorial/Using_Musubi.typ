@@ -11,9 +11,9 @@ command palette (`Space ?`) lists the same commands.
 - *Explorer*, on the left (`Space e`): folders and notes by title. The
   buttons next to the vault name create a note and a folder; the new note
   button next to a folder creates a note in it. The pin and trash buttons of
-  a note show when the pointer is over it. On top, *Pinned* lists the notes
-  you pinned and *Recent* the last 10 notes opened on this computer; both
-  fold like folders.
+  a note show when the pointer is over it. Three sections fold like folders:
+  *Recent*, the last 10 notes opened on this computer; *Pinned*, the notes
+  you pinned; *Notebook*, all your folders and notes.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
   read or edited, or the graph. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current

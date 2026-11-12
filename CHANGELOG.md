@@ -17,6 +17,9 @@ and this project adheres to
 
 ### Changed
 
+- The explorer has three foldable sections with icons: Recent, Pinned and
+  Notebook, which holds every folder and note.
+
 - In the reading view, `k` on the first block and `j` on the last one
   scroll to the very top and end of the note.
 
