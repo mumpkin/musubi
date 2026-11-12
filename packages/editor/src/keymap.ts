@@ -21,6 +21,8 @@ const shared: [string, CommandName][] = [
 	['y', 'yank'],
 	['p', 'paste'],
 	['P', 'pasteBefore'],
+	['>', 'indent'],
+	['<', 'unindent'],
 	['o', 'openBelow'],
 	['O', 'openAbove'],
 	['u', 'undo'],

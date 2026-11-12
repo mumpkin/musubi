@@ -16,6 +16,7 @@ const WORDS = 'alpha beta_gamma  delta-epsilon, zeta\n';
 
 const STICKY = 'a long first line\nshort\n\nanother long line\n';
 const SEARCH = 'cat dog cat\nbird cat dog\nfish\n';
+const NESTED = 'root\n  child\n  other\nlast\n\nend\n';
 
 export const HELIX_CASES: HelixCase[] = [
 	{ text: LINES, keys: 'l' },
@@ -281,4 +282,14 @@ export const HELIX_CASES: HelixCase[] = [
 	{ text: SEARCH, keys: 'll*n' },
 	{ text: SEARCH, keys: '/dog\rvn' },
 	{ text: SEARCH, keys: 'jw/cat\rn' },
+	{ text: NESTED, keys: '>' },
+	{ text: NESTED, keys: 'll>' },
+	{ text: NESTED, keys: 'j>' },
+	{ text: NESTED, keys: 'j<' },
+	{ text: NESTED, keys: 'jll<' },
+	{ text: NESTED, keys: '<' },
+	{ text: NESTED, keys: 'j<<' },
+	{ text: NESTED, keys: 'xxx>' },
+	{ text: NESTED, keys: 'jxx<' },
+	{ text: NESTED, keys: 'xxxxx>' },
 ];
