@@ -8,11 +8,15 @@ export async function trashNote(path: string): Promise<TrashEntry> {
 	return invoke<TrashEntry>('trash_note', { path });
 }
 
+export async function trashFolder(path: string): Promise<TrashEntry> {
+	return invoke<TrashEntry>('trash_folder', { path });
+}
+
 export async function trashEntries(): Promise<TrashEntry[]> {
 	return invoke<TrashEntry[]>('trash_entries');
 }
 
-// Restores an entry; resolves to the path of the note.
+// Restores an entry; resolves to the path of the note or the folder.
 export async function restoreNote(id: string): Promise<string> {
 	return invoke<string>('restore_note', { id });
 }

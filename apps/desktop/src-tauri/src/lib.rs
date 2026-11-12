@@ -39,6 +39,7 @@ macro_rules! commands {
 			assets::paste_image,
 			assets::note_assets,
 			trash::trash_note,
+			trash::trash_folder,
 			trash::trash_entries,
 			trash::restore_note,
 			trash::delete_trash_entries,

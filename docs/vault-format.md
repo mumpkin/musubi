@@ -207,7 +207,7 @@ format `0` with default values.
 
 ### Trash
 
-Deleting a note moves it to the trash instead of removing it.
+Deleting a note or a folder moves it to the trash instead of removing it.
 
 - Each deletion creates one **entry**, a folder in `.musubi/trash/` named
   `<deletion time, UTC, YYYYMMDDTHHMMSSZ>-<8 random hex digits>`, for example
@@ -222,9 +222,13 @@ Deleting a note moves it to the trash instead of removing it.
     }
     ```
 
+- A **folder entry** holds the whole folder at its original path, with its
+  notes, sub-folders and `.assets/` folders, and `"folder": true` in
+  `entry.json` (absent or `false` for a note). Pins of its notes are
+  removed.
 - **Restoring** moves the files back to `originalPath`. If that path is taken,
-  the collision suffix applies (`Old_note_2.typ`). Missing parent folders are
-  created.
+  the collision suffix applies (`Old_note_2.typ`, `Old folder_2`). Missing
+  parent folders are created.
 - **Purge**: when a vault is opened, entries older than `trashRetentionDays`
   (by `deletedAt`) are removed. The user can also empty the trash by hand.
 - Trashed notes are not indexed: links to them show as links to missing

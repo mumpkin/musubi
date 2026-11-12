@@ -97,8 +97,9 @@ image on the editor inserts it too.
   palette. Pins are saved in the vault: every copy of it shows them. A
   renamed note stays pinned; a note moved to the trash is unpinned.
 - *Delete*: the trash button in the explorer, or "Move the note to the
-  trash" in the palette. "Show the trash" restores notes or deletes them for
-  good. Notes stay 30 days in the trash; the settings change the delay.
+  trash" in the palette. Folders go to the trash the same way, with
+  everything in them. "Show the trash" restores notes and folders or deletes
+  them for good. Notes stay 30 days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
 

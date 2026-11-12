@@ -67,6 +67,13 @@
 							onCreate('note', child.path);
 						}}
 					><Icon name="newNote" /></button>
+					<button
+						class="add"
+						title="Move the folder {child.name} to the trash"
+						onclick={() => {
+							onDelete(child.path);
+						}}
+					><Icon name="trash" /></button>
 				{/if}
 			</div>
 			{#if !folded.has(child.path)}

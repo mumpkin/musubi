@@ -9,6 +9,7 @@ export type ShellAction
 		| 'searchText'
 		| 'newNote'
 		| 'deleteNote'
+		| 'deleteFolder'
 		| 'showTrash'
 		| 'openTutorial'
 		| 'togglePin'
@@ -35,6 +36,10 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	searchText: { label: 'Search the text of the notes', group: 'Note' },
 	newNote: { label: 'New note', group: 'Note' },
 	deleteNote: { label: 'Move the note to the trash', group: 'Note' },
+	deleteFolder: {
+		label: 'Move the folder of the note to the trash',
+		group: 'Note',
+	},
 	showTrash: { label: 'Show the trash', group: 'Note' },
 	openTutorial: { label: 'Open the tutorial', group: 'Help' },
 	togglePin: { label: 'Pin or unpin the note', group: 'Note' },
