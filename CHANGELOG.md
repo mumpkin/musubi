@@ -17,6 +17,9 @@ and this project adheres to
 
 ### Changed
 
+- In the reading view, the block selected with `j` and `k` shows with a
+  faint background instead of a blue outline.
+
 - In the reading view, `k` on the first block and `j` on the last one
   scroll to the very top and end of the note.
 
