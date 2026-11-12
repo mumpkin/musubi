@@ -5,6 +5,7 @@
 import { archiveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
 import { isArchived } from '../vault/tree.ts';
+import type { TrashActions } from './actions.ts';
 import type { PaneManager } from './pane-manager.svelte.ts';
 import type { VaultState } from './vault-state.svelte.ts';
 
@@ -21,6 +22,15 @@ export class NoteActions {
 				await files.prepareLink(path, text);
 				manager.open(path);
 			});
+		};
+	}
+
+	// What the trash section of the explorer needs.
+	get trashActions(): TrashActions {
+		return {
+			revision: this.files.loads,
+			onRestored: this.restored,
+			onError: this.showMessage,
 		};
 	}
 

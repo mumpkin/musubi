@@ -193,6 +193,9 @@
 					vaultName={vault.name}
 					root={files.sections.notebook}
 					archive={files.sections.archive}
+					trash={files.settings?.showTrashSection === false
+						? undefined
+						: notes.trashActions}
 					pinned={files.pinnedNotes}
 					recent={files.recentNotes}
 					pinnedPaths={files.pinnedPaths}

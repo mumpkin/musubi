@@ -13,4 +13,8 @@ autosave: boolean, autosaveDelaySeconds: number,
  * Id of the chosen color theme; without one, the theme follows the
  * light or dark preference of the system.
  */
-theme: string | null, };
+theme: string | null, 
+/**
+ * The trash shows as the last section of the explorer.
+ */
+showTrashSection: boolean, };

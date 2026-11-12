@@ -16,6 +16,11 @@ export async function setAutosave(
 	return invoke<DeviceSettings>('set_autosave', { enabled, delaySeconds });
 }
 
+// Resolves to the settings of the device after the change.
+export async function setTrashSection(show: boolean): Promise<DeviceSettings> {
+	return invoke<DeviceSettings>('set_trash_section', { show });
+}
+
 // Days before trash entries are purged; `0` keeps them.
 export async function setTrashRetention(days: number): Promise<void> {
 	await invoke('set_trash_retention', { days });
