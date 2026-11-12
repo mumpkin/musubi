@@ -44,6 +44,9 @@ and this project adheres to
 
 ### Added
 
+- In the reading view, `l` and `h` move between the links of the selected
+  block and `Enter` follows the selected one.
+
 - `Space n` accepts a path: `Projects/Ideas/My note` creates the note in
   `Projects/Ideas`, and the missing folders with it.
 

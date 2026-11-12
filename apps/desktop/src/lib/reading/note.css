@@ -155,6 +155,14 @@ the icon is drawn as a mask, in the colour of the text around it. */
 	outline-offset: 4px;
 }
 
+/* The link reached with `l` / `h` in the selected block: a tint of the
+   accent, as quiet as the block. */
+.reading-view .selected-block a.selected-link {
+	border-radius: 2px;
+	background: color-mix(in srgb, var(--accent) 18%, transparent);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
 .reading-view a.musubi-link {
 	color: var(--accent);
 	text-decoration: none;

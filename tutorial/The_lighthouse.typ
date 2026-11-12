@@ -10,7 +10,9 @@ note; it opens at the matching line.
 A link to a note is written `#note-link("Folder/Note")[text]`. In the editor,
 typing `[[` in insert mode suggests notes as you type. A link to a note that
 does not exist yet shows greyed out: clicking it creates the note.
-#note-link("Welcome/My_first_note")[My first note] is one: try it.
+#note-link("Welcome/My_first_note")[My first note] is one: try it. With the
+keyboard, select a block with `j` and `k`, then `l` and `h` move between
+its links, and `Enter` follows one.
 
 == Challenge 3
 
