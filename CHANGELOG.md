@@ -41,6 +41,9 @@ and this project adheres to
 
 ### Added
 
+- `Space n` accepts a path: `Projects/Ideas/My note` creates the note in
+  `Projects/Ideas`, and the missing folders with it.
+
 - The tutorial is a treasure hunt: six steps, each with a challenge that
   uses a feature (the source of a note, search, backlinks, Helix multiple
   selections, pins, themes, panes, the graph, renaming, the trash) and

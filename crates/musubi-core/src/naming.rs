@@ -4,6 +4,8 @@
 
 use unicode_normalization::UnicodeNormalization;
 
+use crate::error::VaultError;
+
 /// Characters forbidden on Windows or in paths.
 const FORBIDDEN: [char; 9] = ['<', '>', ':', '"', '/', '\\', '|', '?', '*'];
 const RESERVED: [&str; 4] = ["CON", "PRN", "AUX", "NUL"];
@@ -139,6 +141,37 @@ pub const NOTE_EXTENSIONS: [&str; 2] = [".typ", ".assets"];
 pub fn note_file_name(title: &str, folder: &Folder<'_>) -> String {
 	let stem = folder.unique(&base_stem(title), &NOTE_EXTENSIONS);
 	format!("{stem}.typ")
+}
+
+/// The folder and the title of `typed`, a title or a path from `folder`.
+///
+/// # Errors
+///
+/// [`VaultError::InvalidPath`] for an empty, `.` or `..` part.
+pub fn split_note_path(
+	folder: &str,
+	typed: &str,
+) -> Result<(String, String), VaultError> {
+	let Some((path, title)) = typed.rsplit_once('/') else {
+		return Ok((folder.to_owned(), typed.to_owned()));
+	};
+	let mut parts: Vec<String> = Vec::new();
+	for part in path.split('/').map(str::trim) {
+		if part.is_empty() || part == "." || part == ".." {
+			return Err(VaultError::InvalidPath(typed.to_owned()));
+		}
+		parts.push(folder_stem(part));
+	}
+	if title.trim().is_empty() {
+		return Err(VaultError::InvalidPath(typed.to_owned()));
+	}
+	let folders = parts.join("/");
+	let folder = if folder.is_empty() {
+		folders
+	} else {
+		format!("{folder}/{folders}")
+	};
+	Ok((folder, title.to_owned()))
 }
 
 #[cfg(test)]

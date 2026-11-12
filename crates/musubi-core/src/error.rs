@@ -16,6 +16,8 @@ pub enum VaultError {
 	NewerFormat(u64),
 	/// A note already exists at this path.
 	AlreadyExists(String),
+	/// A path typed by the user has an empty, `.` or `..` part.
+	InvalidPath(String),
 	Io(io::Error),
 	/// The index could not be read or written.
 	Index(rusqlite::Error),
@@ -35,6 +37,10 @@ impl Display for VaultError {
 			Self::AlreadyExists(path) => {
 				write!(formatter, "the note {path} already exists")
 			}
+			Self::InvalidPath(path) => write!(
+				formatter,
+				"{path}: each folder of the path needs a name"
+			),
 			Self::Io(error) => write!(formatter, "{error}"),
 			Self::Index(error) => write!(formatter, "index: {error}"),
 		}

@@ -189,3 +189,21 @@ fn copies_images_into_the_assets_folder_and_reuses_duplicates() {
 		.is_ok_and(|bytes| bytes == b"one")
 	);
 }
+
+#[test]
+fn creates_a_note_from_a_path_and_its_missing_folders() {
+	let directory = vault_with(&[("Projects/Old.typ", "= Old\n")]);
+	let vault = open(directory.path());
+	let path = vault
+		.create_note("", "Projects/Sub folder/My note")
+		.expect("created");
+	assert_eq!(path, "Projects/Sub folder/My_note.typ");
+	assert_eq!(vault.read_note(&path).expect("note"), "= My note\n");
+	let nested = vault
+		.create_note("Projects", "Ideas/Plan")
+		.expect("created");
+	assert_eq!(nested, "Projects/Ideas/Plan.typ");
+	for typed in ["/A", "A//B", "../A", "A/./B", "A/ "] {
+		assert!(vault.create_note("", typed).is_err(), "{typed}");
+	}
+}
