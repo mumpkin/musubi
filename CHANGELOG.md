@@ -27,6 +27,8 @@ and this project adheres to
 
 ### Fixed
 
+- A new folder keeps the spaces of its name: `My folder`, not `My_folder`.
+
 - `Space ?` opens the command palette on layouts where `?` needs `Shift`:
   modifier keys alone no longer end a `Space` sequence.
 

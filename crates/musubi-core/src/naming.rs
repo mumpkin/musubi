@@ -19,15 +19,15 @@ fn is_removed(character: char) -> bool {
 		|| (character.is_control() && !character.is_whitespace())
 }
 
-/// Steps 2 to 4: forbidden characters removed, whitespace runs and `_` runs
-/// collapsed into a single `_`.
-fn clean(title: &str) -> String {
+/// Steps 2 to 4: forbidden characters removed, runs of whitespace and of
+/// `separator` collapsed into a single `separator`: `_` for notes, a space
+/// for folders.
+fn clean(title: &str, separator: char) -> String {
 	let mut cleaned = String::with_capacity(title.len());
 	for character in title.nfc().filter(|character| !is_removed(*character)) {
-		let underscore = character.is_whitespace() || character == '_';
-		if underscore {
-			if !cleaned.ends_with('_') {
-				cleaned.push('_');
+		if character.is_whitespace() || character == separator {
+			if !cleaned.ends_with(separator) {
+				cleaned.push(separator);
 			}
 		} else {
 			cleaned.push(character);
@@ -36,8 +36,8 @@ fn clean(title: &str) -> String {
 	cleaned
 }
 
-fn trim_edges(stem: &str) -> &str {
-	stem.trim_matches(|character| character == '_' || character == '.')
+fn trim_edges(stem: &str, separator: char) -> &str {
+	stem.trim_matches(|character| character == separator || character == '.')
 }
 
 fn is_reserved(stem: &str) -> bool {
@@ -62,15 +62,26 @@ fn truncate(stem: &str) -> &str {
 		end -= 1;
 	}
 	stem.get(..end)
-		.map_or(stem, |head| head.trim_end_matches(['_', '.']))
+		.map_or(stem, |head| head.trim_end_matches(['_', ' ', '.']))
 }
 
 /// The stem (name without extension) for `title`, before collisions
 /// (steps 1 to 8).
 #[must_use]
 pub fn base_stem(title: &str) -> String {
-	let cleaned = clean(title);
-	let mut stem = trim_edges(&cleaned).to_owned();
+	stem_with(title, '_')
+}
+
+/// The name of a new folder called `name`, before collisions: as a note
+/// stem, but whitespace stays a space, since a folder has no title to show.
+#[must_use]
+pub fn folder_stem(name: &str) -> String {
+	stem_with(name, ' ')
+}
+
+fn stem_with(title: &str, separator: char) -> String {
+	let cleaned = clean(title, separator);
+	let mut stem = trim_edges(&cleaned, separator).to_owned();
 	if stem.is_empty() {
 		stem = UNTITLED.to_owned();
 	}
@@ -197,6 +208,14 @@ mod tests {
 			own: Some("Notes.typ"),
 		};
 		assert_eq!(note_file_name("Notes", &folder), "Notes.typ");
+	}
+
+	#[test]
+	fn folders_keep_their_spaces() {
+		assert_eq!(super::folder_stem("  Le   caca "), "Le caca");
+		assert_eq!(super::folder_stem("A/B: c"), "AB c");
+		assert_eq!(super::folder_stem("snake_case"), "snake_case");
+		assert_eq!(super::folder_stem(" . "), "Untitled");
 	}
 
 	#[test]
