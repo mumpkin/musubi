@@ -17,6 +17,9 @@ and this project adheres to
 
 ### Changed
 
+- In the reading view, `k` on the first block and `j` on the last one
+  scroll to the very top and end of the note.
+
 - The icons of the interface come from Lucide, with one size and stroke
   width: pane headers, explorer, title bar, the mark of web links. A note
   with unsaved changes shows a dot next to its title.

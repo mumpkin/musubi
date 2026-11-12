@@ -76,9 +76,55 @@ export function highlightBlock(
 	for (const element of elements) {
 		element.classList.add('selected-block');
 	}
-	if (scroll !== 'none') {
+	if (scroll === 'none') {
+		return;
+	}
+	if (!scrollToEdge(container, block, scroll)) {
 		elements[0]?.scrollIntoView(scroll === 'smooth'
 			? { block: 'nearest', behavior: 'smooth' }
 			: { block: 'center' });
 	}
+}
+
+// The first and the last blocks show the very top and end of the note, not
+// a block pressed against the edge of the pane. Whether it scrolled.
+function scrollToEdge(
+	container: Element,
+	block: number,
+	scroll: BlockScroll,
+): boolean {
+	const edge = edgeOf(container, block);
+	const scroller = edge === undefined ? undefined : scrollerOf(container);
+	if (!scroller) {
+		return false;
+	}
+	scroller.scrollTo({
+		top: edge === 'first' ? 0 : scroller.scrollHeight,
+		behavior: scroll === 'smooth' ? 'smooth' : 'instant',
+	});
+	return true;
+}
+
+// Whether `block` is the first or the last block of the note.
+function edgeOf(
+	container: Element,
+	block: number,
+): 'first' | 'last' | undefined {
+	const blocks = [...container.querySelectorAll<HTMLElement>('[data-block]')]
+		.map((element) => Number(element.dataset.block));
+	if (block === Math.min(...blocks)) {
+		return 'first';
+	}
+	return block === Math.max(...blocks) ? 'last' : undefined;
+}
+
+// The element that scrolls the note: the nearest ancestor that overflows.
+function scrollerOf(element: Element): Element | undefined {
+	for (let node = element.parentElement; node; node = node.parentElement) {
+		const { overflowY } = getComputedStyle(node);
+		if (overflowY === 'auto' || overflowY === 'scroll') {
+			return node;
+		}
+	}
+	return undefined;
 }
