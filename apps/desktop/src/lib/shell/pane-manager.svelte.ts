@@ -7,6 +7,8 @@ import { SvelteMap } from 'svelte/reactivity';
 
 import type { PaneAction } from './actions.ts';
 import { modeEvents } from './pane-modes.ts';
+
+export type SplitDirection = 'horizontal' | 'vertical';
 import {
 	MAX_PANES,
 	otherMode,
@@ -21,6 +23,9 @@ export class PaneManager {
 	panes = $state<PaneState[]>([]);
 	focusedIndex = $state(0);
 	editorMode = $state<EditorMode>('normal');
+	// How two panes share the main area: side by side, or one above the
+	// other.
+	direction = $state<SplitDirection>('horizontal');
 	message = $state('');
 	// Saves so far: titles may have changed, the tree is read again.
 	saves = $state(0);
@@ -147,9 +152,12 @@ export class PaneManager {
 	}
 
 	// A second pane, on the same note in the other mode.
-	split(): void {
+	// `Space w v`: a second pane beside the first one; `Space w s` (with
+	// `direction` `'vertical'`): below it, as Helix.
+	split(direction: SplitDirection = 'horizontal'): void {
 		const pane = this.panes[this.focusedIndex];
 		if (pane && this.canSplit) {
+			this.direction = direction;
 			this.panes.push({
 				path: pane.path,
 				mode: otherMode(pane.mode),

@@ -35,6 +35,20 @@ body {
 	cursor: col-resize;
 }
 
+/* Between two panes one above the other: the same handle, lying down. */
+.resizer.vertical {
+	width: auto;
+	height: 5px;
+	background: linear-gradient(
+		to bottom,
+		transparent 2px,
+		var(--border) 2px,
+		var(--border) 3px,
+		transparent 3px
+	);
+	cursor: row-resize;
+}
+
 /* The resize cursor is enough to show the handle: no colour on hover. */
 
 /* The panel with the keyboard focus shows it in its header. */

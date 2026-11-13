@@ -23,6 +23,7 @@ export type ShellAction
 		| 'home'
 		| 'toggleMode'
 		| 'split'
+		| 'splitBelow'
 		| 'closePane'
 		| 'nextPane'
 		| 'leftPanel'
@@ -57,6 +58,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	home: { label: 'Home: recent and pinned notes', group: 'View' },
 	toggleMode: { label: 'Switch between reading and editing', group: 'Pane' },
 	split: { label: 'Split the pane', group: 'Pane' },
+	splitBelow: { label: 'Split the pane, one above the other', group: 'Pane' },
 	closePane: { label: 'Close the pane', group: 'Pane' },
 	nextPane: { label: 'Next pane', group: 'Pane' },
 	leftPanel: { label: 'Focus the panel on the left', group: 'View' },
@@ -79,6 +81,7 @@ const SEQUENCES = new Map<string, ShellAction>([
 	['Space h', 'leftPanel'],
 	['Space l', 'rightPanel'],
 	['Space w v', 'split'],
+	['Space w s', 'splitBelow'],
 	['Space w q', 'closePane'],
 	['Space w w', 'nextPane'],
 	['Space w h', 'leftPanel'],

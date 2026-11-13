@@ -153,10 +153,10 @@
 				defaultSize={PANE_SIZES.main.default}
 				minSize={PANE_SIZES.main.min}
 			>
-				<PaneGroup direction="horizontal">
+				<PaneGroup direction={manager.direction}>
 					{#each manager.panes as pane, index (index)}
 						{#if index > 0}
-							<PaneResizer class="resizer" />
+							<PaneResizer class="resizer {manager.direction}" />
 						{/if}
 						<Pane minSize={PANE_SIZES.half.min}>
 							<NotePane
