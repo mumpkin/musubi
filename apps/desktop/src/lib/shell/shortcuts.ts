@@ -20,6 +20,7 @@ export type ShellAction
 		| 'toggleGraph'
 		| 'review'
 		| 'reviewNote'
+		| 'home'
 		| 'toggleMode'
 		| 'split'
 		| 'closePane'
@@ -53,6 +54,7 @@ export const ACTION_LABELS: Record<ShellAction, ActionLabel> = {
 	toggleGraph: { label: 'Show the graph of links', group: 'View' },
 	review: { label: 'Review the flashcards of the vault', group: 'Note' },
 	reviewNote: { label: 'Review the flashcards of this note', group: 'Note' },
+	home: { label: 'Home: recent and pinned notes', group: 'View' },
 	toggleMode: { label: 'Switch between reading and editing', group: 'Pane' },
 	split: { label: 'Split the pane', group: 'Pane' },
 	closePane: { label: 'Close the pane', group: 'Pane' },
@@ -72,6 +74,7 @@ const SEQUENCES = new Map<string, ShellAction>([
 	['Space b', 'toggleBacklinks'],
 	['Space g', 'toggleGraph'],
 	['Space c', 'review'],
+	['Space o', 'home'],
 	['Space r', 'toggleMode'],
 	['Space h', 'leftPanel'],
 	['Space l', 'rightPanel'],

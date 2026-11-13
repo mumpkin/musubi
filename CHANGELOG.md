@@ -10,6 +10,12 @@ and this project adheres to
 
 ### Added
 
+- A home screen in a pane without a note (`Space o`, or when its note goes
+  to the trash): find a note, the notes modified last, the pinned ones and
+  the flashcards due.
+
+### Added
+
 - Sync conflicts: the conflict copies of Syncthing, Nextcloud and Dropbox
   show in a Conflicts section of the explorer and in the header of their
   note. Opening one compares both versions side by side; keep one, the

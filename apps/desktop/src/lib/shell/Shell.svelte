@@ -7,12 +7,12 @@
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
+	import { homeData } from '../home/home-data.ts';
 	import { DueCounts } from '../review/due-counts.svelte.ts';
 	import SettingsDialog from '../settings/SettingsDialog.svelte';
 	import { themeCommands } from '../theme/theme-commands.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
-	import { parentOf, titleIn } from '../vault/tree.ts';
-	import { openTutorial } from '../vault/vault.ts';
+	import { titleIn } from '../vault/tree.ts';
 	import BacklinksPanel from './BacklinksPanel.svelte';
 	import CommandPalette from './CommandPalette.svelte';
 	import { ShellDialogs } from './dialogs.svelte.ts';
@@ -25,8 +25,8 @@
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
 	import SearchPicker from './SearchPicker.svelte';
+	import { shellActions } from './shell-actions.ts';
 	import { shortcutHandler } from './shortcut-handler.ts';
-	import type { ShellAction } from './shortcuts.ts';
 	import { SidePanels } from './side-panels.svelte.ts';
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
@@ -54,6 +54,7 @@
 	const panels = new SidePanels(manager);
 	const editing = treeEditing(files, manager, panels);
 	const dueCounts = new DueCounts(() => files.loads);
+	const home = homeData({ files, dueCounts, manager, dialogs });
 
 	// Back in the window or after a save: the notes may have changed.
 	function loadTree(): void {
@@ -77,78 +78,7 @@
 
 	const notes = new NoteActions(files, manager);
 
-	const ACTIONS: Record<ShellAction, () => void> = {
-		palette: () => {
-			dialogs.isPaletteOpen = true;
-		},
-		deleteNote: () => {
-			notes.deleteNote(manager.currentPath);
-		},
-		deleteFolder: () => {
-			notes.deleteFolder(parentOf(manager.currentPath));
-		},
-		showTrash: () => {
-			dialogs.isTrashOpen = true;
-		},
-		settings: () => {
-			dialogs.isSettingsOpen = true;
-		},
-		openTutorial: () => {
-			notes.restored(openTutorial());
-		},
-		findNote: () => {
-			dialogs.search = 'titles';
-		},
-		searchText: () => {
-			dialogs.search = 'text';
-		},
-		newNote: () => {
-			dialogs.startCreation('note', parentOf(manager.currentPath));
-		},
-		toggleArchive: () => {
-			notes.toggleArchive(manager.currentPath);
-		},
-		togglePin: () => {
-			notes.togglePin(manager.currentPath);
-		},
-		toggleExplorer: () => {
-			panels.toggleExplorer();
-		},
-		toggleBacklinks: () => {
-			panels.toggleBacklinks();
-		},
-		toggleMode: () => {
-			if (panels.isInExplorer()) {
-				editing.toggle(manager.currentPath);
-			} else {
-				manager.toggleMode(manager.focusedIndex);
-			}
-		},
-		toggleGraph: () => {
-			manager.toggleGraph(manager.focusedIndex);
-		},
-		review: () => {
-			manager.reviewFocused('');
-		},
-		reviewNote: () => {
-			manager.reviewFocused(manager.currentPath);
-		},
-		split: () => {
-			manager.split();
-		},
-		closePane: () => {
-			manager.close(manager.focusedIndex);
-		},
-		nextPane: () => {
-			manager.focusPane(manager.focusedIndex + 1);
-		},
-		leftPanel: () => {
-			panels.move(-1);
-		},
-		rightPanel: () => {
-			panels.move(1);
-		},
-	};
+	const ACTIONS = shellActions({ manager, panels, dialogs, notes, editing });
 
 	const commands = $derived([
 		...paletteCommands(ACTIONS, files.tree.notes, openNote),
@@ -240,6 +170,7 @@
 								events={manager.events(index)}
 								dueCount={dueCounts.of(pane.path)}
 								conflictCopy={files.conflictOf(pane.path)}
+								{home}
 							/>
 						</Pane>
 					{/each}

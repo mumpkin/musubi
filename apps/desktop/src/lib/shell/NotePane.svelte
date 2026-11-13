@@ -5,6 +5,8 @@
 
 	import ConflictPane from '../conflict/ConflictPane.svelte';
 	import GraphView from '../graph/GraphView.svelte';
+	import type { HomeData } from '../home/home-data.ts';
+	import HomePane from '../home/HomePane.svelte';
 	import ReviewPane from '../review/ReviewPane.svelte';
 	import { writeNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
@@ -29,6 +31,8 @@
 		dueCount: number;
 		// The conflict copy of the note, if a sync tool made one.
 		conflictCopy: string | undefined;
+		// What the home screen shows.
+		home: HomeData;
 	}
 
 	const {
@@ -42,11 +46,18 @@
 		events,
 		dueCount,
 		conflictCopy,
+		home,
 	}: Props = $props();
 
 	let editorMode = $state<EditorMode>('normal');
 
 	const isModified = $derived(pane.draft !== undefined);
+
+	// Panes that show no single note have their own title.
+	const HEADER_TITLES: Partial<Record<PaneState['mode'], string>> = {
+		review: 'Flashcards',
+		home: 'Home',
+	};
 
 	function setEditorMode(mode: EditorMode): void {
 		editorMode = mode;
@@ -69,7 +80,7 @@
 	onfocusin={events.focus}
 >
 	<PaneHeader
-		title={pane.mode === 'review' ? 'Flashcards' : title}
+		title={HEADER_TITLES[pane.mode] ?? title}
 		{isModified}
 		mode={pane.mode === 'editing'
 			? modeIndicator(editorMode)
@@ -86,6 +97,11 @@
 			current={pane.path}
 			{notes}
 			onOpen={openFromGraph}
+		/>
+	{:else if pane.mode === 'home'}
+		<HomePane
+			data={home}
+			autofocus={isFocused}
 		/>
 	{:else if pane.mode === 'conflict'}
 		{#key pane.scope}
