@@ -2,6 +2,7 @@
 // What the shell does to notes beyond opening them: trash, pin, open a
 // note just written, follow a link to a missing note. Errors show in the
 // status bar.
+import type { Conflict } from '../bindings/Conflict.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { archiveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
@@ -137,6 +138,12 @@ export class NoteActions {
 		}
 		pane.draft = undefined;
 		return true;
+	};
+
+	// Opens the note of `conflict` beside its conflict copy.
+	readonly showConflict = (conflict: Conflict): void => {
+		this.manager.open(conflict.note);
+		this.manager.events(this.manager.focusedIndex).conflict(conflict.copy);
 	};
 
 	readonly togglePin = (path: string): void => {

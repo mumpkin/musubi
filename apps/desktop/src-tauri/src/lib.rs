@@ -3,6 +3,7 @@
 
 mod assets;
 mod commands;
+mod conflicts;
 mod explorer;
 mod links;
 mod reading;
@@ -49,6 +50,8 @@ macro_rules! commands {
 			explorer::recent_notes,
 			explorer::archive_entry,
 			reviews::due_cards,
+			conflicts::conflicts,
+			conflicts::resolve_conflict,
 			reviews::review_card,
 			settings::set_new_cards_per_day,
 			explorer::retitle_note,

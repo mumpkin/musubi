@@ -3,10 +3,12 @@
 // they may have changed, and the settings of this device.
 import { SvelteSet } from 'svelte/reactivity';
 
+import type { Conflict } from '../bindings/Conflict.ts';
 import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { editorSettings } from '../editor/editor-settings.svelte.ts';
+import { listConflicts } from '../vault/conflicts.ts';
 import { pinNote, recentNotes } from '../vault/explorer.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 import { buildTree, splitArchive } from '../vault/tree.ts';
@@ -19,6 +21,8 @@ export class VaultState {
 	// Bumped on every read of the tree: the backlinks may have changed.
 	loads = $state(0);
 	settings = $state<DeviceSettings>();
+	// Conflict copies made by sync tools, to resolve.
+	conflicts = $state<Conflict[]>([]);
 
 	readonly root = $derived(buildTree(this.tree));
 	// Notebook and Archive sections of the explorer.
@@ -50,6 +54,11 @@ export class VaultState {
 			})
 			.catch(() => undefined);
 		this.loadRecent();
+		listConflicts()
+			.then((found) => {
+				this.conflicts = found;
+			})
+			.catch(() => undefined);
 	}
 
 	private entries(paths: string[]): NoteEntry[] {
@@ -89,6 +98,12 @@ export class VaultState {
 	async load(): Promise<void> {
 		this.setTree(await vaultTree());
 		this.loadRecent();
+		this.conflicts = await listConflicts();
+	}
+
+	// The conflict copy of `note`, if a sync tool made one.
+	conflictOf(note: string): string | undefined {
+		return this.conflicts.find((conflict) => conflict.note === note)?.copy;
 	}
 
 	// Before following a link: creates the note if it is missing, titled

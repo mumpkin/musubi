@@ -4,12 +4,14 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity';
 
+	import type { Conflict } from '../bindings/Conflict.ts';
 	import type { NoteEntry } from '../bindings/NoteEntry.ts';
 	import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
 	import TreeChangesDialog from '../tree-edit/TreeChangesDialog.svelte';
 	import TreeEditor from '../tree-edit/TreeEditor.svelte';
 	import type { FolderNode } from '../vault/tree.ts';
 	import type { TrashActions } from './actions.ts';
+	import ConflictSection from './ConflictSection.svelte';
 	import ContextMenu from './ContextMenu.svelte';
 	import {
 		type EntryActions,
@@ -46,6 +48,9 @@
 		onReview: (scope: string) => void;
 		// Flashcards due in the vault.
 		dueCount: number;
+		// Conflict copies made by sync tools, and how to open one.
+		conflicts: Conflict[];
+		onConflict: (conflict: Conflict) => void;
 	}
 
 	const {
@@ -66,6 +71,8 @@
 		editing,
 		onReview,
 		dueCount,
+		conflicts,
+		onConflict,
 	}: Props = $props();
 
 	const rows = $derived({ current, pinnedPaths, onOpen });
@@ -182,6 +189,11 @@
 			</div>
 		{/key}
 	{:else}
+		<ConflictSection
+			{folded}
+			{conflicts}
+			{onConflict}
+		/>
 		{#if recent.length > 0}
 			<ExplorerSection
 				name="Recent"

@@ -4,6 +4,7 @@
 mod archive;
 mod assets;
 pub mod cards;
+mod conflicts;
 mod context;
 mod error;
 mod index;
@@ -29,6 +30,7 @@ mod vault;
 pub use crate::archive::ARCHIVE_FOLDER;
 pub use crate::assets::{NewAsset, is_image};
 pub use crate::cards::{DueCard, DueRequest, ReviewClock};
+pub use crate::conflicts::{Conflict, Keep, conflict_of};
 pub use crate::error::VaultError;
 pub use crate::index::{
 	Backlink, Graph, GraphLink, GraphNode, IndexedCard, TextMatch, VaultIndex,

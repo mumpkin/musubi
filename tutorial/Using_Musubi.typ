@@ -182,4 +182,11 @@ Your vault is an ordinary folder; Musubi only reads and writes files in it.
 Musubi has no sync of its own. To use your notes on several devices, sync
 the folder with the tool you like: Syncthing, Nextcloud, git…
 
+When a note changed on two devices at once, the sync tool keeps a copy of
+the other version next to it. Musubi lists these copies in a *Conflicts*
+section of the explorer, and marks the note in its header: open one to see
+both versions side by side, the differences marked, then keep this version
+(`1`), the other one (`2`), or merge by hand (`m`). The version you drop
+goes to the trash.
+
 Back to #note-link("Welcome/Start_here")[Start here].

@@ -27,7 +27,8 @@ export type IconName
 		| 'archive'
 		| 'unarchive'
 		| 'cards'
-		| 'more';
+		| 'more'
+		| 'conflict';
 
 export interface PaneAction {
 	label: string;

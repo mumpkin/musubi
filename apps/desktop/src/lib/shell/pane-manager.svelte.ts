@@ -6,6 +6,7 @@ import { tick } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 
 import type { PaneAction } from './actions.ts';
+import { modeEvents } from './pane-modes.ts';
 import {
 	MAX_PANES,
 	otherMode,
@@ -288,12 +289,7 @@ export class PaneManager {
 			edit: (line) => {
 				this.edit(index, line);
 			},
-			read: () => {
-				this.read(index);
-			},
-			review: () => {
-				this.review(index, this.panes[index]?.path ?? '');
-			},
+			...modeEvents(this, index),
 		};
 	}
 
