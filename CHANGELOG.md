@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The status bar is gone: the mode shows in the header of each pane, and
+  of the explorer while its tree is edited; messages show for a few
+  seconds at the bottom right.
+- The panel with the keyboard focus (explorer, pane, backlinks) has its
+  header highlighted, instead of a blue line above the focused pane.
+
 ### Fixed
 
 - `Tab` in insert mode indents, as in Helix, instead of moving the focus

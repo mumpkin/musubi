@@ -58,7 +58,6 @@
 
 <section
 	class="pane"
-	class:focused={isFocused}
 	onfocusin={events.focus}
 >
 	<PaneHeader
@@ -107,10 +106,5 @@
 		grid-template-rows: auto 1fr;
 		height: 100%;
 		min-height: 0;
-		border-top: 2px solid transparent;
-	}
-
-	.pane.focused {
-		border-top-color: var(--accent);
 	}
 </style>

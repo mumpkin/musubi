@@ -11,12 +11,12 @@ them, delete them once you know your way.
 == Reading and editing
 
 A note opens in the *reading view*: the note as it looks, not its source.
-The status bar shows `READ`.
+The header of the pane shows `READ`.
 
 - `j` and `k` select the next and the previous block, `gg` and `ge` go to
   the top and the end, `Ctrl-d` and `Ctrl-u` scroll by half a screen.
 - `i`, or a double click on a paragraph, *edits* the note at that place. The
-  status bar shows `NORMAL`.
+  header of the pane shows `NORMAL`.
 - In the editor, `:q` then `Enter` goes back to reading, `:w` saves, `:wq`
   does both. `Space r` switches without typing a command.
 

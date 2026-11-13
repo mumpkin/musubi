@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // The panes of the main area and what happens to them: open a note, switch
 // mode, split, close, save, reload. Reactive through Svelte runes.
-import { type EditorMode, modeIndicator } from '@musubi/editor';
+import { type EditorMode } from '@musubi/editor';
 import { tick } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 
 import type { PaneAction } from './actions.ts';
 import {
 	MAX_PANES,
-	MODE_LABELS,
 	otherMode,
 	paneActions,
 	type PaneEvents,
@@ -34,11 +33,6 @@ export class PaneManager {
 
 	readonly focused = $derived(this.panes[this.focusedIndex] ?? this.panes[0]);
 	readonly currentPath = $derived(this.focused?.path ?? '');
-	readonly statusMode = $derived(
-		this.focused?.mode === 'editing'
-			? modeIndicator(this.editorMode)
-			: MODE_LABELS[this.focused?.mode ?? 'reading'],
-	);
 
 	constructor(firstNote: string) {
 		this.panes = [{ path: firstNote, mode: 'reading', loads: 0 }];

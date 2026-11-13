@@ -9,7 +9,7 @@ practise on the lines under each exercise.
 
 == Modes
 
-The status bar shows the mode:
+The header of the pane shows the mode:
 
 - `NORMAL`: keys move and act on selections.
 - `INSERT`: keys type text. `i` inserts before the selection, `a` after

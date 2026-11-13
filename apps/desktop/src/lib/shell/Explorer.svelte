@@ -18,8 +18,8 @@
 		type MenuItem,
 	} from './explorer-menu.ts';
 	import ExplorerFolder from './ExplorerFolder.svelte';
+	import ExplorerHeader from './ExplorerHeader.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
-	import Icon from './Icon.svelte';
 	import { focusFirst, listKeydown } from './list-keys.ts';
 	import TrashSection from './TrashSection.svelte';
 
@@ -146,30 +146,12 @@
 		}
 	}}
 >
-	<header>
-		<h2 title={vaultName}>{vaultName}</h2>
-		<button
-			title={editing.isActive
-				? 'Back to the tree (:q)'
-				: 'Edit the tree as text (Space r)'}
-			aria-pressed={editing.isActive}
-			onclick={() => {
-				editing.toggle(current);
-			}}
-		><Icon name={editing.isActive ? 'read' : 'edit'} /></button>
-		<button
-			title="New note"
-			onclick={() => {
-				onCreate('note', '');
-			}}
-		><Icon name="newNote" /></button>
-		<button
-			title="New folder"
-			onclick={() => {
-				onCreate('folder', '');
-			}}
-		><Icon name="newFolder" /></button>
-	</header>
+	<ExplorerHeader
+		{vaultName}
+		{current}
+		{editing}
+		{onCreate}
+	/>
 	{#if editing.isActive}
 		{#key editing.tree}
 			<div class="tree-text">
@@ -278,41 +260,4 @@
 		min-height: 0;
 	}
 
-	header {
-		flex: none;
-		display: flex;
-		gap: 0.25rem;
-		align-items: center;
-		margin: 0 0.25rem 0.5rem 0.5rem;
-	}
-
-	h2 {
-		flex: 1;
-		overflow: hidden;
-		margin: 0;
-		color: var(--muted);
-		font-size: 0.75rem;
-		font-weight: 600;
-		letter-spacing: 0.05em;
-		text-overflow: ellipsis;
-		text-transform: uppercase;
-		white-space: nowrap;
-	}
-
-	header button {
-		display: grid;
-		place-items: center;
-		padding: 0.15rem 0.3rem;
-		border: none;
-		border-radius: 4px;
-		background: none;
-		color: var(--muted);
-		font: inherit;
-		cursor: pointer;
-	}
-
-	header button:hover {
-		background: var(--hover);
-		color: inherit;
-	}
 </style>

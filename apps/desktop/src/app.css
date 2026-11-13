@@ -36,3 +36,17 @@ body {
 }
 
 /* The resize cursor is enough to show the handle: no colour on hover. */
+
+/* The panel with the keyboard focus shows it in its header. */
+:is(
+	.pane:focus-within .pane-header,
+	.explorer:focus-within > header,
+	.backlinks:focus-within > h2
+) {
+	background: var(--selection);
+	color: var(--accent);
+}
+
+.explorer:focus-within > header h2 {
+	color: var(--accent);
+}

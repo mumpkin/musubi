@@ -107,7 +107,9 @@
 	}
 
 	h2 {
-		margin: 0.25rem 0.25rem 0.75rem;
+		margin: 0 0 0.75rem;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
 		color: var(--muted);
 		font-size: 0.75rem;
 		font-weight: 600;

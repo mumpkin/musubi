@@ -39,10 +39,8 @@ export class TreeEditing {
 	// The changes waiting for `y` or `n`.
 	changes = $state<ChangeLine[]>();
 
-	// The status bar shows the mode of the tree editor while it is focused.
-	readonly statusMode = $derived(
-		this.isActive && this.hasFocus ? modeIndicator(this.mode) : undefined,
-	);
+	// The mode of the tree editor, shown in the header of the explorer.
+	readonly modeLabel = $derived(modeIndicator(this.mode));
 
 	private draft: string | undefined;
 	private answer: ((isConfirmed: boolean) => void) | undefined;

@@ -26,9 +26,10 @@ command palette (`Space ?`) lists the same commands.
   and `k` move, `Enter` or `l` opens a note or folds a folder, `Escape` goes
   back to the pane. A note opened from the backlinks takes the keyboard:
   `j` and `k` move in it at once.
-- *Status bar*, at the bottom: the mode (`READ`; `NORMAL`, `INSERT`,
-  `SELECT` in the editor; `GRAPH`), the path of the note, messages, and a
-  reminder of the main keys.
+- The header of each pane shows its mode: `READ`; `NORMAL`, `INSERT`,
+  `SELECT` in the editor; `GRAPH`. The panel with the keyboard (explorer,
+  pane, backlinks) has its header highlighted. Messages (saved, errors)
+  show for a few seconds at the bottom right.
 
 == Shortcuts of the window
 
