@@ -1,18 +1,24 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- CodeMirror 6 with the Helix profile, a status bar and a command line. -->
 <script lang="ts">
+	import './helix-editor.css';
+
 	import { history } from '@codemirror/commands';
-	import { EditorState, type Extension } from '@codemirror/state';
+	import {
+		Compartment,
+		EditorState,
+		type Extension,
+	} from '@codemirror/state';
 	import {
 		drawSelection,
 		EditorView,
-		lineNumbers,
 		type ViewUpdate,
 	} from '@codemirror/view';
 	import {
 		type EditorHost,
 		type EditorMode,
 		helix,
+		lineNumberGutter,
 		type PromptKind,
 		typstLanguage,
 	} from '@musubi/editor';
@@ -25,6 +31,7 @@
 	import { noteAssets } from '../vault/assets.ts';
 	import { linkSource } from '../vault/links.ts';
 	import { diskChange } from './disk-change.ts';
+	import { editorSettings } from './editor-settings.svelte.ts';
 	import { imagePaste, type ImageTarget, listenForDrops } from './images.ts';
 	import { PROMPT_LABELS, runPrompt } from './prompt.ts';
 	import PromptLine from './PromptLine.svelte';
@@ -141,9 +148,19 @@
 		}
 	}
 
+	// The line numbers follow the setting at once.
+	const numbers = new Compartment();
+
+	$effect(() => {
+		const gutter = lineNumberGutter(editorSettings.relativeLineNumbers);
+		untrack(() => {
+			view?.dispatch({ effects: numbers.reconfigure(gutter) });
+		});
+	});
+
 	function extensions(): Extension[] {
 		return [
-			lineNumbers(),
+			numbers.of(lineNumberGutter(editorSettings.relativeLineNumbers)),
 			// Notes are prose: long lines wrap.
 			EditorView.lineWrapping,
 			history(),
@@ -235,7 +252,7 @@
 <div class="helix-editor">
 	<div
 		bind:this={parent}
-		class="editor"
+		class="editor helix-host"
 	></div>
 	<!-- The mode shows in the status bar; this line is the command line. -->
 	{#if prompt}
@@ -264,60 +281,4 @@
 		height: 100%;
 		font-size: 0.95rem;
 	}
-
-	.editor :global(.cm-scroller) {
-		font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
-	}
-
-	/* The gutter and the caret take the colors of the theme, not the
-	light defaults of CodeMirror. */
-	.editor :global(.cm-gutters) {
-		border-right: 1px solid var(--border);
-		background: var(--background);
-		color: var(--muted);
-	}
-
-	.editor :global(.cm-activeLineGutter) {
-		background: var(--hover);
-	}
-
-	/* Completion of links and images. */
-	.editor :global(.cm-tooltip) {
-		border: 1px solid var(--border);
-		background: var(--surface);
-		color: var(--foreground);
-	}
-
-	.editor :global(.cm-tooltip-autocomplete li[aria-selected]) {
-		background: var(--selection);
-		color: inherit;
-	}
-
-	.editor :global(.cm-cursor) {
-		border-left-color: var(--foreground);
-	}
-
-	.editor :global(.cm-selectionBackground),
-	.editor :global(.cm-focused .cm-selectionBackground) {
-		background: var(--selection);
-	}
-
-	/* Outside insert mode the block cursor replaces the caret of CodeMirror,
-	which would sit after the selection, on the next line after `x`. */
-	.editor :global(.helix-normal .cm-cursorLayer),
-	.editor :global(.helix-select .cm-cursorLayer) {
-		display: none;
-	}
-
-	.editor :global(.helix-normal .cm-content),
-	.editor :global(.helix-select .cm-content) {
-		caret-color: transparent;
-	}
-
-	.editor :global(.helix-cursor) {
-		outline: none;
-		background: var(--accent);
-		color: var(--background);
-	}
-
 </style>

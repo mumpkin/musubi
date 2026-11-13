@@ -10,6 +10,7 @@
 		AUTOSAVE_DELAY,
 		boundedNumber,
 		setAutosave,
+		setRelativeLineNumbers,
 		setTrashRetention,
 		setTrashSection,
 		TRASH_RETENTION,
@@ -51,6 +52,14 @@
 		if (settings) {
 			saveAutosave(enabled, settings.autosaveDelaySeconds);
 		}
+	}
+
+	function showRelativeNumbers(relative: boolean): void {
+		setRelativeLineNumbers(relative).then(onSettings).catch(
+			(error: unknown) => {
+				onError(String(error));
+			},
+		);
 	}
 
 	function showTrashSection(show: boolean): void {
@@ -128,6 +137,16 @@
 							}}
 						/>
 						seconds without typing
+					</label>
+					<label class="line">
+						<Switch.Root
+							class="switch"
+							checked={settings.relativeLineNumbers}
+							onCheckedChange={showRelativeNumbers}
+						>
+							<Switch.Thumb class="thumb" />
+						</Switch.Root>
+						Relative line numbers
 					</label>
 				</section>
 			{/if}
