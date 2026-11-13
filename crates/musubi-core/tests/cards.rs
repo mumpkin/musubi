@@ -161,7 +161,10 @@ fn limits_the_new_cards_of_a_day() {
 	assert_eq!(setup.due("", START).len(), 20);
 	let key = setup.key_of("q0");
 	setup.review(("bbbb", &key), START + 10);
-	assert_eq!(setup.due("", START + 20).len(), 19);
+	// 19 new cards left today, then q0, still learning.
+	let due = setup.due("", START + 20);
+	assert_eq!(due.len(), 20);
+	assert_eq!(due.last(), Some(&("q0".to_owned(), false)));
 }
 
 #[test]
@@ -169,12 +172,13 @@ fn keeps_the_history_when_a_note_moves() {
 	let mut setup = Setup::new(&[("Words.typ", "#card[chat][cat]\n")]);
 	let key = setup.key_of("chat");
 	setup.review(("cccc", &key), START);
+	setup.review(("cccc", &key), START + 10);
 	setup
 		.vault
 		.move_entry("Words.typ", "Archive/Words.typ")
 		.expect("moved");
 	setup.refresh();
-	// Reviewed: not due at once, due a month later, with the same key.
+	// Learnt: not due at once, due a month later, with the same key.
 	assert!(setup.due("", START + 60).is_empty());
 	assert_eq!(
 		setup.due("", START + 30 * DAY),
@@ -190,4 +194,38 @@ fn skips_unreadable_log_lines() {
 	let text = fs::read_to_string(&log).expect("log");
 	fs::write(&log, format!("{text}{{\"card\": \"half")).expect("log");
 	assert_eq!(setup.vault.reviews().expect("reviews").len(), 1);
+}
+
+#[test]
+fn keeps_learning_cards_in_the_review_as_anki() {
+	let setup =
+		Setup::new(&[("Words.typ", "#card[chat][cat]\n#card[chien][dog]\n")]);
+	let chat = setup.key_of("chat");
+	// Again: due in a minute, shown at once after the other card.
+	setup
+		.vault
+		.record_review(
+			"eeee",
+			&Review {
+				card: chat.clone(),
+				at: START,
+				rating: 1,
+			},
+		)
+		.expect("recorded");
+	assert_eq!(
+		setup.due("", START + 5),
+		[("chien".to_owned(), false), ("chat".to_owned(), false)]
+	);
+	// Good twice: a day or more ahead, the review is over for it.
+	setup.review(("eeee", &chat), START + 10);
+	setup.review(("eeee", &chat), START + 20);
+	assert_eq!(setup.due("", START + 30), [("chien".to_owned(), false)]);
+}
+
+#[test]
+fn starts_the_day_of_reviews_at_four() {
+	let now = musubi_core::trash::now();
+	let start = musubi_core::cards::local_day_start(now);
+	assert!(start <= now && now - start < DAY);
 }

@@ -20,7 +20,9 @@ cat_ and _a cat_ → _un chat_. Math works too:
 + Press `Space c`: the review shows the cards that are due, new ones
   first-time included.
 + `Enter` shows the answer; rate it with `1` (again), `2` (hard), `3`
-  (good) or `4` (easy). A card rated _again_ comes back soon.
+  (good) or `4` (easy). As in Anki, a card you are still learning (rated
+  _again_ or _hard_, or seen once) comes back in the same review, after
+  the others: the review ends when every card is a day or more ahead.
 + When nothing is due, `Escape` goes back to the note.
 
 The number next to the vault name, in the explorer, counts the cards due;
