@@ -2943,7 +2943,7 @@ dependencies = [
 
 [[package]]
 name = "musubi-core"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "musubi-typst",
  "nucleo-matcher",
@@ -2959,7 +2959,7 @@ dependencies = [
 
 [[package]]
 name = "musubi-desktop"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "musubi-core",
  "musubi-typst",
@@ -2976,7 +2976,7 @@ dependencies = [
 
 [[package]]
 name = "musubi-typst"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "ecow",
  "serde",
