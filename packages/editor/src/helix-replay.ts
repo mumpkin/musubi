@@ -15,6 +15,7 @@ const BACKSPACE = '\u007F';
 const KEY_NAMES = new Map([
 	[ESCAPE, 'Escape'],
 	[BACKSPACE, 'Backspace'],
+	['\t', 'Tab'],
 ]);
 // Commands that read a pattern up to Enter.
 const PROMPTS = new Map<string, PromptKind>([

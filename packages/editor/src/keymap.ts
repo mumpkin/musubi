@@ -65,6 +65,7 @@ export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
 	insert: new Map([
 		['Escape', 'normalMode'],
 		['Backspace', 'deleteCharBackward'],
+		['Tab', 'insertTab'],
 	]),
 };
 
