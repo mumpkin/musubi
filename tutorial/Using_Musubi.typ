@@ -24,7 +24,8 @@ command palette (`Space ?`) lists the same commands.
 - `Space h` and `Space l` move the keyboard to the panel on the left and on
   the right, folded panels skipped. In the explorer and the backlinks, `j`
   and `k` move, `Enter` or `l` opens a note or folds a folder, `Escape` goes
-  back to the pane.
+  back to the pane. A note opened from the backlinks takes the keyboard:
+  `j` and `k` move in it at once.
 - *Status bar*, at the bottom: the mode (`READ`; `NORMAL`, `INSERT`,
   `SELECT` in the editor; `GRAPH`), the path of the note, messages, and a
   reminder of the main keys.

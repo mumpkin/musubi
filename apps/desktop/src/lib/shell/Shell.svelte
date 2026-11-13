@@ -256,7 +256,7 @@
 					bind:this={panels.backlinksList}
 					path={manager.currentPath}
 					revision={files.loads}
-					onOpen={openNote}
+					onOpen={manager.openFocused}
 					onLeave={() => {
 						panels.back();
 					}}

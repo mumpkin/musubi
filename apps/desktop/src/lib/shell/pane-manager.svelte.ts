@@ -63,6 +63,13 @@ export class PaneManager {
 		}
 	}
 
+	// Opens `path` from a side panel (backlinks) and gives the keyboard to
+	// its pane, so that `j` and `k` move in the note at once.
+	readonly openFocused = (path: string): void => {
+		this.open(path);
+		this.focusAfterRender(this.focusedIndex);
+	};
+
 	// `Space g`: the graph in pane `index`, or back to its note.
 	toggleGraph(index: number): void {
 		const pane = this.panes[index];
