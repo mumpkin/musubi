@@ -4,8 +4,8 @@
 	"credit": "Colors of Ayu Light Unbordered from ayu-theme/vscode-ayu (MIT licence, see LICENSE-vscode-ayu)",
 	"ui": {
 		"background": "#f8f9fa",
-		"foreground": "#020a12a3",
-		"muted": "#021a3c7a",
+		"foreground": "#5b6066",
+		"muted": "#828e9f",
 		"surface": "#f8f9fa",
 		"border": "#6b7d8f1f",
 		"accent": "#f29718",

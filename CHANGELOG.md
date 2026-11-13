@@ -8,45 +8,37 @@ and this project adheres to
 
 ## [Unreleased]
 
-### Fixed
-
-- After applying changes in the tree editor, `Space` in insert mode types
-  a space again instead of starting a shortcut.
-
 ### Added
 
 - `Space w s` splits the pane one above the other, as in Helix;
   `Space w v` still splits side by side.
-
-### Added
-
 - An AUR package, `musubi-bin`, built from the `.deb` of a release
   (`packaging/aur/`), and install instructions in the README.
-
-### Changed
-
-- The Linux bundles carry a description, a category and the licence.
-
-### Added
-
 - A home screen in a pane without a note (`Space o`, or when its note goes
   to the trash): find a note, the notes modified last, the pinned ones and
   the flashcards due.
-
-### Added
-
 - Sync conflicts: the conflict copies of Syncthing, Nextcloud and Dropbox
   show in a Conflicts section of the explorer and in the header of their
   note. Opening one compares both versions side by side; keep one, the
   other goes to the trash, or merge by hand.
-
-### Added
-
 - Moving a note or a folder to the trash turns the links to it in other
   notes into their text; restoring it brings them back, where the text was
   not edited.
 - Opening another note in a pane with unsaved changes, closing it or
   switching vault asks first: save, discard or cancel.
+
+### Changed
+
+- The Linux bundles carry a description, a category and the licence.
+
+### Fixed
+
+- After applying changes in the tree editor, `Space` in insert mode types
+  a space again instead of starting a shortcut.
+- Long names in the explorer no longer cut the bottom of letters such as
+  g, p, q and y.
+- Ayu Light and Ayu Mirage draw text with opaque colors, of the same
+  shade, which read better on high resolution screens.
 
 ## [0.3.1] - 2026-11-13
 

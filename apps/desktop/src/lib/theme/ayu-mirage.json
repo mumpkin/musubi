@@ -4,8 +4,8 @@
 	"credit": "Colors of Ayu Mirage Unbordered from ayu-theme/vscode-ayu (MIT licence, see LICENSE-vscode-ayu)",
 	"ui": {
 		"background": "#1f2430",
-		"foreground": "#fefaecc4",
-		"muted": "#d3e3fc73",
+		"foreground": "#cac8c1",
+		"muted": "#707a8c",
 		"surface": "#1f2430",
 		"border": "#171b24",
 		"accent": "#ffcc66",

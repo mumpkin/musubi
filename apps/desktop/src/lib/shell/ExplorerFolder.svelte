@@ -115,6 +115,9 @@
 	/* A long name ends with an ellipsis instead of wrapping. */
 	.name {
 		overflow: hidden;
+		/* Room for the descenders (g, p, y) the overflow would cut. */
+		padding-block: 0.1em;
+		line-height: 1.35;
 		min-width: 0;
 		text-overflow: ellipsis;
 		white-space: nowrap;
