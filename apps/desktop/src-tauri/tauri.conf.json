@@ -25,6 +25,12 @@
 	"bundle": {
 		"active": true,
 		"targets": ["appimage", "deb"],
+		"publisher": "mumpkin",
+		"homepage": "https://github.com/mumpkin/musubi",
+		"license": "GPL-3.0-or-later",
+		"category": "Productivity",
+		"shortDescription": "Local-first notes written in Typst, edited the Helix way",
+		"longDescription": "Musubi keeps notes as Typst files in a folder you sync as you like, shows them in a native reading view, and edits them with Helix-style modal editing. Links, backlinks, a graph and flashcards.",
 		"icon": [
 			"icons/32x32.png",
 			"icons/128x128.png",
