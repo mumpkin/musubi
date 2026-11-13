@@ -13,15 +13,33 @@
 		current: string;
 		editing: TreeEditing;
 		onCreate: (kind: 'note' | 'folder', folder: string) => void;
+		// Flashcards due in the vault; a click reviews them.
+		dueCount: number;
+		onReview: (scope: string) => void;
 	}
 
-	const { vaultName, current, editing, onCreate }: Props = $props();
+	const {
+		vaultName,
+		current,
+		editing,
+		onCreate,
+		dueCount,
+		onReview,
+	}: Props = $props();
 </script>
 
 <header>
 	<h2 title={vaultName}>{vaultName}</h2>
 	{#if editing.isActive}
 		<ModeBadge mode={editing.modeLabel} />
+	{:else if dueCount > 0}
+		<button
+			class="due"
+			title="{dueCount} flashcards to review (Space c)"
+			onclick={() => {
+				onReview('');
+			}}
+		><Icon name="cards" />{dueCount}</button>
 	{/if}
 	<button
 		title={editing.isActive
@@ -80,6 +98,15 @@
 		color: var(--muted);
 		font: inherit;
 		cursor: pointer;
+	}
+
+	.due {
+		display: flex;
+		gap: 0.2rem;
+		align-items: center;
+		color: var(--accent);
+		font-size: 0.75rem;
+		font-weight: 600;
 	}
 
 	button:hover {

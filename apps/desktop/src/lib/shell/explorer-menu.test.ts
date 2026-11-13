@@ -17,6 +17,7 @@ function recorder(): { calls: string[]; actions: EntryActions } {
 			onCreate: record('create'),
 			onDelete: record('delete'),
 			onRename: record('rename'),
+			onReview: record('review'),
 		},
 	};
 }
@@ -31,6 +32,7 @@ describe('entryMenu', () => {
 		expect(labels(entryMenu(target, actions))).toEqual([
 			'Open',
 			'Unpin',
+			'Review the flashcards',
 			'Rename or move',
 			'Archive',
 			'Move to the trash',
@@ -48,6 +50,7 @@ describe('entryMenu', () => {
 		expect(labels(items)).toEqual([
 			'New note',
 			'New folder',
+			'Review the flashcards',
 			'Rename or move',
 			'Unarchive',
 			'Move to the trash',
@@ -58,6 +61,7 @@ describe('entryMenu', () => {
 		expect(calls).toEqual([
 			'create note Archive/Maths',
 			'create folder Archive/Maths',
+			'review Archive/Maths',
 			'rename Archive/Maths',
 			'archive Archive/Maths',
 			'delete Archive/Maths',

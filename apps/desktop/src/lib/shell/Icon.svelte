@@ -13,6 +13,7 @@
 	import Columns2 from '@lucide/svelte/icons/columns-2';
 	import FilePlus from '@lucide/svelte/icons/file-plus';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
+	import Cards from '@lucide/svelte/icons/gallery-vertical-end';
 	import Minus from '@lucide/svelte/icons/minus';
 	import Notebook from '@lucide/svelte/icons/notebook';
 	import Pencil from '@lucide/svelte/icons/pencil';
@@ -47,6 +48,7 @@
 		notebook: Notebook,
 		archive: Archive,
 		unarchive: ArchiveArrowUp,
+		cards: Cards,
 	} as const;
 
 	const SIZE_PIXELS = 15;

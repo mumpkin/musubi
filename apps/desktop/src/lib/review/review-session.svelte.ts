@@ -7,6 +7,7 @@ import type { DueCard } from '../bindings/DueCard.ts';
 import { renderNote } from '../reading/render-note.ts';
 import { dueCards, reviewCard } from '../vault/reviews.ts';
 import { type CardSides, cardSides } from './card-html.ts';
+import { reviewRevision } from './due-counts.svelte.ts';
 
 export class ReviewSession {
 	cards = $state.raw<DueCard[]>([]);
@@ -54,6 +55,7 @@ export class ReviewSession {
 		}
 		await reviewCard(card.key, rating);
 		this.reviewed += 1;
+		reviewRevision.count += 1;
 		await this.load();
 	}
 

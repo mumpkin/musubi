@@ -14,9 +14,19 @@
 		isModified?: boolean;
 		mode: string;
 		actions: PaneAction[];
+		// Flashcards of the note due now; a click reviews them.
+		dueCount?: number;
+		onReview?: () => void;
 	}
 
-	const { title, isModified = false, mode, actions }: Props = $props();
+	const {
+		title,
+		isModified = false,
+		mode,
+		actions,
+		dueCount = 0,
+		onReview,
+	}: Props = $props();
 </script>
 
 <header class="pane-header">
@@ -30,6 +40,13 @@
 			><Icon name="modified" /></span>
 		{/if}
 	</span>
+	{#if dueCount > 0 && onReview}
+		<button
+			class="due"
+			title="{dueCount} flashcards of this note to review"
+			onclick={onReview}
+		><Icon name="cards" />{dueCount}</button>
+	{/if}
 	{#each actions as action (action.label)}
 		<Tooltip.Root>
 			<Tooltip.Trigger
@@ -66,6 +83,25 @@
 		gap: 0.35rem;
 		align-items: center;
 		font-weight: 600;
+	}
+
+	.due {
+		display: flex;
+		gap: 0.2rem;
+		align-items: center;
+		padding: 0.1rem 0.35rem;
+		border: none;
+		border-radius: 4px;
+		background: none;
+		color: var(--accent);
+		font: inherit;
+		font-size: 0.75rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.due:hover {
+		background: var(--hover);
 	}
 
 	/* A small filled dot, as in most editors. */
