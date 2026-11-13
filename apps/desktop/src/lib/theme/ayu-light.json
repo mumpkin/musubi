@@ -1,0 +1,29 @@
+{
+	"name": "Ayu Light",
+	"colorScheme": "light",
+	"credit": "Colors of Ayu Light Unbordered from ayu-theme/vscode-ayu (MIT licence, see LICENSE-vscode-ayu)",
+	"ui": {
+		"background": "#f8f9fa",
+		"foreground": "#020a12a3",
+		"muted": "#021a3c7a",
+		"surface": "#f8f9fa",
+		"border": "#6b7d8f1f",
+		"accent": "#f29718",
+		"selection": "#035bd626",
+		"hover": "#6b7d8f24",
+		"error": "#e65050",
+		"warning": "#f29718",
+		"mark": "#ffe29480"
+	},
+	"syntax": {
+		"comment": "#adaeb1",
+		"keyword": "#fa8532",
+		"string": "#86b300",
+		"constant": "#a37acc",
+		"function": "#eba400",
+		"macro": "#55b4d4",
+		"escape": "#4cbf99",
+		"special": "#f2a191",
+		"raw": "#4cbf99"
+	}
+}

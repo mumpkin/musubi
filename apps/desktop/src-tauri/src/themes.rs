@@ -18,7 +18,8 @@ use crate::vault::config_dir;
 const THEMES_FOLDER: &str = "themes";
 const JSON_EXTENSION: &str = "json";
 /// Ids of the themes shipped with the interface.
-const DEFAULT_IDS: [&str; 2] = ["github-light", "github-dark"];
+const DEFAULT_IDS: [&str; 4] =
+	["github-light", "github-dark", "ayu-light", "ayu-mirage"];
 
 /// A color theme, as written in its JSON file (`docs/themes.md`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, TS)]
