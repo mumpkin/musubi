@@ -292,4 +292,9 @@ export const HELIX_CASES: HelixCase[] = [
 	{ text: NESTED, keys: 'xxx>' },
 	{ text: NESTED, keys: 'jxx<' },
 	{ text: NESTED, keys: 'xxxxx>' },
+	{ text: NESTED, keys: 'i\t\x1b' },
+	{ text: NESTED, keys: 'ji\t\x1b' },
+	{ text: NESTED, keys: 'jgli\t\x1b' },
+	{ text: NESTED, keys: 'lli\t\x1b' },
+	{ text: NESTED, keys: 'i\tX\x1b' },
 ];

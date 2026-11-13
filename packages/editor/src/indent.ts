@@ -74,7 +74,29 @@ const unindent: Command = ({ target }) => {
 	})));
 };
 
-export const indentCommands = { indent, unindent } satisfies Record<
+// `Tab` in insert mode, as Helix with `smart-tab`: inserts one indent unit
+// where only whitespace precedes the cursor on its line; elsewhere it
+// leaves the text as it is. It never moves the focus out of the editor.
+const insertTab: Command = ({ target }) => {
+	const { state } = target;
+	const unit = ' '.repeat(getIndentUnit(state));
+	const changes = state.selection.ranges.flatMap((range) => {
+		const line = state.doc.lineAt(range.head);
+		const before = state.sliceDoc(line.from, range.head);
+		return before.trim() === '' ? [{ from: range.head, insert: unit }] : [];
+	});
+	if (changes.length > 0) {
+		const set = state.changes(changes);
+		target.dispatch({
+			changes: set,
+			// The cursor goes after the inserted indent.
+			selection: state.selection.map(set, 1),
+			scrollIntoView: true,
+		});
+	}
+};
+
+export const indentCommands = { indent, unindent, insertTab } satisfies Record<
 	string,
 	Command
 >;
