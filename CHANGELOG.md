@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Relative line numbers follow the cursor on empty lines too.
+
 ## [0.3.0] - 2026-11-13
 
 ### Added
