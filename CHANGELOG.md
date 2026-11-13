@@ -12,6 +12,8 @@ and this project adheres to
 
 - `Tab` in insert mode indents, as in Helix, instead of moving the focus
   to another panel; in the tree editor of the explorer too.
+- A note opened from the backlinks takes the keyboard focus: `j` and `k`
+  move in it at once.
 
 ## [0.2.0] - 2026-11-12
 
