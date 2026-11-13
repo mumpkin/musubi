@@ -64,6 +64,27 @@ export class PaneManager {
 		this.focusAfterRender(this.focusedIndex);
 	};
 
+	// `Space c`: a review of the flashcards of `scope` in pane `index`.
+	review(index: number, scope: string): void {
+		const pane = this.panes[index];
+		if (pane && pane.draft === undefined) {
+			pane.mode = 'review';
+			pane.scope = scope;
+			this.focusAfterRender(index);
+		} else if (pane) {
+			this.message = 'Save the note before reviewing';
+		}
+	}
+
+	// The pane `index` goes back to reading, from the graph or a review.
+	read(index: number): void {
+		const pane = this.panes[index];
+		if (pane) {
+			pane.mode = 'reading';
+			this.focusAfterRender(index);
+		}
+	}
+
 	// `Space g`: the graph in pane `index`, or back to its note.
 	toggleGraph(index: number): void {
 		const pane = this.panes[index];
@@ -228,6 +249,9 @@ export class PaneManager {
 			edit: (line) => {
 				this.edit(index, line);
 			},
+			read: () => {
+				this.read(index);
+			},
 		};
 	}
 
@@ -246,7 +270,7 @@ export class PaneManager {
 		const element = document.querySelectorAll<HTMLElement>('.pane')
 			.item(this.focusedIndex);
 		element.querySelector<HTMLElement>(
-			'.reading-view, .cm-content, .graph-canvas',
+			'.review-view, .reading-view, .cm-content, .graph-canvas',
 		)
 			?.focus();
 	}

@@ -133,6 +133,9 @@
 		toggleGraph: () => {
 			manager.toggleGraph(manager.focusedIndex);
 		},
+		review: () => {
+			manager.review(manager.focusedIndex, '');
+		},
 		split: () => {
 			manager.split();
 		},

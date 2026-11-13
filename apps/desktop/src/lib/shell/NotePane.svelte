@@ -4,6 +4,7 @@
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
 	import GraphView from '../graph/GraphView.svelte';
+	import ReviewPane from '../review/ReviewPane.svelte';
 	import { writeNote } from '../vault/vault.ts';
 	import type { PaneAction } from './actions.ts';
 	import EditingPane from './EditingPane.svelte';
@@ -61,7 +62,7 @@
 	onfocusin={events.focus}
 >
 	<PaneHeader
-		{title}
+		title={pane.mode === 'review' ? 'Flashcards' : title}
 		{isModified}
 		mode={pane.mode === 'editing'
 			? modeIndicator(editorMode)
@@ -75,6 +76,14 @@
 			{notes}
 			onOpen={openFromGraph}
 		/>
+	{:else if pane.mode === 'review'}
+		{#key pane.scope}
+			<ReviewPane
+				scope={pane.scope ?? ''}
+				autofocus={isFocused}
+				onClose={events.read}
+			/>
+		{/key}
 	{:else if pane.mode === 'reading'}
 		<ReadingPane
 			path={pane.path}

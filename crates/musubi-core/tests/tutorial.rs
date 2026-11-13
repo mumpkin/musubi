@@ -9,8 +9,9 @@ use musubi_typst::NoteCompiler;
 use tempfile::TempDir;
 
 /// Titles of the tutorial notes, by path, once `Start_here.typ` is mine.
-const TITLES: [&str; 9] = [
+const TITLES: [&str; 10] = [
 	"Find anything",
+	"Flashcards",
 	"Helix basics",
 	"Helix workshop",
 	"Pins and themes",
@@ -72,6 +73,6 @@ fn every_note_compiles_without_warnings_and_links_to_existing_notes() {
 	let mut index = VaultIndex::in_memory().expect("index");
 	index.refresh(&vault, &mut compiler).expect("indexed");
 	let graph = index.graph().expect("graph");
-	assert_eq!(graph.nodes.len(), 9);
+	assert_eq!(graph.nodes.len(), 10);
 	assert!(graph.links.len() >= 8, "the notes link to each other");
 }

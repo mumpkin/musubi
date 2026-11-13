@@ -12,7 +12,7 @@ use crate::vault::Vault;
 const FOLDER: &str = "Welcome";
 
 /// Files of the tutorial, by path inside its folder. Text files only.
-const FILES: [(&str, &str); 10] = [
+const FILES: [(&str, &str); 11] = [
 	(
 		"Start_here.typ",
 		include_str!("../../../tutorial/Start_here.typ"),
@@ -36,6 +36,10 @@ const FILES: [(&str, &str); 10] = [
 	(
 		"Writing_Typst.typ",
 		include_str!("../../../tutorial/Writing_Typst.typ"),
+	),
+	(
+		"Flashcards.typ",
+		include_str!("../../../tutorial/Flashcards.typ"),
 	),
 	(
 		"Helix_basics.typ",

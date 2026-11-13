@@ -8,11 +8,15 @@ import { shortcutLabel } from './shortcuts.ts';
 // Each shows any note, in reading or editing mode, or the graph of the
 // notes around its note.
 
-export type PaneMode = 'reading' | 'editing' | 'graph';
+export type PaneMode = 'reading' | 'editing' | 'graph' | 'review';
 
 // What the header and the status bar show for a mode of a pane, the
 // editor showing its own mode.
-export const MODE_LABELS = { reading: 'READ', graph: 'GRAPH' } as const;
+export const MODE_LABELS = {
+	reading: 'READ',
+	graph: 'GRAPH',
+	review: 'REVIEW',
+} as const;
 
 export interface PaneState {
 	path: string;
@@ -24,6 +28,8 @@ export interface PaneState {
 	// Source line (from 0) of the reading cursor or the editor cursor, kept
 	// when switching between reading and editing.
 	line?: number | undefined;
+	// What a review covers: `''` for the vault, a folder or a note.
+	scope?: string | undefined;
 }
 
 // What a pane reports to the shell.
@@ -40,12 +46,14 @@ export interface PaneEvents {
 	line: (line: number | undefined) => void;
 	// Edit the note at a source line (double click on a block).
 	edit: (line: number) => void;
+	// Back to reading, from the graph or a review.
+	read: () => void;
 }
 
 export const MAX_PANES = 2;
 
-// Reading and editing switch to each other; the graph goes back to
-// reading.
+// Reading and editing switch to each other; the graph and a review go
+// back to reading.
 export function otherMode(mode: PaneMode): PaneMode {
 	return mode === 'reading' ? 'editing' : 'reading';
 }
