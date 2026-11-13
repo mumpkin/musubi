@@ -15,6 +15,7 @@
 	import FilePlus from '@lucide/svelte/icons/file-plus';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import Cards from '@lucide/svelte/icons/gallery-vertical-end';
+	import GitCompare from '@lucide/svelte/icons/git-compare';
 	import Minus from '@lucide/svelte/icons/minus';
 	import Notebook from '@lucide/svelte/icons/notebook';
 	import Pencil from '@lucide/svelte/icons/pencil';
@@ -51,6 +52,7 @@
 		unarchive: ArchiveArrowUp,
 		cards: Cards,
 		more: Ellipsis,
+		conflict: GitCompare,
 	} as const;
 
 	const SIZE_PIXELS = 15;

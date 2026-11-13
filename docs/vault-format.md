@@ -314,6 +314,24 @@ a note and never causes a sync conflict.
 - Lines that cannot be read (a line half-written by a sync tool) are
   skipped.
 
+### Sync conflicts
+
+When a note changed on two devices at once, sync tools keep the other
+version as a **conflict copy** next to it. Musubi recognises these names
+(the copy of `Note.typ`):
+
+| Tool      | Copy                                             |
+| --------- | ------------------------------------------------ |
+| Syncthing | `Note.sync-conflict-20261113-101500-ABCDEFG.typ` |
+| Nextcloud | `Note (conflicted copy 2026-11-13 101500).typ`   |
+| Dropbox   | `Note (Name's conflicted copy 2026-11-13).typ`   |
+
+- Conflict copies are not notes of the vault: they are not indexed, linked
+  or listed with the notes, but apart, to resolve.
+- Keeping the note moves the copy to the trash. Keeping the copy writes its
+  text into the note and moves the old text to the trash, under the name of
+  the copy.
+
 ## What is never in the vault
 
 Everything that can be rebuilt or that only concerns one device lives in the

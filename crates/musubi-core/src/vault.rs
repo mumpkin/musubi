@@ -9,6 +9,7 @@ use std::path::{Path, PathBuf};
 use serde::Serialize;
 use ts_rs::TS;
 
+use crate::conflicts::conflict_of;
 use crate::error::VaultError;
 use crate::naming::{self, Folder};
 use crate::paths;
@@ -128,7 +129,7 @@ impl Vault {
 				}
 				tree.folders.push(paths::relative(&self.root, &path));
 				self.collect(&path, tree)?;
-			} else if is_note(&path) {
+			} else if is_note(&path) && conflict_of(name).is_none() {
 				tree.notes.push(self.entry(&path));
 			}
 		}

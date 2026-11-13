@@ -17,6 +17,9 @@
 		// Flashcards of the note due now; a click reviews them.
 		dueCount?: number;
 		onReview?: () => void;
+		// The conflict copy of the note; a click compares the versions.
+		conflictCopy?: string | undefined;
+		onConflict?: (copy: string) => void;
 	}
 
 	const {
@@ -26,6 +29,8 @@
 		actions,
 		dueCount = 0,
 		onReview,
+		conflictCopy,
+		onConflict,
 	}: Props = $props();
 </script>
 
@@ -40,6 +45,15 @@
 			><Icon name="modified" /></span>
 		{/if}
 	</span>
+	{#if conflictCopy !== undefined && onConflict}
+		<button
+			class="due conflict"
+			title="A sync tool kept another version of this note"
+			onclick={() => {
+				onConflict(conflictCopy);
+			}}
+		>Conflict</button>
+	{/if}
 	{#if dueCount > 0 && onReview}
 		<button
 			class="due"
@@ -98,6 +112,10 @@
 		font-size: 0.75rem;
 		font-weight: 600;
 		cursor: pointer;
+	}
+
+	.conflict {
+		color: var(--error);
 	}
 
 	.due:hover {

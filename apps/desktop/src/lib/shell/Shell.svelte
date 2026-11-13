@@ -55,17 +55,16 @@
 	const editing = treeEditing(files, manager, panels);
 	const dueCounts = new DueCounts(() => files.loads);
 
+	// Back in the window or after a save: the notes may have changed.
 	function loadTree(): void {
 		files.load().catch(() => undefined);
 	}
 
-	// Back in the window: notes and titles may have changed on disk.
 	function refresh(): void {
 		manager.reload();
 		loadTree();
 	}
 
-	// A save may change the title of a note.
 	$effect(() => {
 		if (manager.saves > 0) {
 			loadTree();
@@ -214,6 +213,8 @@
 					}}
 					{editing}
 					dueCount={dueCounts.vault}
+					conflicts={files.conflicts}
+					onConflict={notes.showConflict}
 					onReview={manager.reviewFocused}
 				/>
 			</Pane>
@@ -238,6 +239,7 @@
 								notes={files.notePaths}
 								events={manager.events(index)}
 								dueCount={dueCounts.of(pane.path)}
+								conflictCopy={files.conflictOf(pane.path)}
 							/>
 						</Pane>
 					{/each}

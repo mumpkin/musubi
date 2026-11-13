@@ -3,6 +3,7 @@
 <script lang="ts">
 	import { type EditorMode, modeIndicator } from '@musubi/editor';
 
+	import ConflictPane from '../conflict/ConflictPane.svelte';
 	import GraphView from '../graph/GraphView.svelte';
 	import ReviewPane from '../review/ReviewPane.svelte';
 	import { writeNote } from '../vault/vault.ts';
@@ -26,6 +27,8 @@
 		events: PaneEvents;
 		// Flashcards of the note due now.
 		dueCount: number;
+		// The conflict copy of the note, if a sync tool made one.
+		conflictCopy: string | undefined;
 	}
 
 	const {
@@ -38,6 +41,7 @@
 		notes,
 		events,
 		dueCount,
+		conflictCopy,
 	}: Props = $props();
 
 	let editorMode = $state<EditorMode>('normal');
@@ -73,6 +77,8 @@
 		{actions}
 		{dueCount}
 		onReview={events.review}
+		{conflictCopy}
+		onConflict={events.conflict}
 	/>
 	{#if pane.mode === 'graph'}
 		<GraphView
@@ -81,6 +87,18 @@
 			{notes}
 			onOpen={openFromGraph}
 		/>
+	{:else if pane.mode === 'conflict'}
+		{#key pane.scope}
+			<ConflictPane
+				note={pane.path}
+				copy={pane.scope ?? ''}
+				autofocus={isFocused}
+				onResolved={events.resolved}
+				onMerge={events.merge}
+				onClose={events.read}
+				onError={events.message}
+			/>
+		{/key}
 	{:else if pane.mode === 'review'}
 		{#key pane.scope}
 			<ReviewPane

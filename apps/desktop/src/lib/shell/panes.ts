@@ -8,7 +8,7 @@ import { shortcutLabel } from './shortcuts.ts';
 // Each shows any note, in reading or editing mode, or the graph of the
 // notes around its note.
 
-export type PaneMode = 'reading' | 'editing' | 'graph' | 'review';
+export type PaneMode = 'reading' | 'editing' | 'graph' | 'review' | 'conflict';
 
 // What the header and the status bar show for a mode of a pane, the
 // editor showing its own mode.
@@ -16,6 +16,7 @@ export const MODE_LABELS = {
 	reading: 'READ',
 	graph: 'GRAPH',
 	review: 'REVIEW',
+	conflict: 'CONFLICT',
 } as const;
 
 export interface PaneState {
@@ -28,7 +29,8 @@ export interface PaneState {
 	// Source line (from 0) of the reading cursor or the editor cursor, kept
 	// when switching between reading and editing.
 	line?: number | undefined;
-	// What a review covers: `''` for the vault, a folder or a note.
+	// What a review covers (`''` for the vault, a folder or a note), or
+	// the conflict copy of the note in conflict mode.
 	scope?: string | undefined;
 }
 
@@ -50,6 +52,12 @@ export interface PaneEvents {
 	read: () => void;
 	// Reviews the flashcards of the note of the pane.
 	review: () => void;
+	// Compares the note with its conflict copy `copy`.
+	conflict: (copy: string) => void;
+	// A conflict was resolved: back to reading, the vault read again.
+	resolved: () => void;
+	// Merge by hand: the note in the editor, its copy beside it.
+	merge: () => void;
 }
 
 export const MAX_PANES = 2;

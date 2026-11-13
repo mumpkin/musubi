@@ -10,6 +10,13 @@ and this project adheres to
 
 ### Added
 
+- Sync conflicts: the conflict copies of Syncthing, Nextcloud and Dropbox
+  show in a Conflicts section of the explorer and in the header of their
+  note. Opening one compares both versions side by side; keep one, the
+  other goes to the trash, or merge by hand.
+
+### Added
+
 - Moving a note or a folder to the trash turns the links to it in other
   notes into their text; restoring it brings them back, where the text was
   not edited.
