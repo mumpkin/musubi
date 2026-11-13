@@ -31,6 +31,7 @@
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
 	import { treeEditing } from './tree-editing-host.ts';
+	import UnsavedDialog from './UnsavedDialog.svelte';
 	import { VaultState } from './vault-state.svelte.ts';
 
 	interface Props {
@@ -275,6 +276,8 @@
 	bind:open={dialogs.isPaletteOpen}
 	{commands}
 />
+
+<UnsavedDialog prompt={notes.unsaved} />
 
 <TrashDialog
 	bind:open={dialogs.isTrashOpen}
