@@ -140,7 +140,9 @@
 			scrollIntoView: true,
 		});
 		view.focus();
+		onFocusChange(view.hasFocus);
 		return () => {
+			onFocusChange(false);
 			view?.destroy();
 		};
 	});
