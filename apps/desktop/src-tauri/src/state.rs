@@ -79,9 +79,13 @@ pub struct DeviceSettings {
 	pub theme: Option<String>,
 	/// The trash shows as the last section of the explorer.
 	pub show_trash_section: bool,
+	/// Flashcards seen for the first time each day, at most.
+	pub new_cards_per_day: u32,
 }
 
 const DEFAULT_AUTOSAVE_DELAY_SECONDS: u32 = 2;
+/// As Anki: twenty new cards a day.
+const DEFAULT_NEW_CARDS_PER_DAY: u32 = 20;
 
 impl Default for DeviceSettings {
 	fn default() -> Self {
@@ -92,6 +96,7 @@ impl Default for DeviceSettings {
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
 			theme: None,
 			show_trash_section: true,
+			new_cards_per_day: DEFAULT_NEW_CARDS_PER_DAY,
 		}
 	}
 }

@@ -18,6 +18,8 @@ pub enum VaultError {
 	AlreadyExists(String),
 	/// A path typed by the user has an empty, `.` or `..` part.
 	InvalidPath(String),
+	/// A review rating is between 1 and 4.
+	InvalidRating(u8),
 	/// A folder cannot move into one of its own folders.
 	IntoItself(String),
 	Io(io::Error),
@@ -43,6 +45,9 @@ impl Display for VaultError {
 				formatter,
 				"{path}: each folder of the path needs a name"
 			),
+			Self::InvalidRating(rating) => {
+				write!(formatter, "invalid rating {rating}: use 1 to 4")
+			}
 			Self::IntoItself(path) => {
 				write!(formatter, "the folder {path} cannot move into itself")
 			}

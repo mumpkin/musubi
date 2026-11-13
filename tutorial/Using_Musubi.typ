@@ -150,6 +150,8 @@ drops the changes.
   the repository describes the format. The palette has the same commands:
   type `theme` in it.
 - *Editor*: save automatically after a few seconds without typing.
+- *Flashcards*: how many new cards a review brings each day (20 by
+  default).
 - *Trash of this vault*: how many days deleted notes stay in the trash
   (0 keeps them).
 

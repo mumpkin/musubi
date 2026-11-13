@@ -7,6 +7,7 @@ import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 // Bounds of the settings, as the Rust core checks them.
 export const AUTOSAVE_DELAY = { min: 1, max: 60 };
 export const TRASH_RETENTION = { min: 0, max: 3650 };
+export const NEW_CARDS_PER_DAY = { min: 0, max: 999 };
 
 // Resolves to the settings of the device after the change.
 export async function setAutosave(
@@ -19,6 +20,13 @@ export async function setAutosave(
 // Resolves to the settings of the device after the change.
 export async function setTrashSection(show: boolean): Promise<DeviceSettings> {
 	return invoke<DeviceSettings>('set_trash_section', { show });
+}
+
+// The most new flashcards a day; resolves to the settings of the device.
+export async function setNewCardsPerDay(
+	count: number,
+): Promise<DeviceSettings> {
+	return invoke<DeviceSettings>('set_new_cards_per_day', { count });
 }
 
 // Days before trash entries are purged; `0` keeps them.

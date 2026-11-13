@@ -6,6 +6,7 @@ mod commands;
 mod explorer;
 mod links;
 mod reading;
+mod reviews;
 mod settings;
 mod state;
 mod themes;
@@ -47,6 +48,9 @@ macro_rules! commands {
 			explorer::pin_note,
 			explorer::recent_notes,
 			explorer::archive_entry,
+			reviews::due_cards,
+			reviews::review_card,
+			settings::set_new_cards_per_day,
 			explorer::retitle_note,
 			explorer::move_entry,
 			themes::imported_themes,

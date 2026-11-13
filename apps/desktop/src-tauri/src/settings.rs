@@ -13,6 +13,8 @@ const NO_VAULT: &str = "no vault is open";
 const AUTOSAVE_DELAYS: std::ops::RangeInclusive<u32> = 1..=60;
 /// Longest trash retention, in days: ten years.
 const MAX_RETENTION_DAYS: u64 = 3650;
+/// Most new flashcards a day.
+const MAX_NEW_CARDS_PER_DAY: u32 = 999;
 
 /// Turns autosave on or off, after `delay_seconds` of pause in typing.
 /// Returns the settings of the device.
@@ -47,6 +49,22 @@ pub fn set_trash_section(
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
 	settings.show_trash_section = show;
+	settings.save(&config)?;
+	Ok(settings)
+}
+
+/// The most new flashcards a day. Returns the settings of the device.
+#[tauri::command(async)]
+pub fn set_new_cards_per_day(
+	count: u32,
+	app: AppHandle,
+) -> Result<DeviceSettings, String> {
+	if count > MAX_NEW_CARDS_PER_DAY {
+		return Err(format!("at most {MAX_NEW_CARDS_PER_DAY} new cards a day"));
+	}
+	let config = config_dir(&app)?;
+	let mut settings = DeviceSettings::load(&config);
+	settings.new_cards_per_day = count;
 	settings.save(&config)?;
 	Ok(settings)
 }

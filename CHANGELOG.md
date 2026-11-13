@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Flashcard reviews are scheduled with FSRS from a review log kept per
+  device in `.musubi/reviews/`, so that reviewing never changes a note. A
+  setting limits the new cards of a day (20 by default).
+
 ## [0.2.1] - 2026-11-13
 
 ### Added

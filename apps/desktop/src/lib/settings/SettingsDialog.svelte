@@ -5,6 +5,7 @@
 	import { Dialog, Switch } from 'bits-ui';
 
 	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
+	import CardSetting from './CardSetting.svelte';
 	import {
 		AUTOSAVE_DELAY,
 		boundedNumber,
@@ -129,6 +130,13 @@
 						seconds without typing
 					</label>
 				</section>
+			{/if}
+			{#if settings}
+				<CardSetting
+					{settings}
+					{onSettings}
+					{onError}
+				/>
 			{/if}
 			<section aria-labelledby="trash-heading">
 				<h3 id="trash-heading">Trash</h3>

@@ -11,6 +11,7 @@ use musubi_typst::{NoteCompiler, NoteIndex, NoteLink};
 use rusqlite::Transaction;
 
 use super::VaultIndex;
+use crate::cards::{question_hash, question_sources};
 use crate::context::{LinkContext, link_contexts};
 use crate::error::VaultError;
 use crate::passages::passages;
@@ -90,17 +91,25 @@ impl Indexer<'_> {
 
 	fn insert_cards_and_tasks(
 		&self,
-		note: &str,
+		(note, source): (&str, &str),
 		facts: &NoteIndex,
 	) -> Result<(), VaultError> {
 		let mut card = self.transaction.prepare_cached(
-			"INSERT INTO cards (note, position, question, answer, reverse)
-			VALUES (?1, ?2, ?3, ?4, ?5)",
+			"INSERT INTO cards (note, position, key, question, answer, reverse)
+			VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
 		)?;
+		// Cards made by code have no source of their own: their key comes
+		// from the plain text of the question.
+		let questions = question_sources(source);
 		for (position, found) in (0_i64..).zip(&facts.cards) {
+			let question = usize::try_from(position)
+				.ok()
+				.and_then(|index| questions.get(index))
+				.unwrap_or(&found.question);
 			card.execute((
 				note,
 				position,
+				question_hash(question),
 				&found.question,
 				&found.answer,
 				found.reverse,
@@ -133,7 +142,7 @@ impl Indexer<'_> {
 		)?;
 		let links = with_contexts(&facts.links, link_contexts(&source));
 		self.insert_links(&entry.path, links)?;
-		self.insert_cards_and_tasks(&entry.path, &facts)?;
+		self.insert_cards_and_tasks((&entry.path, &source), &facts)?;
 		self.insert_passages(&entry.path, &source)
 	}
 

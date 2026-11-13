@@ -4,6 +4,7 @@
 //! vault when it is missing, outdated or unreadable
 //! (`docs/vault-format.md`, "What is never in the vault").
 
+mod cards;
 mod graph;
 mod refresh;
 mod schema;
@@ -18,6 +19,7 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use ts_rs::TS;
 
+pub use self::cards::IndexedCard;
 pub use self::graph::{Graph, GraphLink, GraphNode};
 pub use self::text_search::TextMatch;
 use crate::error::VaultError;

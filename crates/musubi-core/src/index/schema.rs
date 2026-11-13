@@ -3,7 +3,7 @@
 //! new schema version drops and recreates every table.
 
 /// Bump on any change below, or to the data stored, to rebuild indexes.
-pub const VERSION: i64 = 2;
+pub const VERSION: i64 = 3;
 
 pub const DROP: &str = "
 DROP TABLE IF EXISTS passages;
@@ -34,6 +34,9 @@ CREATE INDEX links_by_note ON links (note);
 CREATE TABLE cards (
 	note TEXT NOT NULL REFERENCES notes (path) ON DELETE CASCADE,
 	position INTEGER NOT NULL,
+	-- Hash of the Typst source of the question: the card key without its
+	-- direction (see the flashcard review log in `docs/vault-format.md`).
+	key TEXT NOT NULL,
 	question TEXT NOT NULL,
 	answer TEXT NOT NULL,
 	reverse INTEGER NOT NULL

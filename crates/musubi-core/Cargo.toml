@@ -11,8 +11,10 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "std"] }
 musubi-typst.workspace = true
 nucleo-matcher = "0.3.1"
+rs-fsrs = "1.2.1"
 rusqlite = { version = "0.41.1", features = ["bundled"] }
 serde.workspace = true
 serde_json = "1.0.154"
