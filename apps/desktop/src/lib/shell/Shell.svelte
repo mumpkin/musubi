@@ -21,13 +21,13 @@
 	import NewEntryDialog from './NewEntryDialog.svelte';
 	import { NoteActions } from './note-actions.ts';
 	import NotePane from './NotePane.svelte';
+	import Notice from './Notice.svelte';
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
 	import SearchPicker from './SearchPicker.svelte';
 	import { shortcutHandler } from './shortcut-handler.ts';
 	import type { ShellAction } from './shortcuts.ts';
 	import { SidePanels } from './side-panels.svelte.ts';
-	import StatusBar from './StatusBar.svelte';
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
 	import { treeEditing } from './tree-editing-host.ts';
@@ -263,13 +263,15 @@
 				/>
 			</Pane>
 		</PaneGroup>
-		<StatusBar
-			mode={editing.statusMode ?? manager.statusMode}
-			path={manager.currentPath}
-			message={manager.message}
-		/>
 	</div>
 </Tooltip.Provider>
+
+<Notice
+	message={manager.message}
+	onDone={() => {
+		manager.message = '';
+	}}
+/>
 
 <CommandPalette
 	bind:open={dialogs.isPaletteOpen}
@@ -309,16 +311,7 @@
 <style>
 	.shell {
 		display: grid;
-		grid-template-rows: auto 1fr auto;
+		grid-template-rows: auto 1fr;
 		height: 100vh;
 	}
-
-	/* A side panel has the focus: no pane shows it. */
-	.shell:has(
-		:global(.explorer:focus-within),
-		:global(.backlinks:focus-within)
-	) :global(.pane.focused) {
-		border-top-color: transparent;
-	}
-
 </style>

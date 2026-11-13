@@ -6,6 +6,7 @@
 	import type { PaneAction } from './actions.ts';
 	import Icon from './Icon.svelte';
 	import { TOOLTIP_OFFSET_PIXELS } from './layout.ts';
+	import ModeBadge from './ModeBadge.svelte';
 
 	interface Props {
 		title: string;
@@ -19,7 +20,7 @@
 </script>
 
 <header class="pane-header">
-	<span class="mode">{mode}</span>
+	<ModeBadge {mode} />
 	<span class="title">
 		{title}
 		{#if isModified}
@@ -57,12 +58,6 @@
 		padding: 0.3rem 0.75rem;
 		border-bottom: 1px solid var(--border);
 		font-size: 0.85rem;
-	}
-
-	.mode {
-		color: var(--muted);
-		font-family: ui-monospace, monospace;
-		font-size: 0.75rem;
 	}
 
 	.title {
