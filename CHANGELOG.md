@@ -14,6 +14,8 @@ and this project adheres to
   device in `.musubi/reviews/`, so that reviewing never changes a note. A
   setting limits the new cards of a day (20 by default).
 - A setting for relative line numbers in the editor, as in Helix.
+- Two built-in themes, Ayu Light and Ayu Mirage, from the unbordered
+  variants of vscode-ayu.
 
 ### Changed
 

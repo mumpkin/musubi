@@ -1,0 +1,29 @@
+{
+	"name": "Ayu Mirage",
+	"colorScheme": "dark",
+	"credit": "Colors of Ayu Mirage Unbordered from ayu-theme/vscode-ayu (MIT licence, see LICENSE-vscode-ayu)",
+	"ui": {
+		"background": "#1f2430",
+		"foreground": "#fefaecc4",
+		"muted": "#d3e3fc73",
+		"surface": "#1f2430",
+		"border": "#171b24",
+		"accent": "#ffcc66",
+		"selection": "#409fff40",
+		"hover": "#63759926",
+		"error": "#ff6666",
+		"warning": "#ffcc66",
+		"mark": "#73695066"
+	},
+	"syntax": {
+		"comment": "#6e7c8f",
+		"keyword": "#ffa659",
+		"string": "#d5ff80",
+		"constant": "#dfbfff",
+		"function": "#ffcd66",
+		"macro": "#5ccfe6",
+		"escape": "#95e6cb",
+		"special": "#f29e74",
+		"raw": "#95e6cb"
+	}
+}

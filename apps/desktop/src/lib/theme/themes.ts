@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Color themes: the two default themes, and the CSS variables a theme sets
-// on the window. A theme may leave colors out; they come from the default
-// theme of the same scheme (`docs/themes.md`).
+// Color themes: the built-in themes (GitHub and Ayu), and the CSS
+// variables a theme sets on the window. A theme may leave colors out; they
+// come from the default theme of the same scheme (`docs/themes.md`).
 import { SYNTAX_TOKENS } from '@musubi/editor';
 
 import type { ColorScheme } from '../bindings/ColorScheme.ts';
 import type { Theme } from '../bindings/Theme.ts';
+import ayuLight from './ayu-light.json';
+import ayuMirage from './ayu-mirage.json';
 import githubDark from './github-dark.json';
 import githubLight from './github-light.json';
 
@@ -34,6 +36,8 @@ export interface ThemeChoice {
 export const DEFAULT_THEMES: ThemeChoice[] = [
 	{ id: 'github-light', theme: githubLight as Theme, isImported: false },
 	{ id: 'github-dark', theme: githubDark as Theme, isImported: false },
+	{ id: 'ayu-light', theme: ayuLight as Theme, isImported: false },
+	{ id: 'ayu-mirage', theme: ayuMirage as Theme, isImported: false },
 ];
 
 const [LIGHT, DARK] = DEFAULT_THEMES;
