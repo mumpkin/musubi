@@ -22,6 +22,7 @@
 	import ExplorerFolder from './ExplorerFolder.svelte';
 	import ExplorerHeader from './ExplorerHeader.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
+	import { focusedEntry, restoreFocus } from './keep-focus.ts';
 	import { focusFirst, listKeydown } from './list-keys.ts';
 	import TrashSection from './TrashSection.svelte';
 
@@ -132,6 +133,20 @@
 		const { items, origin } = menuAt(event.target, pinnedPaths, actions);
 		menu?.show(event, items, origin);
 	}
+
+	// The entry with the keyboard, kept when the lists change under it.
+	let kept: ReturnType<typeof focusedEntry>;
+	$effect.pre(() => {
+		// Read to run before each change of the lists.
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		[root, archive, pinned, recent];
+		kept = focusedEntry(element);
+	});
+	$effect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		[root, archive, pinned, recent];
+		restoreFocus(element, kept);
+	});
 
 	// `Space h` / `Space l`: the focus goes to the current note, or to the
 	// tree editor.
