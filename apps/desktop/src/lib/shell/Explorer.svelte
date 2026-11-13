@@ -209,19 +209,6 @@
 			{conflicts}
 			{onConflict}
 		/>
-		{#if recent.length > 0}
-			<ExplorerSection
-				name="Recent"
-				icon="recent"
-				{folded}
-			>
-				<ExplorerFolder
-					folder={flat(recent)}
-					{folded}
-					{...rows}
-				/>
-			</ExplorerSection>
-		{/if}
 		{#if pinned.length > 0}
 			<ExplorerSection
 				name="Pinned"
@@ -230,6 +217,19 @@
 			>
 				<ExplorerFolder
 					folder={flat(pinned)}
+					{folded}
+					{...rows}
+				/>
+			</ExplorerSection>
+		{/if}
+		{#if recent.length > 0}
+			<ExplorerSection
+				name="Recent"
+				icon="recent"
+				{folded}
+			>
+				<ExplorerFolder
+					folder={flat(recent)}
 					{folded}
 					{...rows}
 				/>
