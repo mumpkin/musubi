@@ -4,7 +4,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeDelta, Utc};
 use rs_fsrs::{Card, FSRS, Rating};
 use serde::Serialize;
 use ts_rs::TS;
@@ -103,9 +103,13 @@ impl Schedule {
 			.count()
 	}
 
-	/// The cards of `cards` to review at `clock.now`: those due, soonest
-	/// first, then new ones, in note order, up to `clock.new_per_day` a day.
-	/// Identical questions share one key and show once.
+	/// The cards of `cards` to review at `clock.now`, in the order of
+	/// Anki: those due, soonest first; then new ones, in note order, up to
+	/// `clock.new_per_day` a day; then the cards still learning (scheduled
+	/// less than a day ahead) that are not due yet, soonest first, as
+	/// Anki's learn-ahead: a review never waits for a learning step and
+	/// ends when every card is a day or more ahead. Identical questions
+	/// share one key and show once.
 	#[must_use]
 	pub fn due(
 		&self,
@@ -113,31 +117,60 @@ impl Schedule {
 		clock: ReviewClock,
 	) -> Vec<DueCard> {
 		let mut seen = HashSet::new();
-		let mut due: Vec<(DateTime<Utc>, DueCard)> = Vec::new();
-		let mut fresh = Vec::new();
+		let mut queues = Queues::default();
 		for (card, direction) in directions(cards) {
 			let key = card_key(&card.hash, direction);
-			if !seen.insert(key.clone()) {
-				continue;
-			}
-			match self.cards.get(&key) {
-				Some(reviewed) if reviewed.card.due <= time(clock.now) => {
-					due.push((
-						reviewed.card.due,
-						due_card(card, (key, direction), false),
-					));
-				}
-				Some(_) => {}
-				None => fresh.push(due_card(card, (key, direction), true)),
+			if seen.insert(key.clone()) {
+				let reviewed =
+					self.cards.get(&key).map(|reviewed| &reviewed.card);
+				let entry =
+					due_card(card, (key, direction), reviewed.is_none());
+				queues.add((reviewed, entry), time(clock.now));
 			}
 		}
-		due.sort_by_key(|(at, _)| *at);
 		let room = clock
 			.new_per_day
 			.saturating_sub(self.new_since(clock.day_start));
-		due.into_iter()
+		queues.into_order(room)
+	}
+}
+
+/// The cards of a review, by queue.
+#[derive(Default)]
+struct Queues {
+	due: Vec<(DateTime<Utc>, DueCard)>,
+	fresh: Vec<DueCard>,
+	learning: Vec<(DateTime<Utc>, DueCard)>,
+}
+
+impl Queues {
+	/// Puts `card` in its queue, from the state of its reviews.
+	fn add(
+		&mut self,
+		(reviewed, card): (Option<&Card>, DueCard),
+		now: DateTime<Utc>,
+	) {
+		match reviewed {
+			None => self.fresh.push(card),
+			Some(state) if state.due <= now => self.due.push((state.due, card)),
+			Some(state)
+				if state.due - state.last_review < TimeDelta::days(1) =>
+			{
+				self.learning.push((state.due, card));
+			}
+			Some(_) => {}
+		}
+	}
+
+	/// Due cards, then `room` new ones, then learning ones ahead of time.
+	fn into_order(mut self, room: usize) -> Vec<DueCard> {
+		self.due.sort_by_key(|(at, _)| *at);
+		self.learning.sort_by_key(|(at, _)| *at);
+		self.due
+			.into_iter()
 			.map(|(_, card)| card)
-			.chain(fresh.into_iter().take(room))
+			.chain(self.fresh.into_iter().take(room))
+			.chain(self.learning.into_iter().map(|(_, card)| card))
 			.collect()
 	}
 }

@@ -11,6 +11,10 @@ and this project adheres to
 ### Fixed
 
 - Relative line numbers follow the cursor on empty lines too.
+- Reviews keep the cards still learning, as Anki does: a card rated
+  Again or Hard comes back in the same review, after the others, instead
+  of waiting a minute or ten. A day of reviews starts at 4 a.m., as in
+  Anki.
 
 ## [0.3.0] - 2026-11-13
 
