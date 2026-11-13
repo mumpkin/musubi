@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-13
+
 ### Added
 
 - Switch vault from the settings: the vaults opened before on this
@@ -210,6 +212,7 @@ and this project adheres to
   flashcards, `todo` and `done` for tasks. Notes using it still compile with
   the Typst command-line tool.
 
-[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/mumpkin/musubi/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mumpkin/musubi/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/mumpkin/musubi/releases/tag/v0.1.0
