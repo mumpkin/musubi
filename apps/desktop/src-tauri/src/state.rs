@@ -67,6 +67,9 @@ impl AppState {
 pub struct DeviceSettings {
 	#[ts(type = "string | null")]
 	pub last_vault: Option<PathBuf>,
+	/// Vaults opened on this device, the last one first.
+	#[ts(type = "string[]")]
+	pub vaults: Vec<PathBuf>,
 	/// Save notes automatically after a pause in typing.
 	pub autosave: bool,
 	pub autosave_delay_seconds: u32,
@@ -84,6 +87,7 @@ impl Default for DeviceSettings {
 	fn default() -> Self {
 		Self {
 			last_vault: None,
+			vaults: Vec::new(),
 			autosave: false,
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
 			theme: None,

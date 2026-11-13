@@ -20,6 +20,7 @@ macro_rules! commands {
 			commands::app_info,
 			reading::render_note,
 			vault::open_vault,
+			vault::known_vaults,
 			vault::current_vault,
 			vault::vault_tree,
 			vault::read_note,

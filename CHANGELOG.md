@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Switch vault from the settings: the vaults opened before on this
+  computer, or another folder.
+
 ### Changed
 
 - The status bar is gone: the mode shows in the header of each pane, and

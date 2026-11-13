@@ -68,3 +68,8 @@ export async function createEntry({ kind, folder, name }: NewEntry) {
 		: (await createFolder(folder, name), undefined);
 	return { tree: await vaultTree(), note };
 }
+
+// The vaults opened on this device that still exist, the last one first.
+export async function knownVaults(): Promise<string[]> {
+	return invoke<string[]>('known_vaults');
+}
