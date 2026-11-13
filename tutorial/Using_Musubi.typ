@@ -141,6 +141,9 @@ drops the changes.
 
 `Space ,` opens the settings; every change applies at once.
 
+- *Vault*: the open vault, the vaults opened before on this computer (a
+  click opens one), and "Open a folder…" for another; an empty folder
+  becomes a new vault, with this tutorial. Save your changes first.
 - *Theme*: Musubi follows the light or dark preference of the system, with
   the colors of GitHub Light and GitHub Dark, or uses the theme you choose.
   "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of

@@ -1,6 +1,6 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- Settings: the theme and autosave belong to this device, the trash
-     retention to the vault. Every change applies at once. -->
+<!-- Settings: the vault, the theme and autosave belong to this device, the
+     trash retention to the vault. Every change applies at once. -->
 <script lang="ts">
 	import { Dialog, Switch } from 'bits-ui';
 
@@ -14,12 +14,17 @@
 		TRASH_RETENTION,
 	} from './commands.ts';
 	import ThemeSetting from './ThemeSetting.svelte';
+	import VaultSetting from './VaultSetting.svelte';
 
 	interface Props {
 		open: boolean;
 		settings: DeviceSettings | undefined;
 		trashRetentionDays: number;
 		isReadOnly: boolean;
+		// Root of the open vault.
+		vaultRoot: string;
+		// Opens another vault, from its folder.
+		onVault: (folder: string) => void;
 		onSettings: (settings: DeviceSettings) => void;
 		onError: (message: string) => void;
 	}
@@ -29,6 +34,8 @@
 		settings,
 		trashRetentionDays = $bindable(),
 		isReadOnly,
+		vaultRoot,
+		onVault,
 		onSettings,
 		onError,
 	}: Props = $props();
@@ -86,6 +93,11 @@
 			<header>
 				<Dialog.Title class="settings-title">Settings</Dialog.Title>
 			</header>
+			<VaultSetting
+				root={vaultRoot}
+				onOpen={onVault}
+				{onError}
+			/>
 			<ThemeSetting {onError} />
 			{#if settings}
 				<section aria-labelledby="editor-heading">

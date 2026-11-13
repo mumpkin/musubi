@@ -71,7 +71,16 @@ pub fn open_vault(
 	};
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
-	settings.last_vault = Some(open.vault.root().to_path_buf());
+	let opened = open.vault.root().to_path_buf();
+	// The vault of the last session, opened at launch, stays in the list.
+	if let Some(previous) = settings.last_vault.take()
+		&& !settings.vaults.contains(&previous)
+	{
+		settings.vaults.push(previous);
+	}
+	settings.vaults.retain(|known| *known != opened);
+	settings.vaults.insert(0, opened.clone());
+	settings.last_vault = Some(opened);
 	settings.save(&config)?;
 	*state.lock() = Some(open);
 	Ok(vault_info)
@@ -160,6 +169,23 @@ pub fn write_note(
 		.map_err(|error| error.to_string())?;
 	open.refresh_index()?;
 	Ok(saved)
+}
+
+/// The vaults opened on this device that still exist, the last one first.
+#[tauri::command(async)]
+pub fn known_vaults(app: AppHandle) -> Result<Vec<String>, String> {
+	let settings = DeviceSettings::load(&config_dir(&app)?);
+	let mut vaults = settings.vaults;
+	if let Some(last) = settings.last_vault
+		&& !vaults.contains(&last)
+	{
+		vaults.insert(0, last);
+	}
+	Ok(vaults
+		.into_iter()
+		.filter(|vault| vault.is_dir())
+		.map(|vault| vault.to_string_lossy().into_owned())
+		.collect())
 }
 
 /// Settings of this device that the interface needs.

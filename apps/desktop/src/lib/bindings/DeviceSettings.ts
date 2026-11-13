@@ -6,6 +6,10 @@
  */
 export type DeviceSettings = { lastVault: string | null, 
 /**
+ * Vaults opened on this device, the last one first.
+ */
+vaults: string[], 
+/**
  * Save notes automatically after a pause in typing.
  */
 autosave: boolean, autosaveDelaySeconds: number, 

@@ -93,6 +93,20 @@ export class NoteActions {
 		});
 	};
 
+	// Opens a vault from its folder with `open`, unless a pane has unsaved
+	// changes, which closing this vault would lose.
+	vaultSwitcher(
+		open: (folder: string) => Promise<void>,
+	): (folder: string) => void {
+		return (folder) => {
+			if (this.manager.panes.some((pane) => pane.draft !== undefined)) {
+				this.showMessage('Save or discard the changes before switching');
+				return;
+			}
+			this.run(async () => open(folder));
+		};
+	}
+
 	readonly togglePin = (path: string): void => {
 		this.run(async () => {
 			await this.files.togglePin(path);

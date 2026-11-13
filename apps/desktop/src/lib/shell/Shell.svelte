@@ -35,9 +35,11 @@
 
 	interface Props {
 		vault: VaultInfo;
+		// Opens another vault: the shell starts again on it.
+		onVault: (folder: string) => Promise<void>;
 	}
 
-	const { vault }: Props = $props();
+	const { vault, onVault }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const files = new VaultState(vault.tree);
@@ -284,6 +286,8 @@
 	isReadOnly={vault.readOnly}
 	onSettings={files.updateSettings}
 	onError={notes.showMessage}
+	vaultRoot={vault.root}
+	onVault={notes.vaultSwitcher(onVault)}
 />
 
 <SearchPicker

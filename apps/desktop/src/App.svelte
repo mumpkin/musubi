@@ -5,7 +5,7 @@
 	import Shell from './lib/shell/Shell.svelte';
 	import TitleBar from './lib/shell/TitleBar.svelte';
 	import WelcomeScreen from './lib/shell/WelcomeScreen.svelte';
-	import { currentVault } from './lib/vault/vault.ts';
+	import { currentVault, openVault } from './lib/vault/vault.ts';
 
 	let vault = $state<VaultInfo | null>();
 
@@ -19,6 +19,11 @@
 
 	function show(opened: VaultInfo): void {
 		vault = opened;
+	}
+
+	// From the settings: another vault replaces the open one.
+	async function switchVault(folder: string): Promise<void> {
+		show(await openVault(folder));
 	}
 
 	// The menu of the webview (reload, inspect…) is not part of the app;
@@ -37,7 +42,10 @@
 
 {#if vault}
 	{#key vault.root}
-		<Shell {vault} />
+		<Shell
+			{vault}
+			onVault={switchVault}
+		/>
 	{/key}
 {:else if vault === null}
 	<div class="start">
