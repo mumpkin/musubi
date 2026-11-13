@@ -138,6 +138,7 @@
 					dueCount={dueCounts.vault}
 					conflicts={files.conflicts}
 					onConflict={notes.showConflict}
+					onMove={notes.moveInto}
 					onReview={manager.reviewFocused}
 				/>
 			</Pane>

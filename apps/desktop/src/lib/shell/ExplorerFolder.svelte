@@ -6,6 +6,7 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import type { FolderNode } from '../vault/tree.ts';
+	import { dragEntry, dropFolder } from './drag-drop.ts';
 	import Self from './ExplorerFolder.svelte';
 	import Icon from './Icon.svelte';
 
@@ -15,9 +16,18 @@
 		folded: SvelteSet<string>;
 		pinnedPaths: ReadonlySet<string>;
 		onOpen: (path: string) => void;
+		// Moves an entry dropped on a folder.
+		onMove: (path: string, folder: string) => void;
 	}
 
-	const { folder, current, folded, pinnedPaths, onOpen }: Props = $props();
+	const {
+		folder,
+		current,
+		folded,
+		pinnedPaths,
+		onOpen,
+		onMove,
+	}: Props = $props();
 
 	function toggle(path: string): void {
 		if (folded.has(path)) {
@@ -37,6 +47,8 @@
 				title={child.path}
 				data-path={child.path}
 				data-kind="folder"
+				use:dragEntry={{ path: child.path, kind: 'folder' }}
+				use:dropFolder={{ folder: child.path, onMove }}
 				onclick={() => {
 					toggle(child.path);
 				}}
@@ -53,6 +65,7 @@
 					{folded}
 					{pinnedPaths}
 					{onOpen}
+					{onMove}
 				/>
 			{/if}
 		</li>
@@ -66,6 +79,7 @@
 				title={note.path}
 				data-path={note.path}
 				data-kind="note"
+				use:dragEntry={{ path: note.path, kind: 'note' }}
 				onclick={() => {
 					onOpen(note.path);
 				}}
@@ -103,6 +117,13 @@
 
 	button:hover {
 		background: var(--hover);
+	}
+
+	/* A folder an entry can be dropped on. */
+	/* Set by the drop action, out of sight of Svelte. */
+	:global(button[data-drop-target]) {
+		background: var(--selection);
+		box-shadow: inset 0 0 0 1px var(--accent);
 	}
 
 	/* The entry reached with `j` and `k`. */

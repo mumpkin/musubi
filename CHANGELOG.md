@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Added
 
+- Drag a note or a folder onto a folder of the explorer, or onto the
+  Notebook section, to move it there; links follow.
 - `Space w s` splits the pane one above the other, as in Helix;
   `Space w v` still splits side by side.
 - An AUR package, `musubi-bin`, built from the `.deb` of a release

@@ -6,6 +6,7 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import type { IconName } from './actions.ts';
+	import { type DropFolder, dropFolder } from './drag-drop.ts';
 	import Icon from './Icon.svelte';
 
 	interface Props {
@@ -13,9 +14,11 @@
 		icon: IconName;
 		folded: SvelteSet<string>;
 		children: Snippet;
+		// Entries dropped on the header move into this folder.
+		drop?: DropFolder | undefined;
 	}
 
-	const { name, icon, folded, children }: Props = $props();
+	const { name, icon, folded, children, drop }: Props = $props();
 
 	// Folder paths never start with `/`: the key cannot clash with one.
 	const key = $derived(`/${name}`);
@@ -25,6 +28,7 @@
 <section aria-label={name}>
 	<button
 		class="folder section-header"
+		use:dropFolder={drop}
 		aria-expanded={!isFolded}
 		onclick={() => {
 			if (isFolded) {
@@ -71,6 +75,12 @@
 		text-align: left;
 		text-transform: uppercase;
 		cursor: pointer;
+	}
+
+	/* Set by the drop action, out of sight of Svelte. */
+	:global(.section-header[data-drop-target]) {
+		background: var(--selection);
+		box-shadow: inset 0 0 0 1px var(--accent);
 	}
 
 	.section-header:hover,
