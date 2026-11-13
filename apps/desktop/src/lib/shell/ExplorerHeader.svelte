@@ -1,9 +1,10 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- The header of the explorer: the vault name, the mode of the tree
-     editor while it is open, and buttons to edit the tree as text and to
-     create a note or a folder at the root. -->
+     editor while it is open or the flashcards due, and one menu button for
+     the vault actions (tree as text, new note, new folder, review). -->
 <script lang="ts">
 	import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
+	import { headerMenu, type MenuItem } from './explorer-menu.ts';
 	import Icon from './Icon.svelte';
 	import ModeBadge from './ModeBadge.svelte';
 
@@ -16,6 +17,8 @@
 		// Flashcards due in the vault; a click reviews them.
 		dueCount: number;
 		onReview: (scope: string) => void;
+		// Opens the menu of the vault actions under `origin`.
+		onMenu: (event: Event, items: MenuItem[], origin?: HTMLElement) => void;
 	}
 
 	const {
@@ -25,7 +28,10 @@
 		onCreate,
 		dueCount,
 		onReview,
+		onMenu,
 	}: Props = $props();
+
+	let menuButton = $state<HTMLElement>();
 </script>
 
 <header>
@@ -42,26 +48,20 @@
 		><Icon name="cards" />{dueCount}</button>
 	{/if}
 	<button
-		title={editing.isActive
-			? 'Back to the tree (:q)'
-			: 'Edit the tree as text (Space r)'}
-		aria-pressed={editing.isActive}
-		onclick={() => {
-			editing.toggle(current);
+		bind:this={menuButton}
+		title="Vault actions: edit the tree, new note, new folder, review"
+		aria-haspopup="menu"
+		onclick={(event) => {
+			onMenu(event, headerMenu({
+				isEditing: editing.isActive,
+				onToggleTree: () => {
+					editing.toggle(current);
+				},
+				onCreate,
+				onReview,
+			}), menuButton);
 		}}
-	><Icon name={editing.isActive ? 'read' : 'edit'} /></button>
-	<button
-		title="New note"
-		onclick={() => {
-			onCreate('note', '');
-		}}
-	><Icon name="newNote" /></button>
-	<button
-		title="New folder"
-		onclick={() => {
-			onCreate('folder', '');
-		}}
-	><Icon name="newFolder" /></button>
+	><Icon name="more" /></button>
 </header>
 
 <style>

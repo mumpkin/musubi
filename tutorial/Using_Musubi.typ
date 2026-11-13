@@ -8,9 +8,9 @@ command palette (`Space ?`) lists the same commands.
 == The window
 
 - *Title bar*: the title of the current note, and the buttons of the window.
-- *Explorer*, on the left (`Space e`): folders and notes by title. The
-  buttons next to the vault name edit the tree as text, create a note and a
-  folder. A right click on a note or a folder, or `Shift-F10` on the entry
+- *Explorer*, on the left (`Space e`): folders and notes by title. Next to
+  the vault name, the flashcards due, and a menu (…) to edit the tree as
+  text, create a note or a folder, and review. A right click on a note or a folder, or `Shift-F10` on the entry
   under the keyboard, opens its menu: open, pin, new note or folder in it,
   rename or move, archive, trash. Long titles end with "…": the tooltip
   shows the full path. Three sections fold like folders:
@@ -94,8 +94,8 @@ image on the editor inserts it too.
 
 == Notes
 
-- *Create*: `Space n`, the new note button of the explorer, or the menu of
-  a folder. The file is
+- *Create*: `Space n`, the menu (…) of the explorer, or the menu of a
+  folder. The file is
   named from the title. Type a path to choose the folder:
   `Projects/Ideas/My note` creates _My note_ in `Projects/Ideas`, and the
   missing folders with it.
@@ -120,9 +120,9 @@ image on the editor inserts it too.
 
 == Edit the tree as text
 
-`Space r` in the explorer, or its pencil button, turns it into an editor
-holding every folder and note of the vault, one per line, as in the
-oil.nvim plugin of Neovim. Folders end with `/`; what a folder holds is
+`Space r` in the explorer, or _Edit the tree as text_ in its menu (…),
+turns it into an editor holding every folder and note of the vault, one
+per line, as in the oil.nvim plugin of Neovim. Folders end with `/`; what a folder holds is
 indented under it. Edit it with the Helix keys, then `:w`:
 
 - change a title to rename the note, a folder name to rename the folder;

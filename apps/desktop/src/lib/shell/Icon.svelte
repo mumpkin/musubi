@@ -11,6 +11,7 @@
 	import Circle from '@lucide/svelte/icons/circle';
 	import Clock from '@lucide/svelte/icons/clock';
 	import Columns2 from '@lucide/svelte/icons/columns-2';
+	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import FilePlus from '@lucide/svelte/icons/file-plus';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import Cards from '@lucide/svelte/icons/gallery-vertical-end';
@@ -49,6 +50,7 @@
 		archive: Archive,
 		unarchive: ArchiveArrowUp,
 		cards: Cards,
+		more: Ellipsis,
 	} as const;
 
 	const SIZE_PIXELS = 15;

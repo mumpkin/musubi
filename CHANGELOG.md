@@ -14,6 +14,8 @@ and this project adheres to
   system; GitHub Light and GitHub Dark are themes to choose.
 - A backlink lights up as a whole on hover and when `j` and `k` reach it,
   as the entries of the explorer; a click anywhere on it opens the note.
+- The buttons next to the vault name give way to one menu (…): edit the
+  tree as text, new note, new folder, review the flashcards.
 
 ### Fixed
 

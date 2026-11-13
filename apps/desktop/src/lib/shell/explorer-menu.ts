@@ -33,7 +33,10 @@ export interface EntryActions {
 	onReview: (path: string) => void;
 }
 
-function createItems(folder: string, actions: EntryActions): MenuItem[] {
+function createItems(
+	folder: string,
+	actions: Pick<EntryActions, 'onCreate'>,
+): MenuItem[] {
 	return [
 		{
 			label: 'New note',
@@ -139,4 +142,34 @@ export function menuAt(
 export function isMenuKey(event: KeyboardEvent): boolean {
 	return event.key === 'ContextMenu'
 		|| (event.shiftKey && event.key === 'F10');
+}
+
+// What the menu button of the explorer header needs.
+export interface HeaderActions {
+	isEditing: boolean;
+	onToggleTree: () => void;
+	onCreate: (kind: EntryKind, folder: string) => void;
+	onReview: (scope: string) => void;
+}
+
+// The menu of the explorer header: the tree as text, new entries at the
+// root, and a review of the vault.
+export function headerMenu(actions: HeaderActions): MenuItem[] {
+	return [
+		{
+			label: actions.isEditing
+				? 'Back to the tree'
+				: 'Edit the tree as text',
+			icon: actions.isEditing ? 'read' : 'edit',
+			run: actions.onToggleTree,
+		},
+		...createItems('', actions),
+		{
+			label: 'Review the flashcards',
+			icon: 'cards',
+			run: () => {
+				actions.onReview('');
+			},
+		},
+	];
 }
