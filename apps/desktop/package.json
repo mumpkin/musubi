@@ -12,6 +12,7 @@
 		"typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
 	},
 	"dependencies": {
+		"@atlaskit/pragmatic-drag-and-drop": "^4.0.0",
 		"@codemirror/commands": "^6.11.1",
 		"@codemirror/state": "^6.7.6",
 		"@codemirror/view": "^6.43.15",

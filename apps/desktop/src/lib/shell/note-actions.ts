@@ -4,7 +4,7 @@
 // status bar.
 import type { Conflict } from '../bindings/Conflict.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
-import { archiveEntry } from '../vault/explorer.ts';
+import { archiveEntry, moveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
 import { isArchived, titleIn } from '../vault/tree.ts';
 import { writeNote } from '../vault/vault.ts';
@@ -88,20 +88,39 @@ export class NoteActions {
 	readonly toggleArchive = (path: string): void => {
 		this.run(async () => {
 			const moved = await archiveEntry(path, isArchived(path));
-			for (const pane of [...this.manager.panes]) {
-				if (pane.path === path) {
-					this.manager.forget(pane.path, moved);
-				} else if (pane.path.startsWith(`${path}/`)) {
-					const rest = pane.path.slice(path.length);
-					this.manager.forget(pane.path, `${moved}${rest}`);
-				}
-			}
+			this.followMove(path, moved);
 			this.showMessage(isArchived(moved)
 				? `Archived ${moved}`
 				: `Moved back to ${moved}`);
 			await this.files.load();
 		});
 	};
+
+	// Moves a note or a folder into `folder` (`''` for the root), as a drag
+	// and drop does; links follow.
+	readonly moveInto = (path: string, folder: string): void => {
+		const name = path.slice(path.lastIndexOf('/') + 1);
+		this.run(async () => {
+			const to = folder === '' ? name : `${folder}/${name}`;
+			const moved = await moveEntry(path, to);
+			this.followMove(path, moved);
+			this.showMessage(`Moved to ${moved}`);
+			await this.files.load();
+			this.manager.reload();
+		});
+	};
+
+	// The panes showing `from`, or a note inside it, follow it to `to`.
+	private followMove(from: string, to: string): void {
+		for (const pane of [...this.manager.panes]) {
+			if (pane.path === from) {
+				this.manager.forget(pane.path, to);
+			} else if (pane.path.startsWith(`${from}/`)) {
+				const rest = pane.path.slice(from.length);
+				this.manager.forget(pane.path, `${to}${rest}`);
+			}
+		}
+	}
 
 	// Opens a vault from its folder with `open`, unless a pane has unsaved
 	// changes, which closing this vault would lose.

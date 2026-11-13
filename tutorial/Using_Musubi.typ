@@ -10,28 +10,31 @@ command palette (`Space ?`) lists the same commands.
 - *Title bar*: the title of the current note, and the buttons of the window.
 - *Explorer*, on the left (`Space e`): folders and notes by title. Next to
   the vault name, the flashcards due, and a menu (…) to edit the tree as
-  text, create a note or a folder, and review. A right click on a note or a folder, or `Shift-F10` on the entry
-  under the keyboard, opens its menu: open, pin, new note or folder in it,
-  rename or move, archive, trash. Long titles end with "…": the tooltip
-  shows the full path. Three sections fold like folders:
-  *Pinned*, the notes you pinned; *Recent*, the four notes modified last;
-  *Notebook*, all your folders and notes. Below come *Archive*
-  and *Trash*, when they are not empty; the settings can hide the trash.
+  text, create a note or a folder, and review. A right click on a note or a
+  folder, or `Shift-F10` on the entry under the keyboard, opens its menu:
+  open, pin, new note or folder in it, rename or move, archive, trash. Drag
+  a note or a folder onto a folder (or onto _Notebook_, for the top) to move
+  it there; links follow. Long titles end with "…": the tooltip shows the
+  full path. Three sections fold like folders: *Pinned*, the notes you
+  pinned; *Recent*, the four notes modified last; *Notebook*, all your
+  folders and notes. Below come *Archive* and *Trash*, when they are not
+  empty; the settings can hide the trash.
 - *Panes*, in the middle: one, or two side by side or one above the other.
-  Each pane shows a note, read or edited, or the graph. Without a note (a note moved to the trash,
-  `Space o`), a pane shows the *home* screen: find a note, the notes
-  modified last, the pinned ones, the flashcards due. Drag the line between panes to resize them.
+  Each pane shows a note, read or edited, or the graph. Without a note (a
+  note moved to the trash, `Space o`), a pane shows the *home* screen: find
+  a note, the notes modified last, the pinned ones, the flashcards due. Drag
+  the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current
   one.
 - `Space h` and `Space l` move the keyboard to the panel on the left and on
   the right, folded panels skipped. In the explorer and the backlinks, `j`
   and `k` move, `Enter` or `l` opens a note or folds a folder, `Escape` goes
-  back to the pane. A note opened from the backlinks takes the keyboard:
-  `j` and `k` move in it at once.
+  back to the pane. A note opened from the backlinks takes the keyboard: `j`
+  and `k` move in it at once.
 - The header of each pane shows its mode: `READ`; `NORMAL`, `INSERT`,
   `SELECT` in the editor; `GRAPH`. The panel with the keyboard (explorer,
-  pane, backlinks) has its header highlighted. Messages (saved, errors)
-  show for a few seconds at the bottom right.
+  pane, backlinks) has its header highlighted. Messages (saved, errors) show
+  for a few seconds at the bottom right.
 
 == Shortcuts of the window
 

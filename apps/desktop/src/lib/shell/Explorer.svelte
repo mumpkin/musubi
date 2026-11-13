@@ -49,6 +49,8 @@
 		onReview: (scope: string) => void;
 		// Flashcards due in the vault.
 		dueCount: number;
+		// Moves a note or a folder into a folder, by drag and drop.
+		onMove: (path: string, folder: string) => void;
 		// Conflict copies made by sync tools, and how to open one.
 		conflicts: Conflict[];
 		onConflict: (conflict: Conflict) => void;
@@ -74,9 +76,10 @@
 		dueCount,
 		conflicts,
 		onConflict,
+		onMove,
 	}: Props = $props();
 
-	const rows = $derived({ current, pinnedPaths, onOpen });
+	const rows = $derived({ current, pinnedPaths, onOpen, onMove });
 
 	// The notes of a section, as a folder without sub-folders.
 	function flat(notes: NoteEntry[]): FolderNode {
@@ -239,6 +242,7 @@
 			name="Notebook"
 			icon="notebook"
 			{folded}
+			drop={{ folder: '', onMove }}
 		>
 			<div class="tree">
 				<ExplorerFolder
