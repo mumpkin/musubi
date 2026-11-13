@@ -26,7 +26,8 @@ export type IconName
 		| 'notebook'
 		| 'archive'
 		| 'unarchive'
-		| 'cards';
+		| 'cards'
+		| 'more';
 
 export interface PaneAction {
 	label: string;

@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { describe, expect, it } from 'vitest';
 
-import { type EntryActions, entryMenu, rootMenu } from './explorer-menu.ts';
+import {
+	type EntryActions,
+	entryMenu,
+	headerMenu,
+	rootMenu,
+} from './explorer-menu.ts';
 
 function recorder(): { calls: string[]; actions: EntryActions } {
 	const calls: string[] = [];
@@ -71,5 +76,34 @@ describe('entryMenu', () => {
 	it('creates at the root from the empty space', () => {
 		const { actions } = recorder();
 		expect(labels(rootMenu(actions))).toEqual(['New note', 'New folder']);
+	});
+});
+
+describe('headerMenu', () => {
+	it('gathers the vault actions', () => {
+		const { calls, actions } = recorder();
+		const items = headerMenu({
+			isEditing: false,
+			onToggleTree: () => {
+				calls.push('tree');
+			},
+			onCreate: actions.onCreate,
+			onReview: actions.onReview,
+		});
+		expect(labels(items)).toEqual([
+			'Edit the tree as text',
+			'New note',
+			'New folder',
+			'Review the flashcards',
+		]);
+		for (const item of items) {
+			item.run();
+		}
+		expect(calls).toEqual([
+			'tree',
+			'create note ',
+			'create folder ',
+			'review ',
+		]);
 	});
 });

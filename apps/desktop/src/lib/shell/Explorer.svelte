@@ -162,6 +162,7 @@
 		{onCreate}
 		{dueCount}
 		{onReview}
+		onMenu={showMenu}
 	/>
 	{#if editing.isActive}
 		{#key editing.tree}
