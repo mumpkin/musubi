@@ -76,6 +76,11 @@ export class PaneManager {
 		}
 	}
 
+	// A review of `scope` in the focused pane.
+	readonly reviewFocused = (scope: string): void => {
+		this.review(this.focusedIndex, scope);
+	};
+
 	// The pane `index` goes back to reading, from the graph or a review.
 	read(index: number): void {
 		const pane = this.panes[index];
@@ -251,6 +256,9 @@ export class PaneManager {
 			},
 			read: () => {
 				this.read(index);
+			},
+			review: () => {
+				this.review(index, this.panes[index]?.path ?? '');
 			},
 		};
 	}

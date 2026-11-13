@@ -24,6 +24,8 @@
 		// Paths of the notes of the vault.
 		notes: ReadonlySet<string>;
 		events: PaneEvents;
+		// Flashcards of the note due now.
+		dueCount: number;
 	}
 
 	const {
@@ -35,6 +37,7 @@
 		autosaveDelay,
 		notes,
 		events,
+		dueCount,
 	}: Props = $props();
 
 	let editorMode = $state<EditorMode>('normal');
@@ -68,6 +71,8 @@
 			? modeIndicator(editorMode)
 			: MODE_LABELS[pane.mode]}
 		{actions}
+		{dueCount}
+		onReview={events.review}
 	/>
 	{#if pane.mode === 'graph'}
 		<GraphView

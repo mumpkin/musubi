@@ -29,6 +29,8 @@ export interface EntryActions {
 	onDelete: (path: string) => void;
 	// Opens the tree editor on the line of the entry.
 	onRename: (path: string) => void;
+	// Reviews the flashcards of a note or a folder.
+	onReview: (path: string) => void;
 }
 
 function createItems(folder: string, actions: EntryActions): MenuItem[] {
@@ -52,6 +54,13 @@ function createItems(folder: string, actions: EntryActions): MenuItem[] {
 
 function sharedItems(path: string, actions: EntryActions): MenuItem[] {
 	return [
+		{
+			label: 'Review the flashcards',
+			icon: 'cards',
+			run: () => {
+				actions.onReview(path);
+			},
+		},
 		{
 			label: 'Rename or move',
 			icon: 'edit',

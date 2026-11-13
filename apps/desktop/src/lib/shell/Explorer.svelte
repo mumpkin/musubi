@@ -42,6 +42,10 @@
 		onLeave: () => void;
 		// The tree as text, edited as in oil.nvim.
 		editing: TreeEditing;
+		// Reviews the flashcards of a folder or a note (`''`: the vault).
+		onReview: (scope: string) => void;
+		// Flashcards due in the vault.
+		dueCount: number;
 	}
 
 	const {
@@ -60,6 +64,8 @@
 		onDelete,
 		onLeave,
 		editing,
+		onReview,
+		dueCount,
 	}: Props = $props();
 
 	const rows = $derived({ current, pinnedPaths, onOpen });
@@ -101,6 +107,9 @@
 		},
 		onRename: (path) => {
 			editing.start(path);
+		},
+		onReview: (path) => {
+			onReview(path);
 		},
 	};
 
@@ -151,6 +160,8 @@
 		{current}
 		{editing}
 		{onCreate}
+		{dueCount}
+		{onReview}
 	/>
 	{#if editing.isActive}
 		{#key editing.tree}

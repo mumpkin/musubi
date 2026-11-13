@@ -7,7 +7,7 @@
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 
 	import type { VaultInfo } from '../bindings/VaultInfo.ts';
-	import type { VaultTree } from '../bindings/VaultTree.ts';
+	import { DueCounts } from '../review/due-counts.svelte.ts';
 	import SettingsDialog from '../settings/SettingsDialog.svelte';
 	import { themeCommands } from '../theme/theme-commands.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
@@ -52,6 +52,7 @@
 	let trashRetentionDays = $state(vault.trashRetentionDays);
 	const panels = new SidePanels(manager);
 	const editing = treeEditing(files, manager, panels);
+	const dueCounts = new DueCounts(() => files.loads);
 
 	function loadTree(): void {
 		files.load().catch(() => undefined);
@@ -69,13 +70,6 @@
 			loadTree();
 		}
 	});
-
-	function created(newTree: VaultTree, note: string | undefined): void {
-		files.setTree(newTree);
-		if (note !== undefined) {
-			manager.open(note);
-		}
-	}
 
 	function openNote(path: string, line?: number): void {
 		manager.open(path, line);
@@ -134,7 +128,10 @@
 			manager.toggleGraph(manager.focusedIndex);
 		},
 		review: () => {
-			manager.review(manager.focusedIndex, '');
+			manager.reviewFocused('');
+		},
+		reviewNote: () => {
+			manager.reviewFocused(manager.currentPath);
 		},
 		split: () => {
 			manager.split();
@@ -215,6 +212,8 @@
 						panels.back();
 					}}
 					{editing}
+					dueCount={dueCounts.vault}
+					onReview={manager.reviewFocused}
 				/>
 			</Pane>
 			<PaneResizer class="resizer" />
@@ -237,6 +236,7 @@
 								autosaveDelay={files.autosaveDelay}
 								notes={files.notePaths}
 								events={manager.events(index)}
+								dueCount={dueCounts.of(pane.path)}
 							/>
 						</Pane>
 					{/each}
@@ -303,7 +303,7 @@
 		bind:open={dialogs.isCreating}
 		kind={dialogs.creation.kind}
 		folder={dialogs.creation.folder}
-		onCreated={created}
+		onCreated={notes.created}
 		onError={notes.showMessage}
 	/>
 {/if}

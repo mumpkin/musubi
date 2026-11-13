@@ -23,6 +23,12 @@ cat_ and _a cat_ → _un chat_. Math works too:
   (good) or `4` (easy). A card rated _again_ comes back soon.
 + When nothing is due, `Escape` goes back to the note.
 
+The number next to the vault name, in the explorer, counts the cards due;
+the header of a note shows its own. A click on either starts a review. To
+review one folder, right click it in the explorer: _Review the
+flashcards_. "Review the flashcards of this note" in the palette reviews
+the current note.
+
 Reviewing never changes your notes: the history of your reviews stays in
 `.musubi/reviews/`, one file per computer, so syncing never conflicts. The
 settings choose how many new cards a day a review brings (20 by default).

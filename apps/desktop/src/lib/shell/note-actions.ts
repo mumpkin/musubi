@@ -2,6 +2,7 @@
 // What the shell does to notes beyond opening them: trash, pin, open a
 // note just written, follow a link to a missing note. Errors show in the
 // status bar.
+import type { VaultTree } from '../bindings/VaultTree.ts';
 import { archiveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
 import { isArchived } from '../vault/tree.ts';
@@ -111,6 +112,14 @@ export class NoteActions {
 		this.run(async () => {
 			await this.files.togglePin(path);
 		});
+	};
+
+	// A note or a folder was created: the tree shows it, a note opens.
+	readonly created = (tree: VaultTree, note: string | undefined): void => {
+		this.files.setTree(tree);
+		if (note !== undefined) {
+			this.manager.open(note);
+		}
 	};
 
 	// Opens a note that was just written (restored, tutorial) once the tree

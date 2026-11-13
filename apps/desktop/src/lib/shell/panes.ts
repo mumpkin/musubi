@@ -48,6 +48,8 @@ export interface PaneEvents {
 	edit: (line: number) => void;
 	// Back to reading, from the graph or a review.
 	read: () => void;
+	// Reviews the flashcards of the note of the pane.
+	review: () => void;
 }
 
 export const MAX_PANES = 2;
