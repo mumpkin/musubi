@@ -21,4 +21,8 @@ theme: string | null,
 /**
  * The trash shows as the last section of the explorer.
  */
-showTrashSection: boolean, };
+showTrashSection: boolean, 
+/**
+ * Flashcards seen for the first time each day, at most.
+ */
+newCardsPerDay: number, };

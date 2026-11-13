@@ -3,6 +3,7 @@
 
 mod archive;
 mod assets;
+pub mod cards;
 mod context;
 mod error;
 mod index;
@@ -26,9 +27,10 @@ mod vault;
 
 pub use crate::archive::ARCHIVE_FOLDER;
 pub use crate::assets::{NewAsset, is_image};
+pub use crate::cards::{DueCard, DueRequest, ReviewClock};
 pub use crate::error::VaultError;
 pub use crate::index::{
-	Backlink, Graph, GraphLink, GraphNode, TextMatch, VaultIndex,
+	Backlink, Graph, GraphLink, GraphNode, IndexedCard, TextMatch, VaultIndex,
 };
 pub use crate::rename::save_note;
 pub use crate::search::{NoteMatch, search_headings, search_titles};

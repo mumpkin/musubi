@@ -284,7 +284,10 @@ a note and never causes a sync conflict.
   so moving or renaming a note keeps the history. Editing a question starts a
   new history; two identical questions share one.
 - The state of a card is computed by replaying, in `reviewedAt` order, the
-  reviews of all device files. The result is the same on every device.
+  reviews of all device files, with the FSRS scheduler (`rs-fsrs`, default
+  parameters, no random fuzz). The result is the same on every device.
+- Lines that cannot be read (a line half-written by a sync tool) are
+  skipped.
 
 ## What is never in the vault
 

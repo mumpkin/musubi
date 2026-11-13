@@ -600,8 +600,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
 dependencies = [
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-link",
 ]
 
@@ -2945,8 +2947,10 @@ dependencies = [
 name = "musubi-core"
 version = "0.2.1"
 dependencies = [
+ "chrono",
  "musubi-typst",
  "nucleo-matcher",
+ "rs-fsrs",
  "rusqlite",
  "serde",
  "serde_json",
@@ -4016,6 +4020,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9da7f59328b09405b181fee1018925fad50f157afb43c0c0f5c522c256dd5907"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "rs-fsrs"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "65a7e7d53c16e720833aa109509f46d4d6cc0c4c820f95b865df72c6118e9124"
+dependencies = [
+ "chrono",
 ]
 
 [[package]]
