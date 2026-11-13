@@ -14,7 +14,7 @@ command palette (`Space ?`) lists the same commands.
   under the keyboard, opens its menu: open, pin, new note or folder in it,
   rename or move, archive, trash. Long titles end with "…": the tooltip
   shows the full path. Three sections fold like folders:
-  *Recent*, the last 10 notes opened on this computer; *Pinned*, the notes
+  *Recent*, the four notes modified last; *Pinned*, the notes
   you pinned; *Notebook*, all your folders and notes. Below come *Archive*
   and *Trash*, when they are not empty; the settings can hide the trash.
 - *Panes*, in the middle: one, or two side by side. Each pane shows a note,
@@ -161,7 +161,7 @@ Your vault is an ordinary folder; Musubi only reads and writes files in it.
 - The images of a note are in a folder next to it, `Note.assets/`.
 - `.musubi/` holds the settings of the vault, its pinned notes and the
   trash.
-- The search index, the recent notes and the window layout stay on this
+- The search index and the window layout stay on this
   computer, outside the vault: deleting them loses nothing.
 
 Musubi has no sync of its own. To use your notes on several devices, sync

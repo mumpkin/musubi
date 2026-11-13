@@ -21,14 +21,9 @@ export async function archiveEntry(
 	return invoke<string>('archive_entry', { path, unarchive });
 }
 
-// Recent notes of the open vault, newest first.
+// The notes of the open vault modified last, newest first.
 export async function recentNotes(): Promise<string[]> {
 	return invoke<string[]>('recent_notes');
-}
-
-// Puts a note first in the recent notes; resolves to them.
-export async function noteOpened(path: string): Promise<string[]> {
-	return invoke<string[]>('note_opened', { path });
 }
 
 // Gives a note a new title (heading and file name); resolves to its path.

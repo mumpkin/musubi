@@ -6,14 +6,14 @@ import { SvelteSet } from 'svelte/reactivity';
 import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
-import { noteOpened, pinNote, recentNotes } from '../vault/explorer.ts';
+import { pinNote, recentNotes } from '../vault/explorer.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 import { buildTree, splitArchive } from '../vault/tree.ts';
 import { deviceSettings, vaultTree } from '../vault/vault.ts';
 
 export class VaultState {
 	tree = $state<VaultTree>({ folders: [], notes: [], pinned: [] });
-	// Paths of the notes opened last on this device, newest first.
+	// Paths of the notes modified last, newest first.
 	recent = $state<string[]>([]);
 	// Bumped on every read of the tree: the backlinks may have changed.
 	loads = $state(0);
@@ -62,11 +62,6 @@ export class VaultState {
 				this.recent = recent;
 			})
 			.catch(() => undefined);
-	}
-
-	// A note shown in the focused pane becomes the most recent.
-	async opened(path: string): Promise<void> {
-		this.recent = await noteOpened(path);
 	}
 
 	async togglePin(path: string): Promise<void> {

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! The open vault, kept between commands, and the device settings.
 
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard, PoisonError};
@@ -77,9 +76,6 @@ pub struct DeviceSettings {
 	pub theme: Option<String>,
 	/// The trash shows as the last section of the explorer.
 	pub show_trash_section: bool,
-	/// Recent notes of each vault, by vault root, newest first.
-	#[ts(skip)]
-	pub recent: BTreeMap<String, Vec<String>>,
 }
 
 const DEFAULT_AUTOSAVE_DELAY_SECONDS: u32 = 2;
@@ -92,7 +88,6 @@ impl Default for DeviceSettings {
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
 			theme: None,
 			show_trash_section: true,
-			recent: BTreeMap::new(),
 		}
 	}
 }

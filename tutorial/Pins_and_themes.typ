@@ -9,9 +9,9 @@ One selection per match, edited at once: the Helix way.
 Make Musubi yours:
 
 + *Pin* this note: right click its row in the explorer (`Space e` shows or
-  hides it) and choose _Pin_, or type `Space ?` and "pin". It appears under _Pinned_, on
-  every copy of your vault. The last notes you opened are under _Recent_,
-  and every note under _Notebook_.
+  hides it) and choose _Pin_, or type `Space ?` and "pin". It appears under
+  _Pinned_, on every copy of your vault. The four notes modified last are
+  under _Recent_, and every note under _Notebook_.
 + Open the *settings* with `Space ,` and try the *GitHub Dark* theme with
   the arrows. Keep it, or go back to _Follow the system_. Autosave is there
   too.

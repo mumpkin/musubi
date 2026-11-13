@@ -45,7 +45,6 @@ macro_rules! commands {
 			trash::delete_trash_entries,
 			explorer::pin_note,
 			explorer::recent_notes,
-			explorer::note_opened,
 			explorer::archive_entry,
 			explorer::retitle_note,
 			explorer::move_entry,
