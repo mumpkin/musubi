@@ -80,6 +80,8 @@ impl Vault {
 		for pin in self.pinned().iter().filter(|pin| pin.starts_with(&prefix)) {
 			self.unpin(pin)?;
 		}
+		let inside = |entry: &str| entry.starts_with(&prefix);
+		let links = self.unlink(&inside, &inside)?;
 		let id =
 			format!("{}-{}", utc::compact(deleted_at), random_part(folder));
 		let entry = self.entry_dir(&id)?;
@@ -88,6 +90,7 @@ impl Vault {
 			original_path: folder.to_owned(),
 			deleted_at: utc::rfc3339(deleted_at),
 			folder: true,
+			links,
 		};
 		write_entry_file(&entry, &file)?;
 		Ok(folder_entry(&id, &entry, file))
