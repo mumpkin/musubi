@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Moving a note or a folder to the trash turns the links to it in other
+  notes into their text; restoring it brings them back, where the text was
+  not edited.
+
 ## [0.3.1] - 2026-11-13
 
 ### Changed

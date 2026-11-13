@@ -15,8 +15,10 @@ use crate::error::VaultError;
 use crate::links;
 use crate::naming::{Folder, NOTE_EXTENSIONS};
 use crate::paths;
+use crate::rename::target_of;
 use crate::title;
 use crate::trash_folder::folder_entry;
+use crate::trash_links::{UnlinkedLink, retarget};
 use crate::utc;
 use crate::vault::Vault;
 
@@ -35,6 +37,9 @@ pub(crate) struct EntryFile {
 	/// The entry holds a folder, not a note.
 	#[serde(default, skip_serializing_if = "std::ops::Not::not")]
 	pub(crate) folder: bool,
+	/// Links to the entry that other notes lost, put back on restore.
+	#[serde(default, skip_serializing_if = "Vec::is_empty")]
+	pub(crate) links: Vec<UnlinkedLink>,
 }
 
 /// A note in the trash.
@@ -120,6 +125,9 @@ impl Vault {
 		self.writable_folder("")?;
 		// Before moving anything: a restored note is not pinned again.
 		self.unpin(note)?;
+		let target = target_of(note);
+		let links =
+			self.unlink(&|link| link == target, &|path| path == note)?;
 		let id = format!("{}-{}", utc::compact(deleted_at), random_part(note));
 		let entry = self.entry_dir(&id)?;
 		let assets = assets_of(note);
@@ -132,6 +140,7 @@ impl Vault {
 			original_path: note.to_owned(),
 			deleted_at: utc::rfc3339(deleted_at),
 			folder: false,
+			links,
 		};
 		write_entry_file(&entry, &file)?;
 		Ok(TrashEntry {
@@ -145,10 +154,15 @@ impl Vault {
 		})
 	}
 
-	fn read_entry(&self, id: &str) -> Option<TrashEntry> {
+	pub(crate) fn entry_file(&self, id: &str) -> Option<EntryFile> {
 		let entry = self.entry_dir(id).ok()?;
 		let text = fs::read_to_string(entry.join(ENTRY_FILE)).ok()?;
-		let file: EntryFile = serde_json::from_str(&text).ok()?;
+		serde_json::from_str(&text).ok()
+	}
+
+	fn read_entry(&self, id: &str) -> Option<TrashEntry> {
+		let entry = self.entry_dir(id).ok()?;
+		let file = self.entry_file(id)?;
 		if file.folder {
 			return Some(folder_entry(id, &entry, file));
 		}
@@ -200,23 +214,36 @@ impl Vault {
 	/// an I/O error.
 	pub fn restore(&self, id: &str) -> Result<String, VaultError> {
 		let entry = self
-			.read_entry(id)
+			.entry_file(id)
 			.ok_or_else(|| VaultError::NotANote(id.to_owned()))?;
 		let original = entry.original_path;
-		if entry.is_folder {
-			return self.restore_folder(id, &original);
-		}
+		let restored = if entry.folder {
+			self.restore_folder(id, &original)?
+		} else {
+			self.restore_note(id, &original)?
+		};
+		self.relink(&entry.links, &retarget(&original, &restored))?;
+		Ok(restored)
+	}
+
+	/// Puts the note of entry `id` back at `original`, or a free name next
+	/// to it, and removes the entry. Returns its path.
+	fn restore_note(
+		&self,
+		id: &str,
+		original: &str,
+	) -> Result<String, VaultError> {
 		let folder = original.rfind('/').map_or("", |slash| &original[..slash]);
 		let directory = self.writable_folder(folder)?;
-		let restored = free_path(&directory, folder, &original)?;
+		let restored = free_path(&directory, folder, original)?;
 		let entry_dir = self.entry_dir(id)?;
-		move_into(&entry_dir.join(&original), &self.root().join(&restored))?;
-		let assets = entry_dir.join(assets_of(&original));
+		move_into(&entry_dir.join(original), &self.root().join(&restored))?;
+		let assets = entry_dir.join(assets_of(original));
 		if assets.is_dir() {
 			move_into(&assets, &self.root().join(assets_of(&restored)))?;
 		}
 		if restored != original {
-			self.follow_assets(&restored, &stem_of(&original))?;
+			self.follow_assets(&restored, &stem_of(original))?;
 		}
 		fs::remove_dir_all(entry_dir)?;
 		Ok(restored)

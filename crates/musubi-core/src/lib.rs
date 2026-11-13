@@ -19,6 +19,7 @@ mod settings;
 pub mod title;
 pub mod trash;
 mod trash_folder;
+mod trash_links;
 mod trash_purge;
 mod tree_edit;
 pub mod tutorial;

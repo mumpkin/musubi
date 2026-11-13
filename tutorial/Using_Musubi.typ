@@ -112,9 +112,11 @@ image on the editor inserts it too.
   trash" in the palette. Folders go to the trash the same way, with
   everything in them. "Show the trash", or the *Trash* section of the
   explorer (a click restores an entry, its menu deletes it for good),
-  restores notes and folders or deletes them for good. A link to a
-  note in the trash shows greyed, as a link to a missing note: restoring the
-  note makes it work again. Notes stay 30 days in the trash; the settings change the delay.
+  restores notes and folders or deletes them for good. The links to a note
+  in the trash become their plain text; restoring the note brings them
+  back, unless you edited that text meanwhile. Deleted for good, the note
+  is forgotten: links to it are to be made again by hand. Notes stay 30
+  days in the trash; the settings change the delay.
 - *Changes made elsewhere* (another program, a sync tool) show when you come
   back to the window.
 

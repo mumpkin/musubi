@@ -247,8 +247,33 @@ Deleting a note or a folder moves it to the trash instead of removing it.
   parent folders are created.
 - **Purge**: when a vault is opened, entries older than `trashRetentionDays`
   (by `deletedAt`) are removed. The user can also empty the trash by hand.
-- Trashed notes are not indexed: links to them show as links to missing
-  notes.
+- **Links to a trashed note**: in every other note, each `#note-link` to the
+  trashed note (or to a note of the trashed folder) is replaced by the text
+  it showed, its content block (or the name of its target without one).
+  `entry.json` keeps each replacement in a `links` list:
+
+    ```json
+    "links": [
+    	{
+    		"note": "Home.typ",
+    		"at": 42,
+    		"text": "the *A* note",
+    		"link": "#note-link(\"Maths/A\")[the *A* note]",
+    		"before": "See ",
+    		"after": ", and more"
+    	}
+    ]
+    ```
+
+    `at` is the byte offset of the text in the note after the replacement;
+    `before` and `after` are up to 12 characters around it. Restoring the
+    entry puts each link back where its text and surroundings are unchanged
+    (at `at`, or else at the only place they appear), pointing to the
+    restored path; a text edited since stays as text. Deleting the entry for
+    good, or purging it, forgets the links. Links written in code (without
+    `#` in markup) are left as they are.
+
+- Trashed notes are not indexed.
 - Two devices purging the same entry both remove the same folder, which sync
   tools handle without conflict.
 

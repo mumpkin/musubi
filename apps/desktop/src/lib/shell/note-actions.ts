@@ -51,6 +51,8 @@ export class NoteActions {
 			this.manager.forget(path, next?.path ?? '');
 			this.showMessage(`Moved ${entry.title} to the trash`);
 			await this.files.load();
+			// Links to it changed in other notes: the panes read them again.
+			this.manager.reload();
 		});
 	};
 
@@ -71,6 +73,8 @@ export class NoteActions {
 			}
 			this.showMessage(`Moved the folder ${entry.title} to the trash`);
 			await this.files.load();
+			// Links to it changed in other notes: the panes read them again.
+			this.manager.reload();
 		});
 	};
 
@@ -128,6 +132,8 @@ export class NoteActions {
 		this.run(async () => {
 			const path = await note;
 			await this.files.load();
+			// Links to it changed in other notes: the panes read them again.
+			this.manager.reload();
 			// A restored folder only shows again in the explorer.
 			if (path.endsWith('.typ')) {
 				this.manager.open(path);
