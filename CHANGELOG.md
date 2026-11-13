@@ -33,6 +33,9 @@ and this project adheres to
 
 ### Fixed
 
+- The explorer keeps the keyboard on its entry when the lists change under
+  it, for example when a note changed by another program moves to the top
+  of Recent.
 - After applying changes in the tree editor, `Space` in insert mode types
   a space again instead of starting a shortcut.
 - Long names in the explorer no longer cut the bottom of letters such as
