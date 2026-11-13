@@ -24,8 +24,7 @@ Two last trials:
   with "Move the note to the trash" in the palette, then bring it back with
   "Show the trash".
 
-You made it to the end of the hunt. The treasure is the
-#note-link("Welcome/Using_Musubi")[reference card]: the whole app on one
-page, to come back to later.
+One step left: the cards you write can be reviewed.
+#note-link("Welcome/Flashcards")[Flashcards] is the last step of the hunt.
 
 Linked from #note-link("Welcome/Pins_and_themes")[Pins and themes].

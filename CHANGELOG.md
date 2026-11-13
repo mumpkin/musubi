@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- Review flashcards: `Space c` opens a review screen with the cards due,
+  rendered as in the reading view (math included). `Enter` shows the
+  answer, `1` to `4` rate it. A new tutorial step covers it.
 - Flashcard reviews are scheduled with FSRS from a review log kept per
   device in `.musubi/reviews/`, so that reviewing never changes a note. A
   setting limits the new cards of a day (20 by default).

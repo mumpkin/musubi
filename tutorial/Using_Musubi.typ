@@ -47,6 +47,7 @@ They work everywhere except while typing text.
   [`Space b`], [Show or hide the backlinks],
   [`Space h`, `Space l`], [Panel on the left, on the right],
   [`Space g`], [Graph of the links, or back to the note],
+  [`Space c`], [Review the flashcards],
   [`Space r`], [Switch between reading and editing; in the explorer, edit
   the tree as text],
   [`Space w v`], [Split the pane],
