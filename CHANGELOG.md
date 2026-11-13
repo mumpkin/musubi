@@ -12,6 +12,8 @@ and this project adheres to
 
 - Ayu Light and Ayu Mirage are the default themes when following the
   system; GitHub Light and GitHub Dark are themes to choose.
+- A backlink lights up as a whole on hover and when `j` and `k` reach it,
+  as the entries of the explorer; a click anywhere on it opens the note.
 
 ### Fixed
 

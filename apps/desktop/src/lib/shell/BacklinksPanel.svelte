@@ -75,7 +75,16 @@
 	{/if}
 	<ul>
 		{#each groups as group (group.path)}
-			<li>
+			<!-- The whole block opens the note; its button takes the keys. -->
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<li
+				onclick={(event) => {
+					if (!(event.target instanceof HTMLButtonElement)) {
+						onOpen(group.path);
+					}
+				}}
+			>
 				<button
 					class="source"
 					title={group.path}
@@ -135,6 +144,14 @@
 		padding: 0.4rem 0.5rem;
 		border-radius: 6px;
 		background: var(--background);
+		cursor: pointer;
+	}
+
+	/* As the entries of the explorer: the whole block lights up on hover
+	and when `j` and `k` reach it. */
+	li:hover,
+	li:has(.source:focus-visible) {
+		background: var(--hover);
 	}
 
 	.source {
@@ -149,14 +166,9 @@
 		cursor: pointer;
 	}
 
-	.source:hover {
-		text-decoration: underline;
-	}
-
 	/* The note reached with `j` and `k`. */
 	.source:focus-visible {
 		outline: none;
-		text-decoration: underline;
 	}
 
 	li:has(.source:focus-visible) {
