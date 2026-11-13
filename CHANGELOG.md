@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- After applying changes in the tree editor, `Space` in insert mode types
+  a space again instead of starting a shortcut.
+
 ### Added
 
 - `Space w s` splits the pane one above the other, as in Helix;

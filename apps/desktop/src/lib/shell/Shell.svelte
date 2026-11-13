@@ -25,7 +25,7 @@
 	import { paletteCommands } from './palette.ts';
 	import { PaneManager } from './pane-manager.svelte.ts';
 	import SearchPicker from './SearchPicker.svelte';
-	import { shellActions } from './shell-actions.ts';
+	import { shellActions, typingCheck } from './shell-actions.ts';
 	import { shortcutHandler } from './shortcut-handler.ts';
 	import { SidePanels } from './side-panels.svelte.ts';
 	import TitleBar from './TitleBar.svelte';
@@ -86,14 +86,7 @@
 	]);
 
 	const handleShortcut = shortcutHandler({
-		isTyping: (event) => {
-			const isInsert = editing.hasFocus
-				? editing.mode === 'insert'
-				: manager.focused?.mode === 'editing'
-					&& manager.editorMode === 'insert';
-			const isInput = event.target instanceof HTMLInputElement;
-			return dialogs.isOpen || isInsert || isInput;
-		},
+		isTyping: typingCheck({ manager, panels, dialogs, notes, editing }),
 		isReading: () => manager.focused?.mode === 'reading'
 			&& panels.isInPane(),
 		run: (action) => {

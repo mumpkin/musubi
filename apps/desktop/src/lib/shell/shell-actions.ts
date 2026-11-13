@@ -126,3 +126,25 @@ export function shellActions(
 		...layoutActions(parts),
 	} as Record<ShellAction, () => void>;
 }
+
+// Whether a key is text being typed, not a shortcut: in a dialog or a
+// field, or in insert mode of the editor the key goes to. The editor is
+// found from the target of the key: a focus flag can be stale when an
+// editor is rebuilt while it has the focus.
+export function typingCheck(
+	parts: ShellParts,
+): (event: KeyboardEvent) => boolean {
+	const { manager, dialogs, editing } = parts;
+	return (event) => {
+		const { target } = event;
+		if (dialogs.isOpen || target instanceof HTMLInputElement) {
+			return true;
+		}
+		if (target instanceof Element && target.closest('.tree-editor')) {
+			return editing.mode === 'insert';
+		}
+		return target instanceof Element
+			&& target.closest('.pane .cm-editor') !== null
+			&& manager.editorMode === 'insert';
+	};
+}
