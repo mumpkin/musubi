@@ -14,8 +14,8 @@ command palette (`Space ?`) lists the same commands.
   under the keyboard, opens its menu: open, pin, new note or folder in it,
   rename or move, archive, trash. Long titles end with "…": the tooltip
   shows the full path. Three sections fold like folders:
-  *Recent*, the four notes modified last; *Pinned*, the notes
-  you pinned; *Notebook*, all your folders and notes. Below come *Archive*
+  *Pinned*, the notes you pinned; *Recent*, the four notes modified last;
+  *Notebook*, all your folders and notes. Below come *Archive*
   and *Trash*, when they are not empty; the settings can hide the trash.
 - *Panes*, in the middle: one, or two side by side or one above the other.
   Each pane shows a note, read or edited, or the graph. Without a note (a note moved to the trash,

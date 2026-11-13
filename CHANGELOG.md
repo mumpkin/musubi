@@ -29,6 +29,7 @@ and this project adheres to
 
 ### Changed
 
+- The Pinned section of the explorer comes before Recent.
 - The Linux bundles carry a description, a category and the licence.
 
 ### Fixed
