@@ -11,6 +11,7 @@ pub mod naming;
 mod passages;
 mod paths;
 mod pins;
+mod recent;
 mod rename;
 mod search;
 mod settings;

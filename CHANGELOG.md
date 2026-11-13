@@ -15,6 +15,9 @@ and this project adheres to
   seconds at the bottom right.
 - The panel with the keyboard focus (explorer, pane, backlinks) has its
   header highlighted, instead of a blue line above the focused pane.
+- The Recent section of the explorer lists the four notes modified last,
+  edits from other programs and sync tools included, instead of the ten
+  opened last on this computer.
 
 ### Fixed
 

@@ -8,7 +8,6 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
 use ts_rs::TS;
 
-use crate::explorer::Recent;
 use crate::state::{AppState, DeviceSettings, OpenVault};
 
 /// The open vault, as the interface sees it.
@@ -153,16 +152,12 @@ pub fn read_note(
 pub fn write_note(
 	path: &str,
 	content: &str,
-	app: AppHandle,
+	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let state = app.state::<AppState>();
 	let mut open = state.lock();
 	let open = open.as_mut().ok_or(NO_VAULT)?;
 	let saved = musubi_core::save_note(&open.vault, path, content)
 		.map_err(|error| error.to_string())?;
-	if saved != path {
-		Recent::of(&app, open.vault.root())?.rename(path, &saved)?;
-	}
 	open.refresh_index()?;
 	Ok(saved)
 }

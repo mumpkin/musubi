@@ -207,3 +207,25 @@ fn creates_a_note_from_a_path_and_its_missing_folders() {
 		assert!(vault.create_note("", typed).is_err(), "{typed}");
 	}
 }
+
+#[test]
+fn lists_the_notes_modified_last() {
+	let directory = tempfile::TempDir::new().expect("temporary directory");
+	let root = directory.path();
+	for (index, name) in ["A", "B", "C"].iter().enumerate() {
+		let file = root.join(format!("{name}.typ"));
+		std::fs::write(&file, "= Note\n").expect("note");
+		let time = std::time::SystemTime::UNIX_EPOCH
+			+ std::time::Duration::from_secs(1_000 + index as u64);
+		std::fs::File::options()
+			.write(true)
+			.open(&file)
+			.and_then(|handle| handle.set_modified(time))
+			.expect("time");
+	}
+	let vault = musubi_core::Vault::open(root).expect("vault opens");
+	assert_eq!(
+		vault.recently_modified(2).expect("recent"),
+		["C.typ", "B.typ"]
+	);
+}

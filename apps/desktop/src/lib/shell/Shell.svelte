@@ -81,13 +81,6 @@
 
 	const notes = new NoteActions(files, manager);
 
-	// The note of the focused pane goes first in the recent notes.
-	$effect(() => {
-		if (manager.currentPath !== '') {
-			files.opened(manager.currentPath).catch(() => undefined);
-		}
-	});
-
 	const ACTIONS: Record<ShellAction, () => void> = {
 		palette: () => {
 			dialogs.isPaletteOpen = true;
