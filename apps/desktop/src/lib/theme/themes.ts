@@ -34,17 +34,18 @@ export interface ThemeChoice {
 }
 
 export const DEFAULT_THEMES: ThemeChoice[] = [
-	{ id: 'github-light', theme: githubLight as Theme, isImported: false },
-	{ id: 'github-dark', theme: githubDark as Theme, isImported: false },
+	// The light and dark themes the system choice uses come first.
 	{ id: 'ayu-light', theme: ayuLight as Theme, isImported: false },
 	{ id: 'ayu-mirage', theme: ayuMirage as Theme, isImported: false },
+	{ id: 'github-light', theme: githubLight as Theme, isImported: false },
+	{ id: 'github-dark', theme: githubDark as Theme, isImported: false },
 ];
 
 const [LIGHT, DARK] = DEFAULT_THEMES;
 
 // The default theme of `scheme`.
 export function defaultTheme(scheme: ColorScheme): Theme {
-	return (scheme === 'dark' ? DARK : LIGHT)?.theme ?? (githubLight as Theme);
+	return (scheme === 'dark' ? DARK : LIGHT)?.theme ?? (ayuLight as Theme);
 }
 
 // Every CSS variable of `theme`, missing colors taken from the default

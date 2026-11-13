@@ -40,7 +40,7 @@
 		<RadioGroup.Item
 			class="choice"
 			value={SYSTEM}
-		>Follow the system (GitHub Light or Dark)</RadioGroup.Item>
+		>Follow the system (Ayu Light or Mirage)</RadioGroup.Item>
 		{#each themes.choices as choice (choice.id)}
 			<RadioGroup.Item
 				class="choice"
