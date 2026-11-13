@@ -19,6 +19,11 @@ autosave: boolean, autosaveDelaySeconds: number,
  */
 theme: string | null, 
 /**
+ * Line numbers count from the line of the cursor, as Helix's
+ * `line-number = "relative"`.
+ */
+relativeLineNumbers: boolean, 
+/**
  * The trash shows as the last section of the explorer.
  */
 showTrashSection: boolean, 

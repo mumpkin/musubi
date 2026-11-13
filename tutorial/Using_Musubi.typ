@@ -149,7 +149,9 @@ drops the changes.
   "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of
   the repository describes the format. The palette has the same commands:
   type `theme` in it.
-- *Editor*: save automatically after a few seconds without typing.
+- *Editor*: save automatically after a few seconds without typing;
+  relative line numbers, as in Helix: the other lines show their distance
+  to the cursor, handy for `5j`.
 - *Flashcards*: how many new cards a review brings each day (20 by
   default).
 - *Trash of this vault*: how many days deleted notes stay in the trash

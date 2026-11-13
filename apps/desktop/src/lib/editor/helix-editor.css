@@ -1,0 +1,71 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/* CodeMirror with the Helix profile, in the colors of the theme: shared by
+   the note editor and the tree editor of the explorer (`.helix-host`). */
+
+.helix-host .cm-scroller {
+	font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
+}
+
+.helix-host .cm-focused {
+	outline: none;
+}
+
+/* Room around the line numbers, and before the text. */
+.helix-host .cm-lineNumbers .cm-gutterElement {
+	min-width: 2ch;
+	padding: 0 0.9rem 0 1.1rem;
+}
+
+.helix-host .cm-gutters + .cm-content,
+.helix-host .cm-gutters ~ .cm-content {
+	padding-left: 0.5rem;
+}
+
+.helix-host .cm-gutters {
+	border-right: 1px solid var(--border);
+	background: var(--background);
+	color: var(--muted);
+}
+
+.helix-host .cm-activeLineGutter {
+	background: var(--hover);
+}
+
+/* Completion of links and images. */
+.helix-host .cm-tooltip {
+	border: 1px solid var(--border);
+	background: var(--surface);
+	color: var(--foreground);
+}
+
+.helix-host .cm-tooltip-autocomplete li[aria-selected] {
+	background: var(--selection);
+	color: inherit;
+}
+
+.helix-host .cm-cursor {
+	border-left-color: var(--foreground);
+}
+
+.helix-host .cm-selectionBackground,
+.helix-host .cm-focused .cm-selectionBackground {
+	background: var(--selection);
+}
+
+/* Outside insert mode the block cursor replaces the caret of CodeMirror,
+   which would sit after the selection, on the next line after `x`. */
+.helix-host .helix-normal .cm-cursorLayer,
+.helix-host .helix-select .cm-cursorLayer {
+	display: none;
+}
+
+.helix-host .helix-normal .cm-content,
+.helix-host .helix-select .cm-content {
+	caret-color: transparent;
+}
+
+.helix-host .helix-cursor {
+	outline: none;
+	background: var(--accent);
+	color: var(--background);
+}

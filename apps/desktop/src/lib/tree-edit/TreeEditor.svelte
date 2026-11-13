@@ -3,6 +3,8 @@
      `:w` applies the changes, `:q` goes back to the tree view, `Enter`
      opens the note of the line. -->
 <script lang="ts">
+	import '../editor/helix-editor.css';
+
 	import { history } from '@codemirror/commands';
 	import { EditorState, Prec } from '@codemirror/state';
 	import { drawSelection, EditorView } from '@codemirror/view';
@@ -170,7 +172,7 @@
 <div class="tree-editor">
 	<div
 		bind:this={parent}
-		class="editor"
+		class="editor helix-host"
 	></div>
 	{#if prompt}
 		<PromptLine
@@ -200,14 +202,6 @@
 		font-size: 0.9rem;
 	}
 
-	.editor :global(.cm-scroller) {
-		font-family: ui-monospace, 'DejaVu Sans Mono', monospace;
-	}
-
-	.editor :global(.cm-focused) {
-		outline: none;
-	}
-
 	.editor :global(.tree-folder) {
 		color: var(--accent);
 	}
@@ -220,30 +214,5 @@
 		margin-left: 1rem;
 		color: var(--error);
 		font-size: 0.8rem;
-	}
-
-	.editor :global(.cm-cursor) {
-		border-left-color: var(--foreground);
-	}
-
-	.editor :global(.cm-selectionBackground),
-	.editor :global(.cm-focused .cm-selectionBackground) {
-		background: var(--selection);
-	}
-
-	.editor :global(.helix-normal .cm-cursorLayer),
-	.editor :global(.helix-select .cm-cursorLayer) {
-		display: none;
-	}
-
-	.editor :global(.helix-normal .cm-content),
-	.editor :global(.helix-select .cm-content) {
-		caret-color: transparent;
-	}
-
-	.editor :global(.helix-cursor) {
-		outline: none;
-		background: var(--accent);
-		color: var(--background);
 	}
 </style>

@@ -77,6 +77,9 @@ pub struct DeviceSettings {
 	/// light or dark preference of the system.
 	#[ts(type = "string | null")]
 	pub theme: Option<String>,
+	/// Line numbers count from the line of the cursor, as Helix's
+	/// `line-number = "relative"`.
+	pub relative_line_numbers: bool,
 	/// The trash shows as the last section of the explorer.
 	pub show_trash_section: bool,
 	/// Flashcards seen for the first time each day, at most.
@@ -95,6 +98,7 @@ impl Default for DeviceSettings {
 			autosave: false,
 			autosave_delay_seconds: DEFAULT_AUTOSAVE_DELAY_SECONDS,
 			theme: None,
+			relative_line_numbers: false,
 			show_trash_section: true,
 			new_cards_per_day: DEFAULT_NEW_CARDS_PER_DAY,
 		}

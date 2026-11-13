@@ -18,6 +18,13 @@ export async function setAutosave(
 }
 
 // Resolves to the settings of the device after the change.
+export async function setRelativeLineNumbers(
+	relative: boolean,
+): Promise<DeviceSettings> {
+	return invoke<DeviceSettings>('set_relative_line_numbers', { relative });
+}
+
+// Resolves to the settings of the device after the change.
 export async function setTrashSection(show: boolean): Promise<DeviceSettings> {
 	return invoke<DeviceSettings>('set_trash_section', { show });
 }

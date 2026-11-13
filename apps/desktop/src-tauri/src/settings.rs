@@ -39,6 +39,20 @@ pub fn set_autosave(
 	Ok(settings)
 }
 
+/// Relative or absolute line numbers in the editor. Returns the settings
+/// of the device.
+#[tauri::command(async)]
+pub fn set_relative_line_numbers(
+	relative: bool,
+	app: AppHandle,
+) -> Result<DeviceSettings, String> {
+	let config = config_dir(&app)?;
+	let mut settings = DeviceSettings::load(&config);
+	settings.relative_line_numbers = relative;
+	settings.save(&config)?;
+	Ok(settings)
+}
+
 /// Shows or hides the trash section of the explorer. Returns the settings
 /// of the device.
 #[tauri::command(async)]

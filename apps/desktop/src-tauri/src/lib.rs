@@ -59,6 +59,7 @@ macro_rules! commands {
 			themes::choose_theme,
 			settings::set_autosave,
 			settings::set_trash_section,
+			settings::set_relative_line_numbers,
 			settings::set_trash_retention,
 		]
 	};

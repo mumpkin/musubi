@@ -13,6 +13,7 @@ export type {
 export { selectMatches } from './editing.ts';
 export { helix, type HelixOptions } from './helix.ts';
 export { keymaps, type KeyResolution, resolveKey } from './keymap.ts';
+export { lineNumberGutter } from './line-numbers.ts';
 export {
 	importChange,
 	linkMarkup,

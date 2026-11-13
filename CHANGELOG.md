@@ -13,6 +13,11 @@ and this project adheres to
 - Flashcard reviews are scheduled with FSRS from a review log kept per
   device in `.musubi/reviews/`, so that reviewing never changes a note. A
   setting limits the new cards of a day (20 by default).
+- A setting for relative line numbers in the editor, as in Helix.
+
+### Changed
+
+- The line numbers of the editor have more room around them.
 
 ## [0.2.1] - 2026-11-13
 

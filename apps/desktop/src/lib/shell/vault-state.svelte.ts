@@ -6,6 +6,7 @@ import { SvelteSet } from 'svelte/reactivity';
 import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
+import { editorSettings } from '../editor/editor-settings.svelte.ts';
 import { pinNote, recentNotes } from '../vault/explorer.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 import { buildTree, splitArchive } from '../vault/tree.ts';
@@ -45,7 +46,7 @@ export class VaultState {
 		this.tree = tree;
 		deviceSettings()
 			.then((loaded) => {
-				this.settings = loaded;
+				this.applySettings(loaded);
 			})
 			.catch(() => undefined);
 		this.loadRecent();
@@ -69,8 +70,14 @@ export class VaultState {
 	}
 
 	readonly updateSettings = (settings: DeviceSettings): void => {
-		this.settings = settings;
+		this.applySettings(settings);
 	};
+
+	// The editors follow the settings that concern them at once.
+	private applySettings(settings: DeviceSettings): void {
+		this.settings = settings;
+		editorSettings.relativeLineNumbers = settings.relativeLineNumbers;
+	}
 
 	setTree(tree: VaultTree): void {
 		this.tree = tree;
