@@ -5,18 +5,24 @@
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { archiveEntry } from '../vault/explorer.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
-import { isArchived } from '../vault/tree.ts';
+import { isArchived, titleIn } from '../vault/tree.ts';
+import { writeNote } from '../vault/vault.ts';
 import type { TrashActions } from './actions.ts';
 import type { PaneManager } from './pane-manager.svelte.ts';
+import type { PaneState } from './panes.ts';
+import { UnsavedPrompt } from './unsaved-prompt.svelte.ts';
 import type { VaultState } from './vault-state.svelte.ts';
 
 export class NoteActions {
+	// Asked before a note with unsaved changes leaves its pane.
+	readonly unsaved = new UnsavedPrompt();
 	private readonly files: VaultState;
 	private readonly manager: PaneManager;
 
 	constructor(files: VaultState, manager: PaneManager) {
 		this.files = files;
 		this.manager = manager;
+		manager.askUnsaved = this.settleUnsaved;
 		// A link to a missing note creates it, titled from the link.
 		manager.followLink = (path, text) => {
 			this.run(async () => {
@@ -104,13 +110,34 @@ export class NoteActions {
 		open: (folder: string) => Promise<void>,
 	): (folder: string) => void {
 		return (folder) => {
-			if (this.manager.panes.some((pane) => pane.draft !== undefined)) {
-				this.showMessage('Save or discard the changes before switching');
-				return;
-			}
-			this.run(async () => open(folder));
+			this.run(async () => {
+				const unsaved = this.manager.panes
+					.filter((pane) => pane.draft !== undefined);
+				for (const pane of unsaved) {
+					if (!await this.settleUnsaved(pane)) {
+						return;
+					}
+				}
+				await open(folder);
+			});
 		};
 	}
+
+	// Asks what to do with the unsaved changes of `pane`, and does it;
+	// resolves to `false` if the user stays on the note.
+	readonly settleUnsaved = async (pane: PaneState): Promise<boolean> => {
+		const title = titleIn(this.files.tree, pane.path);
+		const choice = await this.unsaved.ask(title);
+		if (choice === 'cancel') {
+			return false;
+		}
+		if (choice === 'save' && pane.draft !== undefined) {
+			const saved = await writeNote(pane.path, pane.draft);
+			this.manager.saved(pane.path, saved);
+		}
+		pane.draft = undefined;
+		return true;
+	};
 
 	readonly togglePin = (path: string): void => {
 		this.run(async () => {

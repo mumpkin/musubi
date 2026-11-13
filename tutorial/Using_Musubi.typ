@@ -89,6 +89,10 @@ explains its keys. The commands of the command line (`:`):
   [`:wq`, `:x`], [Save, then back to reading],
 )
 
+Leaving a note with unsaved changes (another note opened in the pane, the
+pane closed, another vault) asks first: `s` saves, `d` discards, `Escape`
+stays on the note.
+
 In insert mode, `[[` links to a note, `Ctrl-v` pastes an image. Dropping an
 image on the editor inserts it too.
 

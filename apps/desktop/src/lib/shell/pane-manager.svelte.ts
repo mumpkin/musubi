@@ -25,6 +25,11 @@ export class PaneManager {
 	saves = $state(0);
 	// Saves of each note, by path: reading panes render again on a change.
 	readonly revisions = new SvelteMap<string, number>();
+	// Saves or discards the unsaved changes of `pane`, as the user answers;
+	// resolves to `false` if they stay. The shell replaces it with a dialog.
+	askUnsaved: (pane: PaneState) => Promise<boolean> = async () =>
+		Promise.resolve(false);
+
 	// Follows a link from a reading pane; the shell replaces it to create
 	// missing notes.
 	followLink: (path: string, text: string) => void = (path) => {
@@ -43,8 +48,35 @@ export class PaneManager {
 	}
 
 	// Opens `path` in the focused pane, at the source `line` if given.
+	// Unsaved changes of another note are asked about first.
 	open(path: string, line?: number): void {
-		const pane = this.panes[this.focusedIndex];
+		const index = this.focusedIndex;
+		this.leave(index, path, () => {
+			this.show(index, path, line);
+		});
+	}
+
+	// Before the note of pane `index` gives way to `path`: unsaved changes
+	// of another note are saved or discarded first, as the user answers.
+	private leave(index: number, path: string, then: () => void): void {
+		const pane = this.panes[index];
+		if (pane?.draft === undefined || pane.path === path) {
+			then();
+			return;
+		}
+		this.askUnsaved(pane)
+			.then((isDone) => {
+				if (isDone) {
+					then();
+				}
+			})
+			.catch((error: unknown) => {
+				this.message = String(error);
+			});
+	}
+
+	private show(index: number, path: string, line?: number): void {
+		const pane = this.panes[index];
 		if (pane) {
 			pane.path = path;
 			pane.draft = undefined;
@@ -125,8 +157,10 @@ export class PaneManager {
 
 	close(index: number): void {
 		if (this.panes.length > 1) {
-			this.panes.splice(index, 1);
-			this.focusAfterRender(0);
+			this.leave(index, '', () => {
+				this.panes.splice(index, 1);
+				this.focusAfterRender(0);
+			});
 		}
 	}
 
