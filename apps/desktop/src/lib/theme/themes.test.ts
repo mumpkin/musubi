@@ -12,8 +12,8 @@ describe('cssVariables', () => {
 			syntax: {},
 		});
 		expect(variables.get('--accent')).toBe('#ff0000');
-		expect(variables.get('--background')).toBe('#0d1117');
-		expect(variables.get('--syntax-keyword')).toBe('#ff7b72');
+		expect(variables.get('--background')).toBe('#1f2430');
+		expect(variables.get('--syntax-keyword')).toBe('#ffa659');
 	});
 
 	it('finds every color in the default themes', () => {

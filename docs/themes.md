@@ -1,9 +1,9 @@
 # Color themes
 
 A theme sets the colors of the interface, of the editor and of the reading
-view. Musubi ships **GitHub Light**, **GitHub Dark**, **Ayu Light** and
-**Ayu Mirage**; without a choice, it follows the light or dark preference of
-the system with the GitHub themes. Themes are a setting of the device: they
+view. Musubi ships **Ayu Light**, **Ayu Mirage**, **GitHub Light** and
+**GitHub Dark**; without a choice, it follows the light or dark preference
+of the system with the Ayu themes. Themes are a setting of the device: they
 are not stored in the vault.
 
 ## Choosing and importing
@@ -48,7 +48,7 @@ name. Removing the chosen theme brings back the system theme.
 
 Colors are hex colors: `#rgb`, `#rgba`, `#rrggbb` or `#rrggbbaa`. Any other
 value refuses the file. A missing color comes from the default theme of the
-same scheme, GitHub Light or GitHub Dark; unknown fields are ignored.
+same scheme, Ayu Light or Ayu Mirage; unknown fields are ignored.
 
 ### Interface colors (`ui`)
 
@@ -88,8 +88,8 @@ Colors that a note sets itself (`#text(fill: red)`) stay as they are.
 
 ## Credits
 
-The default themes take their colors from GitHub Light Default and GitHub
-Dark Default of
+GitHub Light and GitHub Dark take their colors from GitHub Light Default
+and GitHub Dark Default of
 [primer/github-vscode-theme](https://github.com/primer/github-vscode-theme)
 (`@primer/primitives` 7.10.0), MIT licence, © 2020 Primer. The licence is in
 [`apps/desktop/src/lib/theme/LICENSE-github-vscode-theme`](../apps/desktop/src/lib/theme/LICENSE-github-vscode-theme).

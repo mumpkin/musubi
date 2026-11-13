@@ -146,7 +146,8 @@ drops the changes.
   click opens one), and "Open a folder…" for another; an empty folder
   becomes a new vault, with this tutorial. Save your changes first.
 - *Theme*: Musubi follows the light or dark preference of the system, with
-  the colors of GitHub Light and GitHub Dark, or uses the theme you choose.
+  the colors of Ayu Light and Ayu Mirage, or uses the theme you choose
+  (GitHub Light and GitHub Dark are there too).
   "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of
   the repository describes the format. The palette has the same commands:
   type `theme` in it.

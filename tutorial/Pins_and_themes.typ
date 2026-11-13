@@ -12,8 +12,8 @@ Make Musubi yours:
   hides it) and choose _Pin_, or type `Space ?` and "pin". It appears under
   _Pinned_, on every copy of your vault. The four notes modified last are
   under _Recent_, and every note under _Notebook_.
-+ Open the *settings* with `Space ,` and try the *GitHub Dark* or *Ayu Mirage* theme with
-  the arrows. Keep it, or go back to _Follow the system_. Autosave is there
++ Open the *settings* with `Space ,` and try the *Ayu Mirage* or *GitHub
+  Dark* theme with the arrows. Keep it, or go back to _Follow the system_. Autosave is there
   too.
 + *Split* the window with `Space w v`: two panes, `Space w w` moves between
   them, `Space w q` closes one.

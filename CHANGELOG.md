@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Ayu Light and Ayu Mirage are the default themes when following the
+  system; GitHub Light and GitHub Dark are themes to choose.
+
 ### Fixed
 
 - Relative line numbers follow the cursor on empty lines too.
