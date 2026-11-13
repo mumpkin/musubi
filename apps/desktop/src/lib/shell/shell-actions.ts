@@ -99,6 +99,9 @@ function layoutActions(parts: ShellParts): Actions {
 		split: () => {
 			manager.split();
 		},
+		splitBelow: () => {
+			manager.split('vertical');
+		},
 		closePane: () => {
 			manager.close(manager.focusedIndex);
 		},

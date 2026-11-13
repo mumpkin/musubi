@@ -17,8 +17,8 @@ command palette (`Space ?`) lists the same commands.
   *Recent*, the four notes modified last; *Pinned*, the notes
   you pinned; *Notebook*, all your folders and notes. Below come *Archive*
   and *Trash*, when they are not empty; the settings can hide the trash.
-- *Panes*, in the middle: one, or two side by side. Each pane shows a note,
-  read or edited, or the graph. Without a note (a note moved to the trash,
+- *Panes*, in the middle: one, or two side by side or one above the other.
+  Each pane shows a note, read or edited, or the graph. Without a note (a note moved to the trash,
   `Space o`), a pane shows the *home* screen: find a note, the notes
   modified last, the pinned ones, the flashcards due. Drag the line between panes to resize them.
 - *Backlinks*, on the right (`Space b`): the notes that link to the current
@@ -53,7 +53,8 @@ They work everywhere except while typing text.
   [`Space o`], [Home: find a note, recent and pinned notes],
   [`Space r`], [Switch between reading and editing; in the explorer, edit
   the tree as text],
-  [`Space w v`], [Split the pane],
+  [`Space w v`], [Split the pane, side by side],
+  [`Space w s`], [Split the pane, one above the other],
   [`Space w w`], [Next pane],
   [`Space w q`], [Close the pane],
 )

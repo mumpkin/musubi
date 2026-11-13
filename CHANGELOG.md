@@ -10,6 +10,11 @@ and this project adheres to
 
 ### Added
 
+- `Space w s` splits the pane one above the other, as in Helix;
+  `Space w v` still splits side by side.
+
+### Added
+
 - An AUR package, `musubi-bin`, built from the `.deb` of a release
   (`packaging/aur/`), and install instructions in the README.
 
