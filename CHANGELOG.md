@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-13
+
 ### Changed
 
 - Ayu Light and Ayu Mirage are the default themes when following the
@@ -250,7 +252,8 @@ and this project adheres to
   flashcards, `todo` and `done` for tasks. Notes using it still compile with
   the Typst command-line tool.
 
-[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/mumpkin/musubi/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/mumpkin/musubi/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/mumpkin/musubi/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mumpkin/musubi/compare/v0.1.0...v0.2.0
