@@ -41,7 +41,9 @@ export class PaneManager {
 	readonly currentPath = $derived(this.focused?.path ?? '');
 
 	constructor(firstNote: string) {
-		this.panes = [{ path: firstNote, mode: 'reading', loads: 0 }];
+		// Without a note to show, the pane opens on the home screen.
+		const mode = firstNote === '' ? 'home' : 'reading';
+		this.panes = [{ path: firstNote, mode, loads: 0 }];
 	}
 
 	get canSplit(): boolean {
@@ -59,7 +61,7 @@ export class PaneManager {
 
 	// Before the note of pane `index` gives way to `path`: unsaved changes
 	// of another note are saved or discarded first, as the user answers.
-	private leave(index: number, path: string, then: () => void): void {
+	leave(index: number, path: string, then: () => void): void {
 		const pane = this.panes[index];
 		if (pane?.draft === undefined || pane.path === path) {
 			then();
@@ -83,8 +85,8 @@ export class PaneManager {
 			pane.draft = undefined;
 			pane.line = line;
 			pane.loads += 1;
-			// A note opened from the graph shows in reading mode.
-			if (pane.mode === 'graph') {
+			// A note opened from the graph or home shows in reading mode.
+			if (pane.mode === 'graph' || pane.mode === 'home') {
 				pane.mode = 'reading';
 			}
 		}
@@ -136,7 +138,8 @@ export class PaneManager {
 
 	toggleMode(index: number): void {
 		const pane = this.panes[index];
-		if (pane) {
+		// The home screen has no note to edit.
+		if (pane && pane.mode !== 'home') {
 			pane.mode = otherMode(pane.mode);
 			this.editorMode = 'normal';
 			this.focusAfterRender(index);
@@ -205,11 +208,12 @@ export class PaneManager {
 		}
 	}
 
-	// The note at `path` is gone: its panes show `replacement` instead.
+	// The note at `path` is gone: its panes show `replacement` instead, or
+	// the home screen for `''`.
 	forget(path: string, replacement: string): void {
 		for (const pane of this.panes.filter((entry) => entry.path === path)) {
 			pane.path = replacement;
-			pane.mode = 'reading';
+			pane.mode = replacement === '' ? 'home' : 'reading';
 			pane.draft = undefined;
 			pane.line = undefined;
 			pane.loads += 1;
@@ -308,7 +312,7 @@ export class PaneManager {
 		const element = document.querySelectorAll<HTMLElement>('.pane')
 			.item(this.focusedIndex);
 		element.querySelector<HTMLElement>(
-			'.review-view, .reading-view, .cm-content, .graph-canvas',
+			'.home-view, .review-view, .reading-view, .cm-content, .graph-canvas',
 		)
 			?.focus();
 	}

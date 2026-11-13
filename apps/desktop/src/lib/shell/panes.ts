@@ -8,7 +8,13 @@ import { shortcutLabel } from './shortcuts.ts';
 // Each shows any note, in reading or editing mode, or the graph of the
 // notes around its note.
 
-export type PaneMode = 'reading' | 'editing' | 'graph' | 'review' | 'conflict';
+export type PaneMode
+	= | 'reading'
+		| 'editing'
+		| 'graph'
+		| 'review'
+		| 'conflict'
+		| 'home';
 
 // What the header and the status bar show for a mode of a pane, the
 // editor showing its own mode.
@@ -17,6 +23,7 @@ export const MODE_LABELS = {
 	graph: 'GRAPH',
 	review: 'REVIEW',
 	conflict: 'CONFLICT',
+	home: 'HOME',
 } as const;
 
 export interface PaneState {
@@ -100,5 +107,6 @@ export function paneActions(
 				shortcut: shortcutLabel('closePane'),
 				run: close,
 			};
-	return [modeAction, paneAction];
+	// The home screen has no note to read or edit.
+	return pane.mode === 'home' ? [paneAction] : [modeAction, paneAction];
 }

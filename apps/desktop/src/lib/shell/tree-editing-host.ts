@@ -20,11 +20,10 @@ async function followChanges(
 	await files.load();
 	// Links changed in other notes: the panes read them again.
 	manager.reload();
-	const next = files.tree.notes[0]?.path ?? '';
 	for (const trashed of result.trashed) {
 		for (const pane of manager.panes.filter((open) =>
 			open.path === trashed || open.path.startsWith(`${trashed}/`))) {
-			manager.forget(pane.path, next);
+			manager.forget(pane.path, '');
 		}
 	}
 }

@@ -42,6 +42,20 @@ function merge(manager: PaneManager, index: number): void {
 	manager.focusAfterRender(index);
 }
 
+// `Space o`: the home screen in pane `index`, once its unsaved changes
+// are settled.
+export function showHome(manager: PaneManager, index: number): void {
+	manager.leave(index, '', () => {
+		const pane = manager.panes[index];
+		if (pane) {
+			pane.mode = 'home';
+			pane.path = '';
+			pane.draft = undefined;
+			manager.focusAfterRender(index);
+		}
+	});
+}
+
 export function modeEvents(manager: PaneManager, index: number): ModeEvents {
 	return {
 		read: () => {

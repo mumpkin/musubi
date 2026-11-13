@@ -52,10 +52,9 @@ export class NoteActions {
 			this.deleteFolder(path);
 			return;
 		}
-		const next = this.files.tree.notes.find((note) => note.path !== path);
 		this.run(async () => {
 			const entry = await trashNote(path);
-			this.manager.forget(path, next?.path ?? '');
+			this.manager.forget(path, '');
 			this.showMessage(`Moved ${entry.title} to the trash`);
 			await this.files.load();
 			// Links to it changed in other notes: the panes read them again.
@@ -71,12 +70,11 @@ export class NoteActions {
 		}
 		const inside = (path: string): boolean =>
 			path.startsWith(`${folder}/`);
-		const next = this.files.tree.notes.find((note) => !inside(note.path));
 		this.run(async () => {
 			const entry = await trashFolder(folder);
 			for (const pane of this.manager.panes.filter((open) =>
 				inside(open.path))) {
-				this.manager.forget(pane.path, next?.path ?? '');
+				this.manager.forget(pane.path, '');
 			}
 			this.showMessage(`Moved the folder ${entry.title} to the trash`);
 			await this.files.load();
