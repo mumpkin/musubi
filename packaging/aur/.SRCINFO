@@ -1,0 +1,20 @@
+pkgbase = musubi-bin
+	pkgdesc = Local-first notes written in Typst, edited the Helix way
+	pkgver = 0.3.1
+	pkgrel = 1
+	url = https://github.com/mumpkin/musubi
+	arch = x86_64
+	license = GPL-3.0-or-later
+	depends = webkit2gtk-4.1
+	depends = gtk3
+	depends = hicolor-icon-theme
+	provides = musubi
+	conflicts = musubi
+	options = !debug
+	options = !strip
+	source = https://github.com/mumpkin/musubi/releases/download/v0.3.1/Musubi_0.3.1_amd64.deb
+	source = LICENSE-0.3.1::https://raw.githubusercontent.com/mumpkin/musubi/v0.3.1/LICENSE
+	sha256sums = 92330c477faa969309d800726929063265e3db55a68d58ade8488223e72333ea
+	sha256sums = fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0
+
+pkgname = musubi-bin

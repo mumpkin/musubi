@@ -18,6 +18,23 @@ and edited the [Helix](https://helix-editor.com) way.
   conflict files they leave behind.
 - Linux first, Android later.
 
+## Install
+
+Musubi runs on Linux. Each
+[release](https://github.com/mumpkin/musubi/releases) has an `.AppImage`
+and a `.deb`.
+
+On Arch Linux, the AUR package `musubi-bin` installs the `.deb` of the
+latest release:
+
+```sh
+paru -S musubi-bin    # or yay -S musubi-bin, or makepkg -si from the AUR
+```
+
+Its `PKGBUILD` lives in [`packaging/aur/`](packaging/aur/):
+`packaging/aur/update.sh <version>` points it at a new release and writes
+`.SRCINFO` again; the maintainer then pushes it to the AUR.
+
 ## Development
 
 Requirements: Node.js 24 or later, pnpm (version pinned in `package.json`),
@@ -54,6 +71,7 @@ crates/musubi-core/    Rust: vault, file naming, links, backlinks, index
 crates/musubi-typst/   Rust: Typst compilation, HTML export, source positions
 packages/editor/       TypeScript: CodeMirror 6 and the Helix mode
 typst/musubi/          the `musubi` Typst package
+packaging/aur/         the AUR package `musubi-bin`
 docs/                  specifications and decisions
 tools/                 repository scripts
 ```

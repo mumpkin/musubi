@@ -10,6 +10,15 @@ and this project adheres to
 
 ### Added
 
+- An AUR package, `musubi-bin`, built from the `.deb` of a release
+  (`packaging/aur/`), and install instructions in the README.
+
+### Changed
+
+- The Linux bundles carry a description, a category and the licence.
+
+### Added
+
 - A home screen in a pane without a note (`Space o`, or when its note goes
   to the trash): find a note, the notes modified last, the pinned ones and
   the flashcards due.

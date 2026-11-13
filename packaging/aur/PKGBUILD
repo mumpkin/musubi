@@ -1,0 +1,27 @@
+# Maintainer: mumpkin
+# Musubi from the .deb of a GitHub release. `update.sh <version>` sets the
+# version and the checksums for a new release.
+
+pkgname=musubi-bin
+pkgver=0.3.1
+pkgrel=1
+pkgdesc='Local-first notes written in Typst, edited the Helix way'
+arch=('x86_64')
+url='https://github.com/mumpkin/musubi'
+license=('GPL-3.0-or-later')
+depends=('webkit2gtk-4.1' 'gtk3' 'hicolor-icon-theme')
+provides=('musubi')
+conflicts=('musubi')
+# A binary built by the release workflow: no debug package, no stripping.
+options=('!debug' '!strip')
+source=("https://github.com/mumpkin/musubi/releases/download/v${pkgver}/Musubi_${pkgver}_amd64.deb"
+        "LICENSE-${pkgver}::https://raw.githubusercontent.com/mumpkin/musubi/v${pkgver}/LICENSE")
+sha256sums=('92330c477faa969309d800726929063265e3db55a68d58ade8488223e72333ea'
+            'fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0')
+
+package() {
+	bsdtar -xf data.tar.gz -C "${pkgdir}"
+	ln -s musubi-desktop "${pkgdir}/usr/bin/musubi"
+	install -Dm644 "LICENSE-${pkgver}" \
+		"${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
