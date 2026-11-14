@@ -36,6 +36,10 @@ and this project adheres to
 
 ### Fixed
 
+- Blocks and boxes keep their fill, border, inset and rounded corners in
+  the reading view (a fill tints the background in a dark theme); a block
+  of a fixed height, such as a drawn map, is drawn whole. Text aligned
+  with `#align` inside a shape or a grid stays aligned.
 - Grids, columns and shapes with relative sizes (`1fr`, `100%`,
   `#columns(2)`) take the width of the reading view instead of collapsing
   to one word per line; they shrink with a narrower pane.

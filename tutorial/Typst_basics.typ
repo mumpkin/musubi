@@ -84,4 +84,16 @@ fractions (`fr`), percentages and `#columns` work:
    the first one.],
 )
 
+Blocks and boxes keep their fill, border and rounded corners; in a dark
+theme, a fill only tints the background:
+
+#block(
+  fill: rgb("#e8f0fe"),
+  stroke: (left: 3pt + rgb("#1a73e8")),
+  inset: 10pt,
+  radius: (right: 6pt),
+)[*Tip* — `#block(fill: …, stroke: …, inset: …, radius: …)[…]`, and
+  #box(fill: rgb("#fde7c8"), inset: (x: 4pt), radius: 4pt)[`#box`] in a
+  line.]
+
 Back to #note-link("Welcome/Writing_Typst")[Writing Typst].
