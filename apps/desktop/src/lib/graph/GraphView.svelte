@@ -21,6 +21,7 @@
 		type GraphModel,
 		type GraphPoint,
 		keepPosition,
+		pointUnder,
 		vaultGraph,
 	} from './graph-data.ts';
 	import { drawGraph, type GraphColors, themeColors } from './graph-draw.ts';
@@ -47,8 +48,6 @@
 	const MIN_ZOOM = 0.05;
 	const MAX_ZOOM = 8;
 	const HALF = 2;
-	// How far from a note, in screen pixels, the pointer still reaches it.
-	const POINTER_REACH = 10;
 	const REHEAT = 0.3;
 
 	let wrapper = $state<HTMLElement>();
@@ -100,7 +99,7 @@
 	// The note under a point of the canvas (CSS pixels).
 	function pointAt(left: number, top: number): GraphPoint | undefined {
 		const [across, down] = transform.invert([left, top]);
-		return simulation?.find(across, down, POINTER_REACH / transform.k);
+		return pointUnder(model.points, across, down);
 	}
 
 	// Positions of the notes already shown are kept when the graph is read

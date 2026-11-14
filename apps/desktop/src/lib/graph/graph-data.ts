@@ -54,6 +54,22 @@ export async function vaultGraph(): Promise<GraphModel> {
 	return toModel(await invoke<Graph>('vault_graph'));
 }
 
+// The note drawn at `across`, `down` (graph coordinates): the pointer must
+// be on its disc. The last drawn, on top, wins.
+export function pointUnder(
+	points: GraphPoint[],
+	across: number,
+	down: number,
+): GraphPoint | undefined {
+	return points.findLast((point) => {
+		const distance = Math.hypot(
+			(point.x ?? 0) - across,
+			(point.y ?? 0) - down,
+		);
+		return distance <= point.radius;
+	});
+}
+
 export interface Bounds {
 	left: number;
 	top: number;
