@@ -212,13 +212,14 @@ fn keeps_the_look_of_blocks_and_boxes() {
 		"--musubi-fill: #f0f0f0",
 		r#"<span class="musubi-box""#,
 		"width: 0.909em; height: 0.909em",
-		"<div data-block=\"5\">A block without a look</div>",
-		"width: 100%\" data-block=\"7\"><h4>",
+		"<div data-block=\"6\">A block without a look</div>",
+		"width: 100%\" data-block=\"8\"><h4>",
 	] {
 		assert!(html.contains(expected), "missing {expected}");
 	}
-	// The drawing of a fixed height and the gradient are islands.
-	assert_eq!(island_widths(&html).len(), 2);
+	// The drawings of a fixed height, with or without a fill, and the
+	// gradient are islands.
+	assert_eq!(island_widths(&html).len(), 3);
 	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
 }
 

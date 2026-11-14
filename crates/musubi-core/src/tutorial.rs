@@ -62,8 +62,8 @@ const FILES: [(&str, &str); 16] = [
 		include_str!("../../../tutorial/Advanced Examples/Cornell_notes.typ"),
 	),
 	(
-		"Advanced Examples/Drawn_map.typ",
-		include_str!("../../../tutorial/Advanced Examples/Drawn_map.typ"),
+		"Advanced Examples/Class_diagram.typ",
+		include_str!("../../../tutorial/Advanced Examples/Class_diagram.typ"),
 	),
 	(
 		"Advanced Examples/Journal_page.typ",

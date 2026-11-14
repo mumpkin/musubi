@@ -11,8 +11,8 @@ use tempfile::TempDir;
 /// Titles of the tutorial notes, by path, once `Start_here.typ` is mine.
 const TITLES: [&str; 15] = [
 	"Character sheet",
+	"A class diagram",
 	"Cornell notes — Thermodynamics",
-	"A small drawn map",
 	"Journal — A walk by the sea",
 	"Revision sheet — Linear algebra",
 	"Find anything",
@@ -60,7 +60,7 @@ fn installs_the_missing_files_only() {
 	assert!(
 		directory
 			.path()
-			.join("Welcome/Advanced Examples/Drawn_map.typ")
+			.join("Welcome/Advanced Examples/Class_diagram.typ")
 			.is_file()
 	);
 }

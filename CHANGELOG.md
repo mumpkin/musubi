@@ -13,7 +13,7 @@ and this project adheres to
 - Click the checkbox of a task in the reading view to switch it between
   `#todo` and `#done`: the note is saved at once.
 - Examples in the tutorial (`Welcome/Advanced Examples/`): a character sheet,
-  Cornell notes, a revision sheet, a journal page and a drawn map, short
+  Cornell notes, a revision sheet, a journal page and a class diagram, short
   and commented, to see what Typst gives in Musubi.
 - Drag a note or a folder onto a folder of the explorer, or onto the
   Notebook section, to move it there; links follow.
@@ -56,7 +56,7 @@ and this project adheres to
   `1.a.`). Fonts and gradient text are still shown as plain text.
 - Blocks and boxes keep their fill, border, inset and rounded corners in
   the reading view (a fill tints the background in a dark theme); a block
-  of a fixed height, such as a drawn map, is drawn whole. Text aligned
+  of a fixed height, such as a diagram, is drawn whole. Text aligned
   with `#align` inside a shape or a grid stays aligned.
 - Grids, columns and shapes with relative sizes (`1fr`, `100%`,
   `#columns(2)`) take the width of the reading view instead of collapsing
