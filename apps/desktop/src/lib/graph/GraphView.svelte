@@ -3,7 +3,6 @@
      pointer, drag a note to move it, hover to read its title, click to
      open it. Drawn on a canvas so that thousands of notes stay fluid. -->
 <script lang="ts">
-	import { type D3DragEvent, drag } from 'd3-drag';
 	import type { Simulation } from 'd3-force';
 	import { select } from 'd3-selection';
 	import {
@@ -14,6 +13,7 @@
 	} from 'd3-zoom';
 	import { onMount } from 'svelte';
 
+	import type { Graph } from '../bindings/Graph.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
 	import {
 		boundsOf,
@@ -22,10 +22,14 @@
 		type GraphPoint,
 		keepPosition,
 		pointUnder,
-		vaultGraph,
+		readGraph,
+		toModel,
 	} from './graph-data.ts';
+	import { dragging } from './graph-drag.ts';
 	import { drawGraph, type GraphColors, themeColors } from './graph-draw.ts';
+	import { filterGraph, type GraphFilter } from './graph-filter.ts';
 	import { simulate } from './graph-simulation.ts';
+	import GraphFilters from './GraphFilters.svelte';
 
 	interface Props {
 		// Path of the note to highlight.
@@ -48,11 +52,13 @@
 	const MIN_ZOOM = 0.05;
 	const MAX_ZOOM = 8;
 	const HALF = 2;
-	const REHEAT = 0.3;
 
 	let wrapper = $state<HTMLElement>();
 	let canvas = $state<HTMLCanvasElement>();
 	let model: GraphModel = { points: [], edges: [] };
+	// The whole graph of the vault, and the part of it shown.
+	let graph = $state.raw<Graph>();
+	let filter = $state<GraphFilter>('all');
 	let simulation: Simulation<GraphPoint, GraphEdge> | undefined;
 	let transform: ZoomTransform = zoomIdentity;
 	let hovered: GraphPoint | undefined;
@@ -149,8 +155,24 @@
 		// Read to load the graph again when the notes change.
 		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		notes;
-		vaultGraph().then(show).catch(() => undefined);
+		readGraph()
+			.then((read) => {
+				graph = read;
+			})
+			.catch(() => undefined);
 	});
+
+	// The notes the filter keeps, laid out again when it changes.
+	$effect(() => {
+		if (graph) {
+			show(toModel(filterGraph(graph, filter, current)));
+		}
+	});
+
+	function changeFilter(next: GraphFilter): void {
+		filter = next;
+		isFramed = false;
+	}
 
 	$effect(() => {
 		// Read to draw again when the current note changes.
@@ -158,42 +180,6 @@
 		current;
 		draw();
 	});
-
-	// `x` and `y` are where d3-drag reads the start of a drag.
-
-	interface DragSubject {
-		point: GraphPoint;
-		x: number;
-		y: number;
-	}
-
-	type DragEvent = D3DragEvent<HTMLCanvasElement, unknown, DragSubject>;
-
-	function moveTo(event: DragEvent): void {
-		const [across, down] = transform.invert([event.x, event.y]);
-		event.subject.point.fx = across;
-		event.subject.point.fy = down;
-	}
-
-	// A note follows the pointer while dragged; elsewhere the pointer pans.
-	function dragging(target: HTMLCanvasElement) {
-		return drag<HTMLCanvasElement, unknown, DragSubject | undefined>()
-			.container(target)
-			.subject((event: DragSubject) => {
-				const point = pointAt(event.x, event.y);
-				return point && { ...event, point };
-			})
-			.on('start', (event: DragEvent) => {
-				simulation?.alphaTarget(REHEAT).restart();
-				moveTo(event);
-			})
-			.on('drag', moveTo)
-			.on('end', (event: DragEvent) => {
-				simulation?.alphaTarget(0);
-				event.subject.point.fx = null;
-				event.subject.point.fy = null;
-			});
-	}
 
 	function zooming(): ZoomBehavior<HTMLCanvasElement, unknown> {
 		return zoom<HTMLCanvasElement, unknown>()
@@ -219,7 +205,12 @@
 		const box = wrapper;
 		colors = themeColors(box);
 		zoomer = zooming();
-		select(target).call(dragging(target)).call(zoomer);
+		const drags = dragging(target, {
+			transform: () => transform,
+			simulation: () => simulation,
+			pointAt,
+		});
+		select(target).call(drags).call(zoomer);
 		const centre = zoomIdentity.translate(
 			box.clientWidth / HALF,
 			box.clientHeight / HALF,
@@ -259,6 +250,11 @@
 	bind:this={wrapper}
 	class="graph-view"
 >
+	<GraphFilters
+		{filter}
+		{current}
+		onChange={changeFilter}
+	/>
 	<canvas
 		bind:this={canvas}
 		class="graph-canvas"
