@@ -73,4 +73,15 @@ Everything else Typst can do works too: functions, variables, shapes,
 grids. What the reading view cannot show as text is drawn as an image. The
 #link("https://typst.app/docs/tutorial/")[Typst tutorial] explains it all.
 
+Such a drawing takes the width of the reading view, as on a page, so
+fractions (`fr`), percentages and `#columns` work:
+
+#grid(
+  columns: (1fr, 2fr),
+  column-gutter: 1em,
+  [*A cue*],
+  [A grid with `columns: (1fr, 2fr)`: this column is twice as wide as
+   the first one.],
+)
+
 Back to #note-link("Welcome/Writing_Typst")[Writing Typst].
