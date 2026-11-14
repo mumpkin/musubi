@@ -10,13 +10,13 @@
 use std::collections::BTreeSet;
 
 use ecow::eco_vec;
-use typst::World;
 use typst::WorldExt;
 use typst::syntax::FileId;
 use typst::syntax::Span;
 use typst_html::{HtmlAttr, HtmlElement, HtmlNode, tag};
 
 use crate::blocks::SourceBlock;
+use crate::world::VaultWorld;
 
 const BLOCK_ATTRIBUTE: &str = "data-block";
 /// The class of the `span` that gives text its color or size.
@@ -24,7 +24,7 @@ const STYLED_TEXT_CLASS: &str = "musubi-text";
 
 /// What the annotation needs to know about the note.
 pub struct SourceMap<'a> {
-	pub world: &'a dyn World,
+	pub world: &'a VaultWorld,
 	/// The note whose blocks are marked.
 	pub note: FileId,
 	pub blocks: &'a [SourceBlock],
@@ -126,7 +126,8 @@ impl SourceMap<'_> {
 		let Some(range) = self.world.range(span) else {
 			return;
 		};
-		if let Some(index) = self.block_at(range.start) {
+		if let Some(index) = self.block_at(self.world.to_original(range.start))
+		{
 			covered.insert(index);
 		}
 	}

@@ -88,6 +88,11 @@ Everything else Typst can do works too: functions, variables, shapes,
 grids. What the reading view cannot show as text is drawn as an image. The
 #link("https://typst.app/docs/tutorial/")[Typst tutorial] explains it all.
 
+Packages from Typst Universe (`#import "@preview/…"`) are not available:
+Musubi works offline and downloads nothing. A note that imports one still
+shows, with a notice where the import is and in place of what uses the
+package, followed by its source.
+
 Such a drawing takes the width of the reading view, as on a page, so
 fractions (`fr`), percentages and `#columns` work:
 

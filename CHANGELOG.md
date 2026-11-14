@@ -36,6 +36,9 @@ and this project adheres to
 
 ### Fixed
 
+- A note that imports a package Musubi cannot load (`@preview/…`, as it
+  works offline) shows anyway: a notice replaces the import and what uses
+  the package, with its source, instead of an empty pane.
 - Equations: the math font of Typst ships with the app, so braces
   (`cases`) and integrals stretch whatever the fonts of the system;
   fraction bars no longer vanish; numbered equations show their number

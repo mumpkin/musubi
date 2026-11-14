@@ -5,6 +5,7 @@
 mod blocks;
 mod diagnostics;
 mod entry;
+mod fallback;
 mod files;
 mod index;
 mod package;
@@ -12,13 +13,14 @@ mod sanitize;
 mod source_map;
 mod world;
 
+use std::ops::Range;
 use std::path::PathBuf;
 
 use serde::Serialize;
 use ts_rs::TS;
-use typst::World;
-use typst::diag::SourceDiagnostic;
-use typst::syntax::VirtualPath;
+use typst::WorldExt;
+use typst::diag::{SourceDiagnostic, SourceResult, Warned};
+use typst::syntax::{Source, VirtualPath};
 use typst_html::{HtmlDocument, HtmlNode, HtmlOptions, tag};
 
 pub use crate::blocks::{BlockKind, SourceBlock};
@@ -39,6 +41,10 @@ pub struct RenderedNote {
 	/// their block in a `data-block` attribute.
 	pub blocks: Vec<SourceBlock>,
 }
+
+/// How many times a note with a missing package compiles again, with more
+/// elements replaced by notices, before giving up.
+const MAX_FALLBACK_PASSES: usize = 16;
 
 /// Compiles the notes of one vault. Keep it alive between compilations:
 /// Typst then only recomputes what changed.
@@ -62,7 +68,7 @@ impl NoteCompiler {
 			Err(error) => return RenderedNote::failed(error.to_string()),
 		};
 		self.world.prepare(&note);
-		let compiled = typst::compile::<HtmlDocument>(&self.world);
+		let compiled = self.compile();
 		let mut diagnostics = self.diagnostics(&compiled.warnings);
 		let mut document = match compiled.output {
 			Ok(document) => document,
@@ -100,8 +106,7 @@ impl NoteCompiler {
 	pub fn index(&mut self, note_path: &str) -> Option<NoteIndex> {
 		let note = VirtualPath::new(note_path).ok()?;
 		self.world.prepare(&note);
-		let document =
-			typst::compile::<HtmlDocument>(&self.world).output.ok()?;
+		let document = self.compile().output.ok()?;
 		Some(NoteIndex::from_introspector(
 			document.introspector().as_ref(),
 		))
@@ -110,7 +115,7 @@ impl NoteCompiler {
 	/// Finds the blocks of the main note and marks the rendered elements
 	/// with them.
 	fn annotate_blocks(&self, document: &mut HtmlDocument) -> Vec<SourceBlock> {
-		let Ok(source) = self.world.source(self.world.note()) else {
+		let Ok(source) = self.world.original_note() else {
 			return Vec::new();
 		};
 		let blocks = blocks::source_blocks(&source);
@@ -127,6 +132,67 @@ impl NoteCompiler {
 			}
 		}
 		blocks
+	}
+
+	/// Compiles the prepared note. If a package is missing, the elements
+	/// of the note that fail are replaced by notices until it compiles.
+	fn compile(&mut self) -> Warned<SourceResult<HtmlDocument>> {
+		let mut compiled = typst::compile::<HtmlDocument>(&self.world);
+		for _ in 0..MAX_FALLBACK_PASSES {
+			let Err(errors) = &compiled.output else {
+				break;
+			};
+			if !self.patch_errors(errors) {
+				break;
+			}
+			compiled = typst::compile::<HtmlDocument>(&self.world);
+		}
+		compiled
+	}
+
+	/// Replaces the elements of the note where `errors` are, once a package
+	/// is missing; `false` if nothing changed.
+	fn patch_errors(&mut self, errors: &[SourceDiagnostic]) -> bool {
+		let is_missing = |error: &SourceDiagnostic| {
+			fallback::missing_package(&error.message).is_some()
+		};
+		if self.world.patched_note().is_none() && !errors.iter().any(is_missing)
+		{
+			return false;
+		}
+		let Ok(original) = self.world.original_note() else {
+			return false;
+		};
+		let replaced: Vec<_> = errors
+			.iter()
+			.filter_map(|error| self.element_of(&original, error))
+			.collect();
+		let mut note = self
+			.world
+			.take_patched_note()
+			.unwrap_or_else(|| fallback::PatchedNote::new(original));
+		let mut changed = false;
+		for (range, message) in replaced {
+			changed |= note.replace(range, &message);
+		}
+		self.world.patch_note(note);
+		changed
+	}
+
+	/// The top-level element of the note where `error` is, and the notice
+	/// that replaces it.
+	fn element_of(
+		&self,
+		original: &Source,
+		error: &SourceDiagnostic,
+	) -> Option<(Range<usize>, String)> {
+		if error.span.id() != Some(self.world.note()) {
+			return None;
+		}
+		let byte = self.world.to_original(self.world.range(error.span)?.start);
+		let range = fallback::element_at(original, byte)?;
+		let package = fallback::missing_package(&error.message);
+		Some((range, fallback::notice(package)))
 	}
 
 	fn diagnostics(
