@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- Examples in the tutorial (`Welcome/Examples/`): a character sheet,
+  Cornell notes, a revision sheet, a journal page and a drawn map, short
+  and commented, to see what Typst gives in Musubi.
 - Drag a note or a folder onto a folder of the explorer, or onto the
   Notebook section, to move it there; links follow.
 - `Space w s` splits the pane one above the other, as in Helix;

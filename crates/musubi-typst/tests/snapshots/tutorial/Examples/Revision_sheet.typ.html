@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><h2 data-block="1">Revision sheet — Linear algebra</h2><div class="musubi-box" style="border-left: 0.091em solid #3a8a4e; padding-left: 0.909em; border-top: 0.091em solid #3a8a4e; padding-top: 0.909em; border-right: 0.091em solid #3a8a4e; padding-right: 0.909em; border-bottom: 0.091em solid #3a8a4e; padding-bottom: 0.909em; border-radius: 0.364em 0.364em 0.364em 0.364em; --musubi-fill: #e8f4ea; width: 100%"><p><strong data-block="3">Theorem (Rank–nullity).</strong> For a linear map <math data-block="4"><mi>𝑓</mi><mo lspace="0.2777777777777778em" rspace="0.2777777777777778em">:</mo><mi>𝐸</mi><mo stretchy="false">→</mo><mi>𝐹</mi></math> with <math data-block="4"><mrow><mtext>dim</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝐸</mi><mo>&lt;</mo><mi>∞</mi></math>:</p><div id="rank" class="musubi-equation" data-block="4"><math display="block"><mrow><mtext>dim</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝐸</mi><mo>=</mo><mrow><mtext>dim</mtext></mrow><mspace width="0.16666666666666666em"/><mrow><mtext>ker</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝑓</mi><mo>+</mo><mtext>rk</mtext><mspace width="0.2222em"/><mi>𝑓</mi></math><div class="musubi-equation-number">(1)</div></div></div><p data-block="5">By <a href="#rank">Equation 1</a>, the kernel is trivial if and only if <math><mi>𝑓</mi></math> is injective.</p><div class="musubi-equation" data-block="6"><math display="block"><mi>𝐴</mi><mo>=</mo><mrow><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>2</mn></mtd></mtr><mtr><mtd><mn>3</mn></mtd><mtd><mn>4</mn></mtd></mtr></mtable><mo>)</mo></mrow><mo rspace="0em">,</mo><mspace width="1em"/><mrow><mtext>det</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝐴</mi><mo>=</mo><mn>1</mn><mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">⋅</mo><mn>4</mn><mo>−</mo><mn>2</mn><mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">⋅</mo><mn>3</mn><mo>=</mo><mo form="prefix">−</mo><mn>2</mn></math><div class="musubi-equation-number">(2)</div></div><div class="musubi-equation" data-block="7"><math display="block"><mo stretchy="false">|</mo><mi>𝑥</mi><mo lspace="0em" rspace="0em">|</mo><mo>=</mo><mrow><mo>{</mo><mtable class="cases"><mtr><mtd><mi>𝑥</mi><mspace width="0.2222em"/></mtd><mtd><mtext>if</mtext><mspace width="0.2222em"/><mi>𝑥</mi><mo>≥</mo><mn>0</mn></mtd></mtr><mtr><mtd><mo>−</mo><mi>𝑥</mi><mspace width="0.2222em"/></mtd><mtd><mtext>otherwise</mtext></mtd></mtr></mtable></mrow></math><div class="musubi-equation-number">(3)</div></div><div class="musubi-card" data-block="8"><div class="musubi-card-question">What does the rank–nullity theorem say?</div><div class="musubi-card-answer"><math><mrow><mtext>dim</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝐸</mi><mo>=</mo><mrow><mtext>dim</mtext></mrow><mspace width="0.16666666666666666em"/><mrow><mtext>ker</mtext></mrow><mspace width="0.16666666666666666em"/><mi>𝑓</mi><mo>+</mo><mtext>rk</mtext><mspace width="0.2222em"/><mi>𝑓</mi></math></div></div><p data-block="9">Back to the <a href="musubi://note/Welcome/Typst_basics" class="musubi-link" data-target="Welcome/Typst_basics">Typst basics</a>.</p></body></html>

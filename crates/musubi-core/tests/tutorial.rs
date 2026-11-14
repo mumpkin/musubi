@@ -9,7 +9,12 @@ use musubi_typst::NoteCompiler;
 use tempfile::TempDir;
 
 /// Titles of the tutorial notes, by path, once `Start_here.typ` is mine.
-const TITLES: [&str; 10] = [
+const TITLES: [&str; 15] = [
+	"Character sheet",
+	"Cornell notes — Thermodynamics",
+	"A small drawn map",
+	"Journal — A walk by the sea",
+	"Revision sheet — Linear algebra",
 	"Find anything",
 	"Flashcards",
 	"Helix basics",
@@ -52,6 +57,12 @@ fn installs_the_missing_files_only() {
 			.join("Welcome/Typst_basics.assets/musubi.svg")
 			.is_file()
 	);
+	assert!(
+		directory
+			.path()
+			.join("Welcome/Examples/Drawn_map.typ")
+			.is_file()
+	);
 }
 
 #[test]
@@ -73,6 +84,6 @@ fn every_note_compiles_without_warnings_and_links_to_existing_notes() {
 	let mut index = VaultIndex::in_memory().expect("index");
 	index.refresh(&vault, &mut compiler).expect("indexed");
 	let graph = index.graph().expect("graph");
-	assert_eq!(graph.nodes.len(), 10);
+	assert_eq!(graph.nodes.len(), TITLES.len());
 	assert!(graph.links.len() >= 8, "the notes link to each other");
 }

@@ -12,7 +12,7 @@ use crate::vault::Vault;
 const FOLDER: &str = "Welcome";
 
 /// Files of the tutorial, by path inside its folder. Text files only.
-const FILES: [(&str, &str); 11] = [
+const FILES: [(&str, &str); 16] = [
 	(
 		"Start_here.typ",
 		include_str!("../../../tutorial/Start_here.typ"),
@@ -52,6 +52,26 @@ const FILES: [(&str, &str); 11] = [
 	(
 		"Using_Musubi.typ",
 		include_str!("../../../tutorial/Using_Musubi.typ"),
+	),
+	(
+		"Examples/Character_sheet.typ",
+		include_str!("../../../tutorial/Examples/Character_sheet.typ"),
+	),
+	(
+		"Examples/Cornell_notes.typ",
+		include_str!("../../../tutorial/Examples/Cornell_notes.typ"),
+	),
+	(
+		"Examples/Drawn_map.typ",
+		include_str!("../../../tutorial/Examples/Drawn_map.typ"),
+	),
+	(
+		"Examples/Journal_page.typ",
+		include_str!("../../../tutorial/Examples/Journal_page.typ"),
+	),
+	(
+		"Examples/Revision_sheet.typ",
+		include_str!("../../../tutorial/Examples/Revision_sheet.typ"),
 	),
 	(
 		"Typst_basics.assets/musubi.svg",
