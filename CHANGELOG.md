@@ -17,6 +17,8 @@ and this project adheres to
 - Notes of the graph take the color of their folder; while a graph is
   shown, the explorer shows that color next to each folder. The note of
   the pane is ringed.
+- The graph can draw its notes as pills with their title inside, instead
+  of dots with the title below (Nodes, in its panel).
 
 ### Changed
 

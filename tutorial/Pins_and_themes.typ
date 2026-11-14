@@ -24,7 +24,8 @@ press `Enter`) to open it. `Space g` again leaves the graph.
 
 The panel in its corner chooses what it shows, around the selected note
 (or the note of the pane): _All_ the notes, the notes _Linked_ to it both
-ways, or the notes of its _Folder_, down to the depth you choose. Notes
+ways, or the notes of its _Folder_, down to the depth you choose, and
+draws the notes as dots or as pills with their title inside. Notes
 take the color of their folder: while the graph is shown, a dot of that
 color follows each folder in the explorer.
 

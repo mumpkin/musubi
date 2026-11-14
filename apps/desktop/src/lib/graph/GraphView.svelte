@@ -34,6 +34,7 @@
 	} from './graph-filter.ts';
 	import { frameOf } from './graph-frame.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
+	import { graphShape, shapePoints } from './graph-shape.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
 	import GraphPanel from './GraphPanel.svelte';
 
@@ -164,10 +165,13 @@
 		return node && { path: node.path, title: node.title };
 	};
 
-	// The notes the filter keeps, laid out again when it changes.
+	// The notes the filter keeps, laid out again when it or the shape of
+	// the notes changes.
 	$effect(() => {
 		if (graph) {
-			show(toModel(filterGraph(graph, filter, centrePath)));
+			const next = toModel(filterGraph(graph, filter, centrePath));
+			shapePoints(next.points, graphShape.value);
+			show(next);
 		}
 	});
 
