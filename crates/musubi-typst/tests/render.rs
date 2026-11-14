@@ -181,3 +181,22 @@ fn renders_every_element_without_warnings() {
 		"shapes, grids and transforms render as SVG"
 	);
 }
+
+/// The widths of the SVG islands of `html`, in `em`, in order.
+fn island_widths(html: &str) -> Vec<&str> {
+	html.split("<svg style=\"overflow: visible; width: ")
+		.skip(1)
+		.filter_map(|rest| rest.split_once("em;").map(|(width, _)| width))
+		.collect()
+}
+
+#[test]
+fn lays_islands_out_at_the_width_of_the_column() {
+	let note = NoteCompiler::new(tests_vault()).render("Layout.typ");
+	let html = note.html.expect("the note compiles");
+	let widths = island_widths(&html);
+	// Two grids with `fr` columns, `columns(2)` and `rect(width: 100%)`
+	// fill the column (`46em`); a small circle keeps its size.
+	assert_eq!(widths, ["46", "46", "46", "46", "2.576950608"]);
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+}

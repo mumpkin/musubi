@@ -36,6 +36,9 @@ and this project adheres to
 
 ### Fixed
 
+- Grids, columns and shapes with relative sizes (`1fr`, `100%`,
+  `#columns(2)`) take the width of the reading view instead of collapsing
+  to one word per line; they shrink with a narrower pane.
 - The explorer keeps the keyboard on its entry when the lists change under
   it, for example when a note changed by another program moves to the top
   of Recent.

@@ -65,8 +65,11 @@
 
 /* What the HTML export of Typst cannot express (shapes, grids,
    transforms) is drawn by Typst as an SVG block: it needs room around it,
-   as its content may overflow its box. */
+   as its content may overflow its box. It is laid out at the width of
+   the column and shrinks with a narrower one: its height follows its
+   width (`viewBox`) instead of the fixed height given by Typst. */
 .reading-view svg[style*='display: block'] {
+	height: auto !important;
 	margin: 1rem 0;
 }
 
