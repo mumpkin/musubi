@@ -3,7 +3,7 @@
 # version and the checksums for a new release.
 
 pkgname=musubi-bin
-pkgver=0.3.1
+pkgver=0.4.0
 pkgrel=1
 pkgdesc='Local-first notes written in Typst, edited the Helix way'
 arch=('x86_64')
@@ -16,7 +16,7 @@ conflicts=('musubi')
 options=('!debug' '!strip')
 source=("https://github.com/mumpkin/musubi/releases/download/v${pkgver}/Musubi_${pkgver}_amd64.deb"
         "LICENSE-${pkgver}::https://raw.githubusercontent.com/mumpkin/musubi/v${pkgver}/LICENSE")
-sha256sums=('92330c477faa969309d800726929063265e3db55a68d58ade8488223e72333ea'
+sha256sums=('07f93a5fc970b2e0b0a58b0bd8bacc7b55767709e38687ee6acbc14be32d526a'
             'fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0')
 
 package() {
