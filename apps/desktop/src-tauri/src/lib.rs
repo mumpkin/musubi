@@ -21,6 +21,7 @@ macro_rules! commands {
 		tauri::generate_handler![
 			commands::app_info,
 			reading::render_note,
+			reading::toggle_task,
 			vault::open_vault,
 			vault::known_vaults,
 			vault::current_vault,

@@ -22,6 +22,9 @@
 		// The source line of the selected block.
 		onLine: (line: number | undefined) => void;
 		onEdit: (line: number) => void;
+		// A click on the checkbox of the task whose function name starts at
+		// byte `offset` of the note.
+		onToggleTask: (offset: number) => void;
 		// Whether the pane has the focus.
 		isFocused: boolean;
 	}
@@ -35,6 +38,7 @@
 		onOpen,
 		onLine,
 		onEdit,
+		onToggleTask,
 		isFocused,
 	}: Props = $props();
 
@@ -130,6 +134,7 @@
 			onNavigate={onOpen}
 			onSelect={selectBlock}
 			onEdit={editBlock}
+			{onToggleTask}
 			autofocus={isFocused}
 		/>
 	{/if}

@@ -11,6 +11,7 @@ mod index;
 mod package;
 mod sanitize;
 mod source_map;
+mod task_marks;
 mod world;
 
 use std::ops::Range;
@@ -27,6 +28,7 @@ pub use crate::blocks::{BlockKind, SourceBlock};
 pub use crate::diagnostics::{Diagnostic, DiagnosticSeverity, SourcePosition};
 pub use crate::index::{Card, NoteIndex, NoteLink, Task};
 use crate::source_map::SourceMap;
+use crate::task_marks::TaskMarks;
 use crate::world::VaultWorld;
 
 /// A note compiled for the reading view.
@@ -113,7 +115,7 @@ impl NoteCompiler {
 	}
 
 	/// Finds the blocks of the main note and marks the rendered elements
-	/// with them.
+	/// with them, and the tasks with their call.
 	fn annotate_blocks(&self, document: &mut HtmlDocument) -> Vec<SourceBlock> {
 		let Ok(source) = self.world.original_note() else {
 			return Vec::new();
@@ -124,11 +126,16 @@ impl NoteCompiler {
 			note: self.world.note(),
 			blocks: &blocks,
 		};
+		let task_marks = TaskMarks {
+			world: &self.world,
+			source: &source,
+		};
 		for node in document.root_mut().children.make_mut() {
 			if let HtmlNode::Element(element) = node
 				&& element.tag == tag::body
 			{
 				source_map.annotate(element);
+				task_marks.mark(element);
 			}
 		}
 		blocks

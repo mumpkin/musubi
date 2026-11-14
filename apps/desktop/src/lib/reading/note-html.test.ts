@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { describe, expect, it } from 'vitest';
 
-import { linkedNotePath, toNoteMarkup, webLinkUrl } from './note-html.ts';
+import {
+	linkedNotePath,
+	taskOffset,
+	toNoteMarkup,
+	webLinkUrl,
+} from './note-html.ts';
 
 function page(head: string, body: string): string {
 	return `<!DOCTYPE html><html><head>${head}</head><body>${body}</body></html>`;
@@ -130,5 +135,24 @@ describe('web links', () => {
 			'HTTPS://typst.app',
 		);
 		expect(webLinkUrl(anchor ?? body)).toBeUndefined();
+	});
+});
+
+describe('tasks', () => {
+	const task = (attributes: string): string =>
+		`<span class="musubi-task"${attributes}>`
+		+ '<input type="checkbox" disabled="">Buy milk</span>';
+
+	it('lets the tasks the core found be switched', () => {
+		const markup = toNoteMarkup(
+			page('', task(' data-task="12"') + task('')),
+		);
+		const root = document.createElement('div');
+		root.innerHTML = markup.body;
+		const [found, other] = root.querySelectorAll('input');
+		expect(found?.disabled).toBe(false);
+		expect(other?.disabled).toBe(true);
+		expect(found && taskOffset(found)).toBe(12);
+		expect(other && taskOffset(other)).toBeUndefined();
 	});
 });
