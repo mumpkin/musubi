@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Filters of the graph: every note, the notes linked to the note of the
+  pane (its links and backlinks), or the notes of its folder and
+  subfolders.
+
 ## [0.4.0] - 2026-11-14
 
 ### Added

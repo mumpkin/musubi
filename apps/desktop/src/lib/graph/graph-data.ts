@@ -50,8 +50,9 @@ export function toModel(graph: Graph): GraphModel {
 	return { points, edges };
 }
 
-export async function vaultGraph(): Promise<GraphModel> {
-	return toModel(await invoke<Graph>('vault_graph'));
+// The notes of the vault and their links.
+export async function readGraph(): Promise<Graph> {
+	return invoke<Graph>('vault_graph');
 }
 
 // The note drawn at `across`, `down` (graph coordinates): the pointer must
