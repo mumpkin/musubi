@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="en"><head><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><h2 data-block="1">Blocks</h2><p data-block="2">A first paragraph on two lines, with <math><msup><mi>𝑥</mi><mn>2</mn></msup></math> and a <a href="musubi://note/Demo" class="musubi-link" data-target="Demo">link</a>.</p><ul><li data-block="3"><p>First item</p><ul><li>Nested item</li></ul></li><li data-block="4">Second item</li></ul><ol><li data-block="5">One</li><li data-block="6">Two</li></ol><math display="block" data-block="7"><munderover><mo lspace="0em">∑</mo><mrow><mi>𝑘</mi><mo lspace="0em" rspace="0em">=</mo><mn>1</mn></mrow><mi>𝑛</mi></munderover><mi>𝑘</mi><mo>=</mo><mfrac><mrow><mi>𝑛</mi><mrow><mo>(</mo><mrow><mi>𝑛</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow></mrow><mn>2</mn></mfrac></math><div class="musubi-card" data-block="8"><div class="musubi-card-question">Question</div><div class="musubi-card-answer">Answer</div></div><pre data-block="9"><code data-lang="rust"><span style="color: #d73948">let</span> answer <span style="color: #d73948">=</span> <span style="color: #b60157">42</span>;</code></pre><dl data-block="10"><dt>Term</dt><dd>Definition</dd></dl><p data-block="12">Last paragraph: Hello.</p></body></html>
