@@ -10,12 +10,18 @@ and this project adheres to
 
 ### Added
 
-- Filters of the graph: every note, the notes linked to the note of the
-  pane (its links and backlinks), or the notes of its folder and
-  subfolders.
+- A panel over the corner of the graph chooses the notes it shows, around
+  the selected note or the note of the pane: every note, the notes linked
+  to it (links and backlinks), or the notes of its folder, down to a depth
+  of subfolders.
 - Notes of the graph take the color of their folder; while a graph is
   shown, the explorer shows that color next to each folder. The note of
   the pane is ringed.
+
+### Changed
+
+- A click on a note of the graph selects it; a double click, `Enter` or
+  the Open button of the panel opens it.
 
 ## [0.4.0] - 2026-11-14
 

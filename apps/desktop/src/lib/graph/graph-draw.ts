@@ -41,6 +41,8 @@ export interface GraphScene {
 	transform: ZoomTransform;
 	colors: GraphColors;
 	current: string;
+	// Path of the note selected with a click.
+	selected: string | undefined;
 	hovered: GraphPoint | undefined;
 	// Canvas pixels per CSS pixel.
 	ratio: number;
@@ -71,8 +73,8 @@ function drawEdges(context: CanvasRenderingContext2D, scene: GraphScene) {
 	context.stroke();
 }
 
-// Rings around the note of the pane and the note under the pointer, in
-// screen pixels: the fill keeps the color of the folder.
+// Rings around the note of the pane, the selected one and the one under
+// the pointer, in screen pixels: the fill keeps the color of the folder.
 const CURRENT_RING = 2.5;
 const HOVER_RING = 1.5;
 const RING_GAP = 2;
@@ -88,6 +90,9 @@ function ringOf(
 ): { color: string; width: number } | undefined {
 	if (point.path === scene.current) {
 		return { color: scene.colors.current, width: CURRENT_RING };
+	}
+	if (point.path === scene.selected) {
+		return { color: scene.colors.hovered, width: CURRENT_RING };
 	}
 	if (point === scene.hovered) {
 		return { color: scene.colors.hovered, width: HOVER_RING };
@@ -161,7 +166,8 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 	const isZoomedIn = transform.k >= LABEL_ZOOM;
 	for (const point of scene.model.points) {
 		const isMarked = point === scene.hovered
-			|| point.path === scene.current;
+			|| point.path === scene.current
+			|| point.path === scene.selected;
 		if (isZoomedIn || isMarked) {
 			drawLabel(context, point, scene);
 		}

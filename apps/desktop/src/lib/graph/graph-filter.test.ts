@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { Graph } from '../bindings/Graph.ts';
-import { filterGraph, folderOf } from './graph-filter.ts';
+import { EVERY_NOTE, filterGraph, folderOf } from './graph-filter.ts';
 
 const graph: Graph = {
 	nodes: [
@@ -19,16 +19,20 @@ const graph: Graph = {
 	],
 };
 
+const links = { kind: 'links', depth: undefined } as const;
+const folder = (depth: number | undefined) =>
+	({ kind: 'folder', depth }) as const;
+
 const paths = (filtered: Graph): string[] =>
 	filtered.nodes.map((node) => node.path);
 
 describe('filterGraph', () => {
 	it('keeps every note without a filter', () => {
-		expect(filterGraph(graph, 'all', 'A.typ')).toEqual(graph);
+		expect(filterGraph(graph, EVERY_NOTE, 'A.typ')).toEqual(graph);
 	});
 
 	it('keeps the notes linked to the note, both ways', () => {
-		const filtered = filterGraph(graph, 'links', 'A.typ');
+		const filtered = filterGraph(graph, links, 'A.typ');
 		expect(paths(filtered)).toEqual(['A.typ', 'Maths/B.typ', 'Philo/D.typ']);
 		expect(filtered.links).toEqual([
 			{ source: 0, target: 1 },
@@ -37,13 +41,25 @@ describe('filterGraph', () => {
 	});
 
 	it('keeps the notes of the folder and of its subfolders', () => {
-		const filtered = filterGraph(graph, 'folder', 'Maths/B.typ');
+		const filtered = filterGraph(graph, folder(undefined), 'Maths/B.typ');
 		expect(paths(filtered)).toEqual(['Maths/B.typ', 'Maths/Algebra/C.typ']);
 		expect(filtered.links).toEqual([{ source: 0, target: 1 }]);
 	});
 
+	it('goes down the subfolders only to the depth asked', () => {
+		const filtered = filterGraph(graph, folder(0), 'Maths/B.typ');
+		expect(paths(filtered)).toEqual(['Maths/B.typ']);
+		const root = filterGraph(graph, folder(1), 'A.typ');
+		expect(paths(root)).toEqual([
+			'A.typ',
+			'Maths/B.typ',
+			'Philo/D.typ',
+			'Mathsy/E.typ',
+		]);
+	});
+
 	it('keeps everything for a note unknown to the graph', () => {
-		expect(paths(filterGraph(graph, 'links', ''))).toHaveLength(5);
+		expect(paths(filterGraph(graph, links, ''))).toHaveLength(5);
 	});
 });
 
