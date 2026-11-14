@@ -110,6 +110,26 @@ function thickenFractionRules(root: Element): void {
 	}
 }
 
+// Tasks whose call the core found (`data-task`, the offset of its
+// function name): their checkbox can be clicked.
+const SWITCHABLE_TASK = '.musubi-task[data-task]';
+
+function enableTasks(root: Element): void {
+	for (const box of root.querySelectorAll(`${SWITCHABLE_TASK} > input`)) {
+		box.removeAttribute('disabled');
+		box.setAttribute('title', 'Switch between to do and done');
+	}
+}
+
+// The offset of the task whose checkbox is `element`, if it can switch.
+export function taskOffset(element: Element): number | undefined {
+	if (!(element instanceof HTMLInputElement)) {
+		return undefined;
+	}
+	const task = element.closest<HTMLElement>(SWITCHABLE_TASK)?.dataset.task;
+	return task === undefined ? undefined : Number(task);
+}
+
 // `exists` tells whether a note path (from the vault root, with the
 // extension) is a note of the vault.
 export function toNoteMarkup(
@@ -122,6 +142,7 @@ export function toNoteMarkup(
 	markWebLinks(document.body);
 	themeCodeColors(document.body);
 	thickenFractionRules(document.body);
+	enableTasks(document.body);
 	const styles = [...document.head.querySelectorAll('style')]
 		.map((style) => style.textContent)
 		.join('\n');

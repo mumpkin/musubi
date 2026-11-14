@@ -16,7 +16,7 @@
 	} from './block-cursor.ts';
 	import { LinkCursor } from './link-cursor.ts';
 	import type { NoteMarkup } from './note-html.ts';
-	import { linkedNotePath, webLinkUrl } from './note-html.ts';
+	import { linkedNotePath, taskOffset, webLinkUrl } from './note-html.ts';
 	import { readingKeyHandler } from './reading-keys.ts';
 	import { ReadingNavigator } from './reading-navigator.ts';
 
@@ -34,6 +34,9 @@
 		onSelect: (block: number | undefined) => void;
 		// Double click on a block: edit the note there.
 		onEdit: (block: number) => void;
+		// A click on the checkbox of a task: `offset` is where the name of
+		// its function starts in the note.
+		onToggleTask: (offset: number) => void;
 		// The pane has the focus: the view takes the keyboard once shown.
 		autofocus?: boolean;
 	}
@@ -46,6 +49,7 @@
 		onNavigate,
 		onSelect,
 		onEdit,
+		onToggleTask,
 		autofocus = false,
 	}: Props = $props();
 
@@ -136,6 +140,13 @@
 
 	function handleClick(event: MouseEvent): void {
 		if (!(event.target instanceof Element)) {
+			return;
+		}
+		const task = taskOffset(event.target);
+		if (task !== undefined) {
+			// The box changes once the note is saved and rendered again.
+			event.preventDefault();
+			onToggleTask(task);
 			return;
 		}
 		const anchor = event.target.closest('a');

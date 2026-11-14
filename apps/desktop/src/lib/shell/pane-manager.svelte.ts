@@ -16,6 +16,7 @@ import {
 	type PaneEvents,
 	type PaneState,
 } from './panes.ts';
+import { taskEvents } from './task-events.ts';
 
 const UNSAVED = 'Unsaved changes: :w saves them, :q! discards them';
 
@@ -302,6 +303,7 @@ export class PaneManager {
 				this.edit(index, line);
 			},
 			...modeEvents(this, index),
+			...taskEvents(this, index),
 		};
 	}
 

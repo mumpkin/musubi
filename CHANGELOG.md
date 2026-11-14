@@ -10,6 +10,8 @@ and this project adheres to
 
 ### Added
 
+- Click the checkbox of a task in the reading view to switch it between
+  `#todo` and `#done`: the note is saved at once.
 - Examples in the tutorial (`Welcome/Advanced Examples/`): a character sheet,
   Cornell notes, a revision sheet, a journal page and a drawn map, short
   and commented, to see what Typst gives in Musubi.

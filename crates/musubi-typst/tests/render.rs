@@ -277,3 +277,23 @@ fn shows_a_note_whose_package_is_missing() {
 		Some("Other")
 	);
 }
+
+#[test]
+fn marks_tasks_with_the_name_of_their_function() {
+	let vault = tests_vault();
+	let text = std::fs::read_to_string(vault.join("Tasks.typ"))
+		.expect("the note is readable");
+	let note = NoteCompiler::new(vault).render("Tasks.typ");
+	let html = note.html.expect("the note compiles");
+	let offsets: Vec<usize> = html
+		.split("data-task=\"")
+		.skip(1)
+		.filter_map(|rest| rest.split_once('"')?.0.parse().ok())
+		.collect();
+	let names: Vec<&str> = offsets
+		.iter()
+		.filter_map(|offset| text.get(*offset..offset + "todo".len()))
+		.collect();
+	// A task made by another function (`#t[…]`) is not marked.
+	assert_eq!(names, ["todo", "done", "todo"]);
+}

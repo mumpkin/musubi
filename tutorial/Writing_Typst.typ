@@ -11,6 +11,9 @@ Musubi adds a few functions: tasks and flashcards.
 - #todo[Finish the treasure hunt]
 - #done[Find the graph]
 
+Click a checkbox to switch its task between to do and done: the note is
+saved at once, no need to edit it.
+
 #card[What opens the settings?][`Space ,`]
 
 == Challenge 6

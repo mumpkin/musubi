@@ -17,6 +17,7 @@ mod recent;
 mod rename;
 mod search;
 mod settings;
+mod tasks;
 pub mod title;
 pub mod trash;
 mod trash_folder;
@@ -37,6 +38,7 @@ pub use crate::index::{
 };
 pub use crate::rename::save_note;
 pub use crate::search::{NoteMatch, search_headings, search_titles};
+pub use crate::tasks::toggle_task;
 pub use crate::trash::TrashEntry;
 pub use crate::vault::{FORMAT, NoteEntry, Vault, VaultTree};
 

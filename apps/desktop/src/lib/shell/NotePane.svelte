@@ -133,6 +133,7 @@
 			onOpen={events.open}
 			onLine={events.line}
 			onEdit={events.edit}
+			onToggleTask={events.toggleTask}
 			{isFocused}
 		/>
 	{:else}

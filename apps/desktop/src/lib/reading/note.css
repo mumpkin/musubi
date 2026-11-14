@@ -232,6 +232,11 @@ the icon is drawn as a mask, in the colour of the text around it. */
 	align-items: baseline;
 }
 
+/* A task the reading view can switch: a click on its box. */
+.reading-view .musubi-task[data-task] > input {
+	cursor: pointer;
+}
+
 .reading-view .musubi-task[data-done='true'] {
 	color: var(--muted);
 	text-decoration: line-through;

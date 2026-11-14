@@ -65,6 +65,9 @@ export interface PaneEvents {
 	resolved: () => void;
 	// Merge by hand: the note in the editor, its copy beside it.
 	merge: () => void;
+	// Switch the task whose function name starts at byte `offset` of the
+	// note between to do and done (a click on its checkbox).
+	toggleTask: (offset: number) => void;
 }
 
 export const MAX_PANES = 2;
