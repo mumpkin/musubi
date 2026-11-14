@@ -5,3 +5,7 @@ target/
 apps/desktop/src-tauri/gen/
 *.log
 .DS_Store
+
+# What the app writes in the demo vault when it is opened (reviews,
+# vault settings): it belongs to whoever uses it, not to the repository.
+examples/demo-vault/.musubi/
