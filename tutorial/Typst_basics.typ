@@ -94,7 +94,7 @@ Five short pages show what that gives, each with comments in its source
 #note-link("Welcome/Advanced Examples/Cornell_notes")[Cornell notes], a
 #note-link("Welcome/Advanced Examples/Revision_sheet")[revision sheet], a
 #note-link("Welcome/Advanced Examples/Journal_page")[journal page] and a
-#note-link("Welcome/Advanced Examples/Drawn_map")[drawn map].
+#note-link("Welcome/Advanced Examples/Class_diagram")[class diagram].
 
 Packages from Typst Universe (`#import "@preview/…"`) are not available:
 Musubi works offline and downloads nothing. A note that imports one still

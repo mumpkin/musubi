@@ -42,6 +42,6 @@ page, to come back to later.
 And for ideas, the `Advanced Examples` folder next to these notes holds a
 few pages written in Typst: a
 #note-link("Welcome/Advanced Examples/Character_sheet")[character sheet], a
-#note-link("Welcome/Advanced Examples/Drawn_map")[drawn map] and more.
+#note-link("Welcome/Advanced Examples/Class_diagram")[class diagram] and more.
 
 Linked from #note-link("Welcome/Writing_Typst")[Writing Typst].

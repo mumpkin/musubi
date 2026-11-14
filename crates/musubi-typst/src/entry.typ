@@ -127,10 +127,13 @@
 
 // A block or box with a fill, a stroke, an inset or a radius, as an HTML
 // element with styles, or as an island when HTML cannot show it (a drawing
-// of a fixed height, a gradient…).
+// of a fixed height, a gradient…). A block of a fixed height is a drawing
+// even without a look: shapes placed in it keep their places.
 #let musubi-styled(tag, inline) = it => context {
-  if not musubi-is-html() or not musubi-has-look(it) { return it }
-  if not musubi-fits-html(it, inline) {
+  if not musubi-is-html() { return it }
+  let is-drawing = not inline and it.height != auto
+  if not musubi-has-look(it) and not is-drawing { return it }
+  if is-drawing or not musubi-fits-html(it, inline) {
     return musubi-island(it, wrapper: if inline { box } else { block })
   }
   let style = (musubi-box-style(it) + musubi-sizes(it)).join("; ")
