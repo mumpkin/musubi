@@ -265,3 +265,25 @@ the icon is drawn as a mask, in the colour of the text around it. */
 .reading-view svg [stroke='#000000'] {
 	stroke: currentColor;
 }
+
+/* Blocks and boxes with a fill, a stroke, an inset or a radius: their
+   styles come from the note. A fill shows as is in a light theme; in a
+   dark theme it tints the background, so that the text stays readable. */
+.reading-view .musubi-box {
+	box-sizing: border-box;
+}
+
+.reading-view div.musubi-box {
+	margin: 1rem 0;
+}
+
+.reading-view span.musubi-box {
+	display: inline-block;
+}
+
+.reading-view .musubi-box[style*='--musubi-fill'] {
+	background: light-dark(
+		var(--musubi-fill),
+		color-mix(in srgb, var(--musubi-fill) 25%, var(--background))
+	);
+}

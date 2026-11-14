@@ -200,3 +200,24 @@ fn lays_islands_out_at_the_width_of_the_column() {
 	assert_eq!(widths, ["46", "46", "46", "46", "2.576950608"]);
 	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
 }
+
+#[test]
+fn keeps_the_look_of_blocks_and_boxes() {
+	let note = NoteCompiler::new(tests_vault()).render("Styles.typ");
+	let html = note.html.expect("the note compiles");
+	for expected in [
+		"border-left: 0.273em solid #b10dc9",
+		"padding-top: 0.909em",
+		"border-radius: 0.545em 0.545em 0.545em 0.545em",
+		"--musubi-fill: #f0f0f0",
+		r#"<span class="musubi-box""#,
+		"width: 0.909em; height: 0.909em",
+		"<div data-block=\"5\">A block without a look</div>",
+		"width: 100%\" data-block=\"7\"><h4>",
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
+	// The drawing of a fixed height and the gradient are islands.
+	assert_eq!(island_widths(&html).len(), 2);
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+}
