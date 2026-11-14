@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-14
+
 ### Added
 
 - Click the checkbox of a task in the reading view to switch it between
@@ -315,7 +317,8 @@ and this project adheres to
   flashcards, `todo` and `done` for tasks. Notes using it still compile with
   the Typst command-line tool.
 
-[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/mumpkin/musubi/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/mumpkin/musubi/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/mumpkin/musubi/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/mumpkin/musubi/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/mumpkin/musubi/compare/v0.2.0...v0.2.1
