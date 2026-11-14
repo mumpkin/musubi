@@ -20,6 +20,8 @@ file. `==` starts a section, `===` a subsection.
 - Web links: `#link("https://typst.app")[Typst]` gives
   #link("https://typst.app")[Typst], which opens in your browser.
 - A footnote: `#footnote[…]`#footnote[Footnotes go to the end of the note.].
+- Colors and sizes: `#text(fill: blue)[…]` gives #text(fill: blue)[blue
+  text], `#text(size: 14pt)[…]` #text(size: 14pt)[larger text].
 
 == Lists
 
@@ -27,6 +29,9 @@ file. `==` starts a section, `===` a subsection.
   - Indent it to nest it.
 + A line starting with `+` is numbered.
 + Numbers follow by themselves.
+
+#enum(numbering: "a)")[Another numbering:][`#enum(numbering: "a)")[…][…]`,
+  or `#set enum(numbering: "I.")` for the lists that follow.]
 
 / Term: A line starting with `/` and ending the term with `:` describes a
   term.
