@@ -10,6 +10,7 @@ import type { VaultTree } from '../bindings/VaultTree.ts';
 import { editorSettings } from '../editor/editor-settings.svelte.ts';
 import { listConflicts } from '../vault/conflicts.ts';
 import { pinNote, recentNotes } from '../vault/explorer.ts';
+import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import { createLinkedNote, linkedNoteTitle } from '../vault/links.ts';
 import { buildTree, splitArchive } from '../vault/tree.ts';
 import { deviceSettings, vaultTree } from '../vault/vault.ts';
@@ -48,6 +49,7 @@ export class VaultState {
 
 	constructor(tree: VaultTree) {
 		this.tree = tree;
+		folderPalette.update(tree.folders);
 		deviceSettings()
 			.then((loaded) => {
 				this.applySettings(loaded);
@@ -90,6 +92,7 @@ export class VaultState {
 
 	setTree(tree: VaultTree): void {
 		this.tree = tree;
+		folderPalette.update(tree.folders);
 		this.loads += 1;
 	}
 

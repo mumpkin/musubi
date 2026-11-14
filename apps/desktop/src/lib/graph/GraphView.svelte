@@ -28,6 +28,7 @@
 	import { dragging } from './graph-drag.ts';
 	import { drawGraph, type GraphColors, themeColors } from './graph-draw.ts';
 	import { filterGraph, type GraphFilter } from './graph-filter.ts';
+	import { graphPresence } from './graph-presence.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
 	import GraphFilters from './GraphFilters.svelte';
 
@@ -220,7 +221,9 @@
 			resize(target, box);
 		});
 		observer.observe(box);
+		const leave = graphPresence.enter();
 		return () => {
+			leave();
 			observer.disconnect();
 			simulation?.stop();
 			cancelAnimationFrame(frame);
