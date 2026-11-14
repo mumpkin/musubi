@@ -43,6 +43,16 @@ dollars, on its own:
 
 $ sum_(k=1)^n k = (n(n+1)) / 2 $
 
+To number equations, `#set math.equation(numbering: "(1)")`; label one
+with `<name>` and point to it with `@name`:
+
+#[
+  #set math.equation(numbering: "(1)")
+  $ f(x) = cases(x^2 & "if" x >= 0, -x & "otherwise") $ <cases>
+]
+
+@cases uses `cases`, a brace that grows with its lines.
+
 == Code
 
 Three backticks and the name of a language:

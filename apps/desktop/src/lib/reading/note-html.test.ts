@@ -33,6 +33,16 @@ describe('toNoteMarkup', () => {
 		);
 	});
 
+	it('gives fraction bars a visible thickness', () => {
+		const fraction = '<mfrac><mi>a</mi><mi>b</mi></mfrac>';
+		const binomial = '<mfrac linethickness="0"><mi>n</mi><mi>k</mi></mfrac>';
+		const markup = toNoteMarkup(
+			page('', `<math>${fraction}${binomial}</math>`),
+		);
+		expect(markup.body).toContain('<mfrac linethickness="1px">');
+		expect(markup.body).toContain('<mfrac linethickness="0">');
+	});
+
 	it('removes event handlers', () => {
 		const markup = toNoteMarkup(page('', '<p onclick="alert(1)">a</p>'));
 		expect(markup.body).toBe('<p>a</p>');

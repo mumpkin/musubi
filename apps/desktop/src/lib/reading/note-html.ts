@@ -99,6 +99,17 @@ function themeCodeColors(root: Element): void {
 	}
 }
 
+// WebKitGTK drops a rule thinner than a pixel when it falls between two
+// rows of pixels: the bar of a fraction (about 0.6px) comes and goes with
+// its position. A pixel keeps it; an explicit thickness (`binom`) stays.
+const FRACTION_RULE = '1px';
+
+function thickenFractionRules(root: Element): void {
+	for (const fraction of root.querySelectorAll('mfrac:not([linethickness])')) {
+		fraction.setAttribute('linethickness', FRACTION_RULE);
+	}
+}
+
 // `exists` tells whether a note path (from the vault root, with the
 // extension) is a note of the vault.
 export function toNoteMarkup(
@@ -110,6 +121,7 @@ export function toNoteMarkup(
 	markMissingLinks(document.body, exists);
 	markWebLinks(document.body);
 	themeCodeColors(document.body);
+	thickenFractionRules(document.body);
 	const styles = [...document.head.querySelectorAll('style')]
 		.map((style) => style.textContent)
 		.join('\n');

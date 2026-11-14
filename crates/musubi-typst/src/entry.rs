@@ -29,6 +29,7 @@ const STYLED: &str = "#show block: musubi-styled(\"div\", false)
 #show footnote.entry: musubi-base
 #show text: musubi-styled-text
 #show enum: musubi-numbered
+#show math.equation: musubi-equation
 ";
 
 pub fn entry_path() -> VirtualPath {

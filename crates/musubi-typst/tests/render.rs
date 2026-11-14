@@ -240,3 +240,18 @@ fn keeps_text_styles_and_list_numbering() {
 	}
 	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
 }
+
+#[test]
+fn numbers_equations() {
+	let note = NoteCompiler::new(tests_vault()).render("Math.typ");
+	let html = note.html.expect("the note compiles");
+	for expected in [
+		r#"<div id="cases" class="musubi-equation""#,
+		r#"<div class="musubi-equation-number">(1)</div>"#,
+		r#"<div class="musubi-equation-number">(2)</div>"#,
+		r##"<a href="#cases">Equation"##,
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+}
