@@ -5,6 +5,7 @@ import type { ZoomTransform } from 'd3-zoom';
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
 import { folderOf } from './graph-filter.ts';
+import { PILL_FONT } from './graph-shape.svelte.ts';
 
 export interface GraphColors {
 	link: string;
@@ -79,6 +80,9 @@ const CURRENT_RING = 2.5;
 const HOVER_RING = 1.5;
 const RING_GAP = 2;
 const HALF = 2;
+// Titles inside pills: dark text reads on every color of the folders,
+// which all have a mid lightness.
+const PILL_TEXT = '#1b1f24';
 
 function fillOf(point: GraphPoint, scene: GraphScene): string {
 	return folderPalette.colorOf(folderOf(point.path)) ?? scene.colors.node;
@@ -100,30 +104,57 @@ function ringOf(
 	return undefined;
 }
 
+// The outline of `point`, grown by `grow` graph units: its disc or its
+// pill.
+function traceNode(
+	context: CanvasRenderingContext2D,
+	point: GraphPoint,
+	grow: number,
+) {
+	const across = point.x ?? 0;
+	const down = point.y ?? 0;
+	context.beginPath();
+	if (point.halfWidth === undefined || point.halfHeight === undefined) {
+		context.arc(across, down, point.radius + grow, 0, FULL_CIRCLE);
+		return;
+	}
+	const halfWidth = point.halfWidth + grow;
+	const halfHeight = point.halfHeight + grow;
+	context.roundRect(
+		across - halfWidth,
+		down - halfHeight,
+		halfWidth * HALF,
+		halfHeight * HALF,
+		halfHeight,
+	);
+}
+
+// The title written inside a pill.
+function drawPillTitle(context: CanvasRenderingContext2D, point: GraphPoint) {
+	context.fillStyle = PILL_TEXT;
+	context.font = PILL_FONT;
+	context.textAlign = 'center';
+	context.textBaseline = 'middle';
+	context.fillText(point.title, point.x ?? 0, point.y ?? 0);
+}
+
 function drawNode(
 	context: CanvasRenderingContext2D,
 	point: GraphPoint,
 	scene: GraphScene,
 ) {
-	const across = point.x ?? 0;
-	const down = point.y ?? 0;
 	context.fillStyle = fillOf(point, scene);
-	context.beginPath();
-	context.arc(across, down, point.radius, 0, FULL_CIRCLE);
+	traceNode(context, point, 0);
 	context.fill();
+	if (point.halfWidth !== undefined) {
+		drawPillTitle(context, point);
+	}
 	const ring = ringOf(point, scene);
 	if (ring) {
 		const scale = scene.transform.k;
 		context.strokeStyle = ring.color;
 		context.lineWidth = ring.width / scale;
-		context.beginPath();
-		context.arc(
-			across,
-			down,
-			point.radius + (RING_GAP + ring.width / HALF) / scale,
-			0,
-			FULL_CIRCLE,
-		);
+		traceNode(context, point, (RING_GAP + ring.width / HALF) / scale);
 		context.stroke();
 	}
 }
@@ -168,7 +199,8 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 		const isMarked = point === scene.hovered
 			|| point.path === scene.current
 			|| point.path === scene.selected;
-		if (isZoomedIn || isMarked) {
+		const isPill = point.halfWidth !== undefined;
+		if (!isPill && (isZoomedIn || isMarked)) {
 			drawLabel(context, point, scene);
 		}
 	}

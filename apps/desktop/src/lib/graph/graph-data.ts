@@ -11,6 +11,9 @@ export interface GraphPoint extends SimulationNodeDatum {
 	// Links to and from the note.
 	degree: number;
 	radius: number;
+	// Half the size of the note drawn as a pill; unset for a dot.
+	halfWidth?: number | undefined;
+	halfHeight?: number | undefined;
 }
 
 export type GraphEdge = SimulationLinkDatum<GraphPoint>;
@@ -55,20 +58,25 @@ export async function readGraph(): Promise<Graph> {
 	return invoke<Graph>('vault_graph');
 }
 
-// The note drawn at `across`, `down` (graph coordinates): the pointer must
-// be on its disc. The last drawn, on top, wins.
+// Whether `across`, `down` (graph coordinates) is on the note as drawn:
+// its disc, or its pill.
+function isOn(point: GraphPoint, across: number, down: number): boolean {
+	const awayAcross = Math.abs((point.x ?? 0) - across);
+	const awayDown = Math.abs((point.y ?? 0) - down);
+	if (point.halfWidth !== undefined && point.halfHeight !== undefined) {
+		return awayAcross <= point.halfWidth && awayDown <= point.halfHeight;
+	}
+	return Math.hypot(awayAcross, awayDown) <= point.radius;
+}
+
+// The note drawn at `across`, `down` (graph coordinates). The last drawn,
+// on top, wins.
 export function pointUnder(
 	points: GraphPoint[],
 	across: number,
 	down: number,
 ): GraphPoint | undefined {
-	return points.findLast((point) => {
-		const distance = Math.hypot(
-			(point.x ?? 0) - across,
-			(point.y ?? 0) - down,
-		);
-		return distance <= point.radius;
-	});
+	return points.findLast((point) => isOn(point, across, down));
 }
 
 export interface Bounds {

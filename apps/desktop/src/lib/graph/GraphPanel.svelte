@@ -1,10 +1,12 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- The controls of the graph, in a small panel over its bottom left
-     corner: which notes it shows, how deep in the folders, and the note
-     selected with a click, to open. It folds down to its title. -->
+     corner: which notes it shows, how deep in the folders, the shape of
+     the notes, and the note selected with a click, to open. It folds down
+     to its title. -->
 <script lang="ts">
 	import { folderPalette } from '../vault/folder-palette.svelte.ts';
 	import { folderOf, type GraphFilter } from './graph-filter.ts';
+	import { graphShape } from './graph-shape.svelte.ts';
 
 	interface Note {
 		path: string;
@@ -33,6 +35,10 @@
 		{ kind: 'all', label: 'All' },
 		{ kind: 'links', label: 'Linked' },
 		{ kind: 'folder', label: 'Folder' },
+	] as const;
+	const SHAPES = [
+		{ shape: 'dot', label: 'Dots' },
+		{ shape: 'pill', label: 'Pills' },
 	] as const;
 	const DEPTHS = [
 		{ depth: 0, label: 'This folder' },
@@ -120,6 +126,25 @@
 			</div>
 		{/if}
 		<p class="summary">{summary}</p>
+		<div class="row">
+			<span class="label">Nodes</span>
+			<div
+				class="choices"
+				role="radiogroup"
+				aria-label="Shape of the notes"
+			>
+				{#each SHAPES as choice (choice.shape)}
+					<button
+						type="button"
+						role="radio"
+						aria-checked={graphShape.value === choice.shape}
+						onclick={() => {
+							graphShape.set(choice.shape);
+						}}
+					>{choice.label}</button>
+				{/each}
+			</div>
+		</div>
 		{#if selected}
 			<div class="selected">
 				<span

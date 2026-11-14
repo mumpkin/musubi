@@ -52,4 +52,10 @@ describe('pointUnder', () => {
 		const points = [point('A', 0), point('B', 2)];
 		expect(pointUnder(points, 1, 0)?.path).toBe('B');
 	});
+
+	it('finds a pill on its whole width', () => {
+		const pill = { ...point('A', 0), halfWidth: 30, halfHeight: 8 };
+		expect(pointUnder([pill], 25, 5)?.path).toBe('A');
+		expect(pointUnder([pill], 25, 10)).toBeUndefined();
+	});
 });

@@ -39,6 +39,8 @@ export function simulate(
 		.force('y', forceY<GraphPoint>(0).strength(CENTRE_PULL))
 		.force(
 			'collide',
-			forceCollide<GraphPoint>((point) => point.radius + COLLISION_GAP),
+			forceCollide<GraphPoint>(
+				(point) => (point.halfWidth ?? point.radius) + COLLISION_GAP,
+			),
 		);
 }
