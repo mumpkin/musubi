@@ -39,4 +39,8 @@ You made it to the end of the hunt. The treasure is the
 #note-link("Welcome/Using_Musubi")[reference card]: the whole app on one
 page, to come back to later.
 
+And for ideas, the `Examples` folder next to these notes holds a few pages
+written in Typst: a #note-link("Welcome/Examples/Character_sheet")[character
+sheet], a #note-link("Welcome/Examples/Drawn_map")[drawn map] and more.
+
 Linked from #note-link("Welcome/Writing_Typst")[Writing Typst].
