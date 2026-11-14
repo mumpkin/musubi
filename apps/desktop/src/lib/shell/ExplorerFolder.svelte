@@ -5,6 +5,8 @@
 <script lang="ts">
 	import type { SvelteSet } from 'svelte/reactivity';
 
+	import { graphPresence } from '../graph/graph-presence.svelte.ts';
+	import { folderPalette } from '../vault/folder-palette.svelte.ts';
 	import type { FolderNode } from '../vault/tree.ts';
 	import { dragEntry, dropFolder } from './drag-drop.ts';
 	import Self from './ExplorerFolder.svelte';
@@ -57,6 +59,13 @@
 					<Icon name={folded.has(child.path) ? 'folded' : 'unfolded'} />
 				</span>
 				<span class="name">{child.name}</span>
+				{#if graphPresence.isShown}
+					<span
+						class="folder-color"
+						style:background={folderPalette.colorOf(child.path)}
+						aria-hidden="true"
+					></span>
+				{/if}
 			</button>
 			{#if !folded.has(child.path)}
 				<Self
@@ -117,6 +126,15 @@
 
 	button:hover {
 		background: var(--hover);
+	}
+
+	/* While a graph is shown: the color its notes have there. */
+	.folder-color {
+		flex-shrink: 0;
+		width: 0.5rem;
+		height: 0.5rem;
+		margin: 0 0.1rem 0 auto;
+		border-radius: 50%;
 	}
 
 	/* A folder an entry can be dropped on. */

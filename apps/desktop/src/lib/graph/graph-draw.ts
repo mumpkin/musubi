@@ -2,7 +2,9 @@
 // Draws the graph on a canvas, in the colors of the theme.
 import type { ZoomTransform } from 'd3-zoom';
 
+import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
+import { folderOf } from './graph-filter.ts';
 
 export interface GraphColors {
 	link: string;
@@ -69,11 +71,56 @@ function drawEdges(context: CanvasRenderingContext2D, scene: GraphScene) {
 	context.stroke();
 }
 
-function colorOf(point: GraphPoint, scene: GraphScene): string {
+// Rings around the note of the pane and the note under the pointer, in
+// screen pixels: the fill keeps the color of the folder.
+const CURRENT_RING = 2.5;
+const HOVER_RING = 1.5;
+const RING_GAP = 2;
+const HALF = 2;
+
+function fillOf(point: GraphPoint, scene: GraphScene): string {
+	return folderPalette.colorOf(folderOf(point.path)) ?? scene.colors.node;
+}
+
+function ringOf(
+	point: GraphPoint,
+	scene: GraphScene,
+): { color: string; width: number } | undefined {
 	if (point.path === scene.current) {
-		return scene.colors.current;
+		return { color: scene.colors.current, width: CURRENT_RING };
 	}
-	return point === scene.hovered ? scene.colors.hovered : scene.colors.node;
+	if (point === scene.hovered) {
+		return { color: scene.colors.hovered, width: HOVER_RING };
+	}
+	return undefined;
+}
+
+function drawNode(
+	context: CanvasRenderingContext2D,
+	point: GraphPoint,
+	scene: GraphScene,
+) {
+	const across = point.x ?? 0;
+	const down = point.y ?? 0;
+	context.fillStyle = fillOf(point, scene);
+	context.beginPath();
+	context.arc(across, down, point.radius, 0, FULL_CIRCLE);
+	context.fill();
+	const ring = ringOf(point, scene);
+	if (ring) {
+		const scale = scene.transform.k;
+		context.strokeStyle = ring.color;
+		context.lineWidth = ring.width / scale;
+		context.beginPath();
+		context.arc(
+			across,
+			down,
+			point.radius + (RING_GAP + ring.width / HALF) / scale,
+			0,
+			FULL_CIRCLE,
+		);
+		context.stroke();
+	}
 }
 
 function drawLabel(
@@ -109,10 +156,7 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 	);
 	drawEdges(context, scene);
 	for (const point of scene.model.points) {
-		context.fillStyle = colorOf(point, scene);
-		context.beginPath();
-		context.arc(point.x ?? 0, point.y ?? 0, point.radius, 0, FULL_CIRCLE);
-		context.fill();
+		drawNode(context, point, scene);
 	}
 	const isZoomedIn = transform.k >= LABEL_ZOOM;
 	for (const point of scene.model.points) {

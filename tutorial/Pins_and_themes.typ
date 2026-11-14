@@ -22,6 +22,7 @@ The next step is in the *graph* of the links: press `Space g`, find the note
 named _Writing Typst_ and click it. `Space g` again leaves the graph.
 The buttons in its corner narrow it: _Linked notes_ keeps the notes linked
 to this one, both ways; the name of the folder keeps the notes of its
-folder and subfolders.
+folder and subfolders. Notes take the color of their folder: while the
+graph is shown, a dot of that color follows each folder in the explorer.
 
 Back to the #note-link("Welcome/Helix_workshop")[workshop].
