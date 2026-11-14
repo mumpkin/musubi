@@ -36,6 +36,10 @@ and this project adheres to
 
 ### Fixed
 
+- Equations: the math font of Typst ships with the app, so braces
+  (`cases`) and integrals stretch whatever the fonts of the system;
+  fraction bars no longer vanish; numbered equations show their number
+  on the right.
 - Text keeps its color, size, letter spacing and weight
   (`#text(fill: red)[…]`) in the reading view, with colors made readable
   in a dark theme; numbered lists keep their numbering (`a)`, `I.`,

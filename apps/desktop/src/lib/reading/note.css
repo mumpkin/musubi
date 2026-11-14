@@ -12,12 +12,31 @@
 	font-size: 1.35rem;
 }
 
+/* The math font of Typst, shipped with the app: its stretchy braces and
+   large operators do not depend on the fonts of the system. */
+@font-face {
+	font-family: 'Musubi Math';
+	src: url('./fonts/NewCMMath-Regular.woff2') format('woff2');
+	font-display: block;
+}
+
 .reading-view math {
-	font-family: 'New Computer Modern Math', 'STIX Two Math', math;
+	font-family: 'Musubi Math', 'New Computer Modern Math', math;
 }
 
 .reading-view math[display='block'] {
 	margin: 1rem 0;
+}
+
+/* A numbered equation: the number, written by Typst, on the right. */
+.reading-view .musubi-equation {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.reading-view .musubi-equation > math {
+	flex: 1;
 }
 
 .reading-view pre {

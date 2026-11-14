@@ -230,3 +230,17 @@
   }
   html.elem("ol", attrs: (class: "musubi-enum"), items.join())
 }
+
+// A numbered equation on its own line: MathML has no numbers, so the
+// number, written by Typst, follows the equation in a row of its own.
+#let musubi-equation(it) = context {
+  if not musubi-is-html() or not it.block or it.numbering == none {
+    return it
+  }
+  let counts = counter(math.equation).at(it.location())
+  let number = numbering(it.numbering, ..counts)
+  html.elem("div", attrs: (class: "musubi-equation"), {
+    it
+    html.elem("div", attrs: (class: "musubi-equation-number"), number)
+  })
+}
