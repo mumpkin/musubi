@@ -19,6 +19,8 @@ use typst_html::{HtmlAttr, HtmlElement, HtmlNode, tag};
 use crate::blocks::SourceBlock;
 
 const BLOCK_ATTRIBUTE: &str = "data-block";
+/// The class of the `span` that gives text its color or size.
+const STYLED_TEXT_CLASS: &str = "musubi-text";
 
 /// What the annotation needs to know about the note.
 pub struct SourceMap<'a> {
@@ -136,9 +138,19 @@ impl SourceMap<'_> {
 	}
 }
 
+/// Whether `element` has children other than text; a `span` that only
+/// carries the style of its text (`entry.typ`) counts as text.
 fn has_element_children(element: &HtmlElement) -> bool {
-	element
-		.children
-		.iter()
-		.any(|child| matches!(child, HtmlNode::Element(_)))
+	element.children.iter().any(|child| match child {
+		HtmlNode::Element(child) => !is_styled_text(child),
+		_ => false,
+	})
+}
+
+fn is_styled_text(element: &HtmlElement) -> bool {
+	element.tag == tag::span
+		&& element.attrs.0.iter().any(|(attribute, value)| {
+			attribute.resolve().as_str() == "class"
+				&& value == STYLED_TEXT_CLASS
+		})
 }

@@ -142,3 +142,91 @@
   // The alignment is lost in HTML, but the content stays.
   if musubi-is-html() { it.body } else { it }
 }
+
+// Text with a color, a size, a spacing or a weight of its own. Headings,
+// code and footnotes take the base size and weight first, so that only what the
+// note changes shows; the reading view styles them already.
+#let musubi-base(it) = context {
+  if musubi-is-html() {
+    set text(size: musubi-em-size, weight: "regular")
+    it
+  } else { it }
+}
+
+#let musubi-text-style() = {
+  let rules = ()
+  if type(text.fill) == color and text.fill != black {
+    rules.push("--musubi-color: " + text.fill.to-hex())
+  }
+  let size = text.size.to-absolute()
+  if size != musubi-em-size {
+    let ratio = calc.round(size / musubi-em-size, digits: 3)
+    rules.push("font-size: " + str(ratio) + "em")
+  }
+  if text.tracking != 0pt {
+    rules.push("letter-spacing: " + musubi-em(text.tracking))
+  }
+  let weight = if type(text.weight) == int { text.weight } else {
+    (thin: 100, extralight: 200, light: 300, regular: 400, medium: 500,
+      semibold: 600, bold: 700, extrabold: 800, black: 900).at(text.weight)
+  }
+  // Equations use a weight of 450: only a clear change counts.
+  if weight < 300 or weight > 500 {
+    rules.push("font-weight: " + str(weight))
+  }
+  rules
+}
+
+#let musubi-styled-text(it) = context {
+  if not musubi-is-html() { return it }
+  let rules = musubi-text-style()
+  if rules == () { return it }
+  html.elem("span", attrs: (class: "musubi-text", style: rules.join("; ")), it)
+}
+
+// A numbered list with another numbering than `1.` (`a)`, `I.`, `1.a.`…):
+// each item carries its marker, written by Typst. The numbers of the
+// items around a nested list give its level, as Typst counts them.
+#let musubi-parents = state("musubi-enum-parents", ())
+
+#let musubi-quoted(marker) = {
+  "\"" + marker.replace("\\", "\\\\").replace("\"", "\\\"") + " \""
+}
+
+// The marker of item `number` under `parents`: the whole chain with
+// `full`, else only the counting symbol of its level.
+#let musubi-marker(it, parents, number) = {
+  let marker = numbering(it.numbering, ..parents, number)
+  if type(marker) != str { return none }
+  if it.full or parents == () { return musubi-quoted(marker) }
+  let prefix = numbering(it.numbering, ..parents)
+  if type(prefix) == str and marker.starts-with(prefix) {
+    marker = marker.slice(prefix.len())
+  }
+  musubi-quoted(marker)
+}
+
+#let musubi-numbered(it) = context {
+  if not musubi-is-html() or it.numbering == "1." { return it }
+  let parents = musubi-parents.get()
+  let step = if it.reversed { -1 } else { 1 }
+  let number = if it.start != auto { it.start } else if it.reversed {
+    it.children.len()
+  } else { 1 }
+  let items = ()
+  for item in it.children {
+    let explicit = item.at("number", default: auto)
+    if explicit != auto { number = explicit }
+    let marker = musubi-marker(it, parents, number)
+    if marker == none { return it }
+    let body = {
+      musubi-parents.update(parents + (number,))
+      item.body
+      musubi-parents.update(parents)
+    }
+    let style = "list-style-type: " + marker
+    items.push(html.elem("li", attrs: (style: style), body))
+    number += step
+  }
+  html.elem("ol", attrs: (class: "musubi-enum"), items.join())
+}

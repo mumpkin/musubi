@@ -136,7 +136,7 @@ fn maps_generated_content_to_its_call() {
 	let html = note.html.expect("the note compiles");
 	for expected in [
 		r#"<p data-block="1">Lorem"#,
-		r#"<strong data-block="4">Replaced heading"#,
+		r#"<strong data-block="4"><span class="musubi-text""#,
 		r#"<ul data-block="5">"#,
 		"<p>Included paragraph.</p>",
 	] {
@@ -219,5 +219,24 @@ fn keeps_the_look_of_blocks_and_boxes() {
 	}
 	// The drawing of a fixed height and the gradient are islands.
 	assert_eq!(island_widths(&html).len(), 2);
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+}
+
+#[test]
+fn keeps_text_styles_and_list_numbering() {
+	let note = NoteCompiler::new(tests_vault()).render("Text.typ");
+	let html = note.html.expect("the note compiles");
+	for expected in [
+		r#"style="--musubi-color: #ff4136""#,
+		r#"style="font-size: 1.273em""#,
+		r#"style="letter-spacing: 0.182em""#,
+		r#"style="font-weight: 700""#,
+		"<strong>strong</strong>",
+		"list-style-type: &quot;a) &quot;",
+		"list-style-type: &quot;b) &quot;",
+		"list-style-type: &quot;a. &quot;",
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
 	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
 }

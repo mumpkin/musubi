@@ -19,10 +19,16 @@ const FRAMED: [&str; 16] = [
 	"rotate", "scale", "skew", "move", "place", "stack", "columns", "repeat",
 ];
 
-/// Show rules after `RULES`: blocks and boxes keep their look.
+/// Show rules after `RULES`: blocks, boxes and text keep their look, lists
+/// their numbering.
 const STYLED: &str = "#show block: musubi-styled(\"div\", false)
 #show box: musubi-styled(\"span\", true)
 #show align: musubi-unaligned
+#show heading: musubi-base
+#show raw: musubi-base
+#show footnote.entry: musubi-base
+#show text: musubi-styled-text
+#show enum: musubi-numbered
 ";
 
 pub fn entry_path() -> VirtualPath {

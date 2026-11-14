@@ -277,6 +277,15 @@ the icon is drawn as a mask, in the colour of the text around it. */
 	margin: 1rem 0;
 }
 
+/* The inset of the block sets the room around its content. */
+.reading-view .musubi-box > :first-child {
+	margin-top: 0;
+}
+
+.reading-view .musubi-box > :last-child {
+	margin-bottom: 0;
+}
+
 .reading-view span.musubi-box {
 	display: inline-block;
 }
@@ -285,5 +294,14 @@ the icon is drawn as a mask, in the colour of the text around it. */
 	background: light-dark(
 		var(--musubi-fill),
 		color-mix(in srgb, var(--musubi-fill) 25%, var(--background))
+	);
+}
+
+/* Text colored in the note: as is in a light theme, mixed with the text
+   color of the theme in a dark one, so that a dark color stays readable. */
+.reading-view .musubi-text[style*='--musubi-color'] {
+	color: light-dark(
+		var(--musubi-color),
+		color-mix(in oklab, var(--musubi-color) 65%, var(--foreground))
 	);
 }

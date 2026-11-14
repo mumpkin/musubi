@@ -36,6 +36,10 @@ and this project adheres to
 
 ### Fixed
 
+- Text keeps its color, size, letter spacing and weight
+  (`#text(fill: red)[…]`) in the reading view, with colors made readable
+  in a dark theme; numbered lists keep their numbering (`a)`, `I.`,
+  `1.a.`). Fonts and gradient text are still shown as plain text.
 - Blocks and boxes keep their fill, border, inset and rounded corners in
   the reading view (a fill tints the background in a dark theme); a block
   of a fixed height, such as a drawn map, is drawn whole. Text aligned
