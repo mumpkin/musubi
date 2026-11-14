@@ -1,12 +1,13 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- The controls of the graph, in a small panel over its bottom left
-     corner: which notes it shows, how deep in the folders, the shape of
-     the notes, and the note selected with a click, to open. It folds down
-     to its title. -->
+     corner: which notes it shows (all, linked, a folder), the shape of the
+     notes, their grouping by folder, and the note selected with a click,
+     to open. It folds down to its title. -->
 <script lang="ts">
 	import { folderPalette } from '../vault/folder-palette.svelte.ts';
+	import ChoiceRow from './ChoiceRow.svelte';
 	import { folderOf, type GraphFilter } from './graph-filter.ts';
-	import { graphShape } from './graph-shape.svelte.ts';
+	import { graphOptions, type NodeShape } from './graph-options.svelte.ts';
 
 	interface Note {
 		path: string;
@@ -28,26 +29,41 @@
 	let isFolded = $state(false);
 
 	function choose(kind: GraphFilter['kind']): void {
-		onFilter({ kind, depth: filter.depth });
+		onFilter({ kind, folder: filter.folder });
 	}
 
-	const KINDS = [
-		{ kind: 'all', label: 'All' },
-		{ kind: 'links', label: 'Linked' },
-		{ kind: 'folder', label: 'Folder' },
-	] as const;
+	function chooseShape(shape: NodeShape): void {
+		graphOptions.setShape(shape);
+	}
+
+	function chooseGrouping(grouping: 'off' | 'folders'): void {
+		graphOptions.setGrouped(grouping === 'folders');
+	}
+
+	function chooseFolder(event: Event): void {
+		const { value } = event.currentTarget as HTMLSelectElement;
+		onFilter({ kind: 'folder', folder: value });
+	}
+
+	const kinds = $derived([
+		{ value: 'all', label: 'All' },
+		{ value: 'links', label: 'Linked', isDisabled: !centre },
+		{ value: 'folder', label: 'Folder' },
+	] as const);
 	const SHAPES = [
-		{ shape: 'dot', label: 'Dots' },
-		{ shape: 'pill', label: 'Pills' },
+		{ value: 'dot', label: 'Dots' },
+		{ value: 'pill', label: 'Pills' },
 	] as const;
-	const DEPTHS = [
-		{ depth: 0, label: 'This folder' },
-		{ depth: 1, label: '1' },
-		{ depth: 2, label: '2' },
-		{ depth: undefined, label: 'All' },
+	const GROUPS = [
+		{ value: 'off', label: 'Off' },
+		{ value: 'folders', label: 'By folder' },
 	] as const;
 
-	const folder = $derived(centre ? folderOf(centre.path) : '');
+	// The folder shown by the folder filter: the one chosen, or the folder
+	// of the selected note.
+	const folder = $derived(
+		filter.folder ?? (centre ? folderOf(centre.path) : ''),
+	);
 
 	function colorOf(path: string): string {
 		return folderPalette.colorOf(folderOf(path)) ?? 'var(--muted)';
@@ -59,9 +75,8 @@
 		if (filter.kind === 'links' && centre) {
 			return `Notes linked to ${centre.title}`;
 		}
-		if (filter.kind === 'folder' && centre) {
-			const below = filter.depth === 0 ? '' : ' and below';
-			return `Notes in ${folderName}${below}`;
+		if (filter.kind === 'folder') {
+			return `Notes in ${folderName} and its subfolders`;
 		}
 		return 'Every note of the vault';
 	});
@@ -84,67 +99,43 @@
 		<span class="chevron">{isFolded ? '▴' : '▾'}</span>
 	</button>
 	{#if !isFolded}
-		<div class="row">
-			<span class="label">Show</span>
-			<div
-				class="choices"
-				role="radiogroup"
-				aria-label="Notes shown"
-			>
-				{#each KINDS as choice (choice.kind)}
-					<button
-						type="button"
-						role="radio"
-						aria-checked={filter.kind === choice.kind}
-						disabled={!centre && choice.kind !== 'all'}
-						onclick={() => {
-							choose(choice.kind);
-						}}
-					>{choice.label}</button>
-				{/each}
-			</div>
-		</div>
+		<ChoiceRow
+			label="Show"
+			description="Notes shown"
+			choices={kinds}
+			checked={filter.kind}
+			onChoose={choose}
+		/>
 		{#if filter.kind === 'folder'}
-			<div class="row">
-				<span class="label">Depth</span>
-				<div
-					class="choices"
-					role="radiogroup"
-					aria-label="Subfolders shown"
+			<div class="folder-row">
+				<span class="label">In</span>
+				<select
+					value={folder}
+					aria-label="Folder shown"
+					onchange={chooseFolder}
 				>
-					{#each DEPTHS as choice (choice.label)}
-						<button
-							type="button"
-							role="radio"
-							aria-checked={filter.depth === choice.depth}
-							onclick={() => {
-								onFilter({ kind: 'folder', depth: choice.depth });
-							}}
-						>{choice.label}</button>
+					<option value="">Vault root</option>
+					{#each folderPalette.folders as path (path)}
+						<option value={path}>{path}</option>
 					{/each}
-				</div>
+				</select>
 			</div>
 		{/if}
 		<p class="summary">{summary}</p>
-		<div class="row">
-			<span class="label">Nodes</span>
-			<div
-				class="choices"
-				role="radiogroup"
-				aria-label="Shape of the notes"
-			>
-				{#each SHAPES as choice (choice.shape)}
-					<button
-						type="button"
-						role="radio"
-						aria-checked={graphShape.value === choice.shape}
-						onclick={() => {
-							graphShape.set(choice.shape);
-						}}
-					>{choice.label}</button>
-				{/each}
-			</div>
-		</div>
+		<ChoiceRow
+			label="Nodes"
+			description="Shape of the notes"
+			choices={SHAPES}
+			checked={graphOptions.shape}
+			onChoose={chooseShape}
+		/>
+		<ChoiceRow
+			label="Group"
+			description="Grouping of the notes"
+			choices={GROUPS}
+			checked={graphOptions.isGrouped ? 'folders' : 'off'}
+			onChoose={chooseGrouping}
+		/>
 		{#if selected}
 			<div class="selected">
 				<span
@@ -209,7 +200,7 @@
 		text-transform: uppercase;
 	}
 
-	.row {
+	.folder-row {
 		display: flex;
 		gap: 0.5rem;
 		align-items: center;
@@ -222,31 +213,15 @@
 		font-size: 0.8rem;
 	}
 
-	.choices {
-		display: flex;
+	select {
 		flex: 1;
-		padding: 0.15rem;
+		min-width: 0;
+		padding: 0.15rem 0.3rem;
+		border: 1px solid var(--border);
 		border-radius: 6px;
 		background: var(--surface);
-	}
-
-	.choices button {
-		flex: 1;
-		padding: 0.1rem 0.3rem;
-		border-radius: 4px;
-		color: var(--muted);
-		white-space: nowrap;
-	}
-
-	.choices button[aria-checked='true'] {
-		background: var(--background);
-		box-shadow: 0 0 0 1px var(--border);
 		color: var(--foreground);
-	}
-
-	.choices button:disabled {
-		opacity: 0.5;
-		cursor: default;
+		font: inherit;
 	}
 
 	.summary {
