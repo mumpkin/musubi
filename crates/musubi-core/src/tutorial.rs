@@ -54,24 +54,24 @@ const FILES: [(&str, &str); 16] = [
 		include_str!("../../../tutorial/Using_Musubi.typ"),
 	),
 	(
-		"Examples/Character_sheet.typ",
-		include_str!("../../../tutorial/Examples/Character_sheet.typ"),
+		"Advanced Examples/Character_sheet.typ",
+		include_str!("../../../tutorial/Advanced Examples/Character_sheet.typ"),
 	),
 	(
-		"Examples/Cornell_notes.typ",
-		include_str!("../../../tutorial/Examples/Cornell_notes.typ"),
+		"Advanced Examples/Cornell_notes.typ",
+		include_str!("../../../tutorial/Advanced Examples/Cornell_notes.typ"),
 	),
 	(
-		"Examples/Drawn_map.typ",
-		include_str!("../../../tutorial/Examples/Drawn_map.typ"),
+		"Advanced Examples/Drawn_map.typ",
+		include_str!("../../../tutorial/Advanced Examples/Drawn_map.typ"),
 	),
 	(
-		"Examples/Journal_page.typ",
-		include_str!("../../../tutorial/Examples/Journal_page.typ"),
+		"Advanced Examples/Journal_page.typ",
+		include_str!("../../../tutorial/Advanced Examples/Journal_page.typ"),
 	),
 	(
-		"Examples/Revision_sheet.typ",
-		include_str!("../../../tutorial/Examples/Revision_sheet.typ"),
+		"Advanced Examples/Revision_sheet.typ",
+		include_str!("../../../tutorial/Advanced Examples/Revision_sheet.typ"),
 	),
 	(
 		"Typst_basics.assets/musubi.svg",

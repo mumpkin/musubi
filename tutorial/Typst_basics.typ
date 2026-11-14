@@ -89,12 +89,12 @@ grids. What the reading view cannot show as text is drawn as an image. The
 #link("https://typst.app/docs/tutorial/")[Typst tutorial] explains it all.
 
 Five short pages show what that gives, each with comments in its source
-(press `i`): a #note-link("Welcome/Examples/Character_sheet")[character
-sheet], #note-link("Welcome/Examples/Cornell_notes")[Cornell notes], a
-#note-link("Welcome/Examples/Revision_sheet")[revision sheet], a
-#note-link("Welcome/Examples/Journal_page")[journal page] and a
-#note-link("Welcome/Examples/Drawn_map")[drawn map], in
-`Welcome/Examples/`.
+(press `i`), in `Welcome/Advanced Examples/`: a
+#note-link("Welcome/Advanced Examples/Character_sheet")[character sheet],
+#note-link("Welcome/Advanced Examples/Cornell_notes")[Cornell notes], a
+#note-link("Welcome/Advanced Examples/Revision_sheet")[revision sheet], a
+#note-link("Welcome/Advanced Examples/Journal_page")[journal page] and a
+#note-link("Welcome/Advanced Examples/Drawn_map")[drawn map].
 
 Packages from Typst Universe (`#import "@preview/…"`) are not available:
 Musubi works offline and downloads nothing. A note that imports one still

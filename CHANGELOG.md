@@ -10,7 +10,7 @@ and this project adheres to
 
 ### Added
 
-- Examples in the tutorial (`Welcome/Examples/`): a character sheet,
+- Examples in the tutorial (`Welcome/Advanced Examples/`): a character sheet,
   Cornell notes, a revision sheet, a journal page and a drawn map, short
   and commented, to see what Typst gives in Musubi.
 - Drag a note or a folder onto a folder of the explorer, or onto the

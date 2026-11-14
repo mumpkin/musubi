@@ -60,7 +60,7 @@ fn installs_the_missing_files_only() {
 	assert!(
 		directory
 			.path()
-			.join("Welcome/Examples/Drawn_map.typ")
+			.join("Welcome/Advanced Examples/Drawn_map.typ")
 			.is_file()
 	);
 }
