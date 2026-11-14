@@ -39,6 +39,8 @@ and this project adheres to
 
 ### Fixed
 
+- The graph catches a note, to drag it or show its title, only when the
+  pointer is on its disc, no longer from around it.
 - A note that imports a package Musubi cannot load (`@preview/…`, as it
   works offline) shows anyway: a notice replaces the import and what uses
   the package, with its source, instead of an empty pane.
