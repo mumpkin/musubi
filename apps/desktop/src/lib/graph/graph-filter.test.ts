@@ -19,9 +19,9 @@ const graph: Graph = {
 	],
 };
 
-const links = { kind: 'links', depth: undefined } as const;
-const folder = (depth: number | undefined) =>
-	({ kind: 'folder', depth }) as const;
+const links = { kind: 'links', folder: undefined } as const;
+const folder = (chosen: string | undefined) =>
+	({ kind: 'folder', folder: chosen }) as const;
 
 const paths = (filtered: Graph): string[] =>
 	filtered.nodes.map((node) => node.path);
@@ -46,16 +46,9 @@ describe('filterGraph', () => {
 		expect(filtered.links).toEqual([{ source: 0, target: 1 }]);
 	});
 
-	it('goes down the subfolders only to the depth asked', () => {
-		const filtered = filterGraph(graph, folder(0), 'Maths/B.typ');
-		expect(paths(filtered)).toEqual(['Maths/B.typ']);
-		const root = filterGraph(graph, folder(1), 'A.typ');
-		expect(paths(root)).toEqual([
-			'A.typ',
-			'Maths/B.typ',
-			'Philo/D.typ',
-			'Mathsy/E.typ',
-		]);
+	it('keeps the notes of a folder chosen apart from the note', () => {
+		const filtered = filterGraph(graph, folder('Philo'), 'Maths/B.typ');
+		expect(paths(filtered)).toEqual(['Philo/D.typ']);
 	});
 
 	it('keeps everything for a note unknown to the graph', () => {

@@ -6,6 +6,11 @@ import { assignFolderColors, fallbackFolderColor } from './folder-colors.ts';
 class FolderPalette {
 	private colors = $state(new Map<string, string>());
 
+	// Every folder of the vault, by path.
+	get folders(): string[] {
+		return [...this.colors.keys()].sort();
+	}
+
 	// The folders of the vault were read again.
 	update(folders: readonly string[]): void {
 		this.colors = assignFolderColors(folders);

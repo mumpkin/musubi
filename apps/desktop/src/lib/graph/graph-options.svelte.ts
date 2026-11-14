@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// The shape of the notes of the graph, for a trial: dots with the title
-// below, or pills with the title inside. Kept on this device.
+// Options of the graph, kept on this device: the shape of the notes (dots
+// with the title below, or pills with the title inside) and whether the
+// notes of a folder are grouped together.
 import type { GraphPoint } from './graph-data.ts';
 
 export type NodeShape = 'dot' | 'pill';
 
-const STORAGE_KEY = 'musubi.graph.nodeShape';
+const SHAPE_KEY = 'musubi.graph.nodeShape';
+const GROUPS_KEY = 'musubi.graph.folderGroups';
 
 // Size of the pills, in units of the graph (one unit is a screen pixel at
 // zoom 1).
@@ -15,20 +17,25 @@ const PILL_PADDING = 6;
 const PILL_HALF_HEIGHT = 8;
 const HALF = 2;
 
-function readShape(): NodeShape {
-	return localStorage.getItem(STORAGE_KEY) === 'pill' ? 'pill' : 'dot';
-}
+class GraphOptions {
+	shape = $state<NodeShape>(
+		localStorage.getItem(SHAPE_KEY) === 'pill' ? 'pill' : 'dot',
+	);
 
-class GraphShape {
-	value = $state<NodeShape>(readShape());
+	isGrouped = $state(localStorage.getItem(GROUPS_KEY) === 'true');
 
-	set(shape: NodeShape): void {
-		this.value = shape;
-		localStorage.setItem(STORAGE_KEY, shape);
+	setShape(shape: NodeShape): void {
+		this.shape = shape;
+		localStorage.setItem(SHAPE_KEY, shape);
+	}
+
+	setGrouped(isGrouped: boolean): void {
+		this.isGrouped = isGrouped;
+		localStorage.setItem(GROUPS_KEY, String(isGrouped));
 	}
 }
 
-export const graphShape = new GraphShape();
+export const graphOptions = new GraphOptions();
 
 let measuring: CanvasRenderingContext2D | null | undefined;
 

@@ -4,14 +4,14 @@
 import type { Graph } from '../bindings/Graph.ts';
 
 // `all`: every note; `links`: the note and the notes it links to or that
-// link to it; `folder`: the notes of its folder, and of its subfolders down
-// to `depth` levels (`undefined`: all of them).
+// link to it; `folder`: the notes of `folder` and of its subfolders, or of
+// the folder of the note when `folder` is unset.
 export interface GraphFilter {
 	kind: 'all' | 'links' | 'folder';
-	depth: number | undefined;
+	folder: string | undefined;
 }
 
-export const EVERY_NOTE: GraphFilter = { kind: 'all', depth: undefined };
+export const EVERY_NOTE: GraphFilter = { kind: 'all', folder: undefined };
 
 // The folder of the note at `path`, `''` for the vault root.
 export function folderOf(path: string): string {
@@ -19,17 +19,8 @@ export function folderOf(path: string): string {
 	return slash === -1 ? '' : path.slice(0, slash);
 }
 
-function isInFolder(
-	path: string,
-	folder: string,
-	depth: number | undefined,
-): boolean {
-	if (folder !== '' && !path.startsWith(`${folder}/`)) {
-		return false;
-	}
-	const inside = folder === '' ? path : path.slice(folder.length + 1);
-	const subfolders = inside.split('/').length - 1;
-	return depth === undefined || subfolders <= depth;
+function isInFolder(path: string, folder: string): boolean {
+	return folder === '' || path.startsWith(`${folder}/`);
 }
 
 // Indices of the notes `filter` keeps, around the note at `current`.
@@ -40,10 +31,10 @@ function keptNotes(
 ): Set<number> {
 	const all = [...graph.nodes.keys()];
 	if (filter.kind === 'folder') {
-		const folder = folderOf(current);
+		const folder = filter.folder ?? folderOf(current);
 		return new Set(all.filter((index) => {
 			const path = graph.nodes[index]?.path ?? '';
-			return isInFolder(path, folder, filter.depth);
+			return isInFolder(path, folder);
 		}));
 	}
 	const centre = graph.nodes.findIndex((node) => node.path === current);

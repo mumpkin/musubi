@@ -10,10 +10,13 @@ and this project adheres to
 
 ### Added
 
-- A panel over the corner of the graph chooses the notes it shows, around
-  the selected note or the note of the pane: every note, the notes linked
-  to it (links and backlinks), or the notes of its folder, down to a depth
-  of subfolders.
+- A panel over the corner of the graph chooses the notes it shows: every
+  note, the notes linked to the selected note or the note of the pane
+  (links and backlinks), or the notes of a folder picked in a list, with
+  its subfolders.
+- The graph can group its notes by folder: each folder is a circle of its
+  color, with the circles of its subfolders inside; links stay drawn
+  (Group, in its panel).
 - Notes of the graph take the color of their folder; while a graph is
   shown, the explorer shows that color next to each folder. The note of
   the pane is ringed.
@@ -24,6 +27,10 @@ and this project adheres to
 
 - A click on a note of the graph selects it; a double click, `Enter` or
   the Open button of the panel opens it.
+
+### Fixed
+
+- Links of the graph are easier to see, in dark themes above all.
 
 ## [0.4.0] - 2026-11-14
 

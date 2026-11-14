@@ -33,8 +33,9 @@
 		type GraphFilter,
 	} from './graph-filter.ts';
 	import { frameOf } from './graph-frame.ts';
+	import { type GroupLayout, layoutGroups } from './graph-groups.ts';
+	import { graphOptions, shapePoints } from './graph-options.svelte.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
-	import { graphShape, shapePoints } from './graph-shape.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
 	import GraphPanel from './GraphPanel.svelte';
 
@@ -63,6 +64,8 @@
 	let wrapper = $state<HTMLElement>();
 	let canvas = $state<HTMLCanvasElement>();
 	let model: GraphModel = { points: [], edges: [] };
+	// The nested circles of the folders, when the notes are grouped.
+	let groups: GroupLayout | undefined;
 	// The whole graph of the vault, and the part of it shown.
 	let graph = $state.raw<Graph>();
 	let filter = $state<GraphFilter>(EVERY_NOTE);
@@ -77,6 +80,8 @@
 	// The first layout is framed to show every note; later ones keep the
 	// view the user chose.
 	let isFramed = false;
+	// Grouping the notes, or not, frames them again.
+	let wasGrouped = graphOptions.isGrouped;
 	// How settled the layout is when it is framed (`alpha` of d3-force,
 	// from 1 down to 0).
 	const SETTLED = 0.3;
@@ -102,6 +107,7 @@
 					colors,
 					current,
 					selected,
+					groups,
 					hovered,
 					ratio: window.devicePixelRatio,
 				});
@@ -127,7 +133,9 @@
 		}
 		model = next;
 		simulation?.stop();
-		simulation = simulate(model).on('tick', () => {
+		const { isGrouped } = graphOptions;
+		groups = isGrouped ? layoutGroups(model.points) : undefined;
+		simulation = simulate(model, groups).on('tick', () => {
 			if ((simulation?.alpha() ?? 0) < SETTLED) {
 				frameNotes();
 			}
@@ -140,8 +148,8 @@
 		if (isFramed || !canvas || !wrapper || !zoomer) {
 			return;
 		}
-		const { clientWidth, clientHeight } = wrapper;
-		const view = frameOf(model.points, clientWidth, clientHeight);
+		const { clientWidth: width, clientHeight: height } = wrapper;
+		const view = frameOf(model.points, { width, height }, groups);
 		if (view) {
 			isFramed = true;
 			zoomer.transform(select(canvas), view);
@@ -170,7 +178,11 @@
 	$effect(() => {
 		if (graph) {
 			const next = toModel(filterGraph(graph, filter, centrePath));
-			shapePoints(next.points, graphShape.value);
+			shapePoints(next.points, graphOptions.shape);
+			if (graphOptions.isGrouped !== wasGrouped) {
+				wasGrouped = graphOptions.isGrouped;
+				isFramed = false;
+			}
 			show(next);
 		}
 	});

@@ -5,7 +5,8 @@ import type { ZoomTransform } from 'd3-zoom';
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
 import { folderOf } from './graph-filter.ts';
-import { PILL_FONT } from './graph-shape.svelte.ts';
+import type { GroupLayout } from './graph-groups.ts';
+import { PILL_FONT } from './graph-options.svelte.ts';
 
 export interface GraphColors {
 	link: string;
@@ -26,7 +27,7 @@ export function themeColors(element: Element): GraphColors {
 		return getComputedStyle(probe).color;
 	};
 	const colors = {
-		link: resolve('--border'),
+		link: resolve('--muted'),
 		node: resolve('--muted'),
 		current: resolve('--accent'),
 		hovered: resolve('--foreground'),
@@ -44,6 +45,8 @@ export interface GraphScene {
 	current: string;
 	// Path of the note selected with a click.
 	selected: string | undefined;
+	// Notes grouped by folder: the nested circles of the folders.
+	groups: GroupLayout | undefined;
 	hovered: GraphPoint | undefined;
 	// Canvas pixels per CSS pixel.
 	ratio: number;
@@ -59,7 +62,44 @@ function endpoint(end: GraphEdge['source']): GraphPoint | undefined {
 	return typeof end === 'object' ? end : undefined;
 }
 
+// Links in the muted color of the theme, see-through: they read on light
+// and dark themes without hiding the notes.
+const LINK_OPACITY = 0.45;
+// Halos of the groups of notes, and the names of their folders.
+const HALO_FILL_OPACITY = 0.08;
+const HALO_STROKE_OPACITY = 0.35;
+const GROUP_NAME_SIZE = 13;
+
+function drawHalos(
+	context: CanvasRenderingContext2D,
+	scene: GraphScene,
+	groups: GroupLayout,
+) {
+	const scale = scene.transform.k;
+	const size = String(GROUP_NAME_SIZE / scale);
+	context.font = `600 ${size}px system-ui, sans-serif`;
+	context.textAlign = 'center';
+	context.textBaseline = 'bottom';
+	context.lineWidth = 1 / scale;
+	for (const halo of groups.halos) {
+		const color = folderPalette.colorOf(halo.folder) ?? scene.colors.node;
+		context.fillStyle = color;
+		context.strokeStyle = color;
+		context.beginPath();
+		context.arc(halo.across, halo.down, halo.radius, 0, FULL_CIRCLE);
+		context.globalAlpha = HALO_FILL_OPACITY;
+		context.fill();
+		context.globalAlpha = HALO_STROKE_OPACITY;
+		context.stroke();
+		context.globalAlpha = 1;
+		const name = halo.folder.slice(halo.folder.lastIndexOf('/') + 1);
+		const top = halo.down - halo.radius - LABEL_GAP / scale;
+		context.fillText(name, halo.across, top);
+	}
+}
+
 function drawEdges(context: CanvasRenderingContext2D, scene: GraphScene) {
+	context.globalAlpha = LINK_OPACITY;
 	context.strokeStyle = scene.colors.link;
 	context.lineWidth = 1 / scene.transform.k;
 	context.beginPath();
@@ -72,6 +112,7 @@ function drawEdges(context: CanvasRenderingContext2D, scene: GraphScene) {
 		}
 	}
 	context.stroke();
+	context.globalAlpha = 1;
 }
 
 // Rings around the note of the pane, the selected one and the one under
@@ -190,6 +231,9 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 		ratio * transform.x,
 		ratio * transform.y,
 	);
+	if (scene.groups) {
+		drawHalos(context, scene, scene.groups);
+	}
 	drawEdges(context, scene);
 	for (const point of scene.model.points) {
 		drawNode(context, point, scene);
