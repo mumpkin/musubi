@@ -255,3 +255,25 @@ fn numbers_equations() {
 	}
 	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
 }
+
+#[test]
+fn shows_a_note_whose_package_is_missing() {
+	let note = NoteCompiler::new(tests_vault()).render("Package.typ");
+	let html = note.html.expect("the note shows without the package");
+	for expected in [
+		"The package @preview/cetz:0.3.4 is not available",
+		"This part needs a package that is not available offline.",
+		"cetz</span>.<span",
+		r#"<h2 data-block="1">A missing package</h2>"#,
+		r#"<p data-block="4">Text after"#,
+	] {
+		assert!(html.contains(expected), "missing {expected}");
+	}
+	assert!(note.diagnostics.is_empty(), "{:?}", note.diagnostics);
+	assert_eq!(note.blocks.len(), 5);
+	let links = note.index.links;
+	assert_eq!(
+		links.first().map(|link| link.target.as_str()),
+		Some("Other")
+	);
+}

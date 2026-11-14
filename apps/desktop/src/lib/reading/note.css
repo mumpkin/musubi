@@ -324,3 +324,25 @@ the icon is drawn as a mask, in the colour of the text around it. */
 		color-mix(in oklab, var(--musubi-color) 65%, var(--foreground))
 	);
 }
+
+/* What uses a package that cannot load offline: a notice, then the source
+   of the part that is not shown. */
+.reading-view .musubi-unavailable {
+	margin: 1rem 0;
+	padding: 0.5rem 0.75rem;
+	border-left: 3px solid var(--warning);
+	border-radius: 4px;
+	background: var(--surface);
+}
+
+.reading-view .musubi-unavailable > p {
+	margin: 0 0 0.5rem;
+	color: var(--warning);
+	font-size: 0.9em;
+}
+
+.reading-view .musubi-unavailable > pre {
+	margin: 0;
+	padding: 0;
+	background: none;
+}

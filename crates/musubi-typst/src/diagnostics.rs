@@ -3,10 +3,11 @@
 
 use serde::Serialize;
 use ts_rs::TS;
-use typst::World;
 use typst::WorldExt;
 use typst::diag::{Severity, SourceDiagnostic};
 use typst::syntax::FileId;
+
+use crate::world::VaultWorld;
 
 /// An error or a warning of the Typst compiler.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
@@ -39,8 +40,8 @@ pub struct SourcePosition {
 impl Diagnostic {
 	/// `diagnostic` of a compilation, with its position in `note` if it is
 	/// in that file.
-	pub fn from_typst(
-		world: &dyn World,
+	pub(crate) fn from_typst(
+		world: &VaultWorld,
 		note: FileId,
 		diagnostic: &SourceDiagnostic,
 	) -> Self {
@@ -61,7 +62,7 @@ impl Diagnostic {
 }
 
 fn position_in_note(
-	world: &dyn World,
+	world: &VaultWorld,
 	note: FileId,
 	diagnostic: &SourceDiagnostic,
 ) -> Option<SourcePosition> {
@@ -69,7 +70,8 @@ fn position_in_note(
 		return None;
 	}
 	let range = world.range(diagnostic.span)?;
-	let source = world.source(note).ok()?;
-	let (line, column) = source.lines().byte_to_line_column(range.start)?;
+	let source = world.original_note().ok()?;
+	let byte = world.to_original(range.start);
+	let (line, column) = source.lines().byte_to_line_column(byte)?;
 	Some(SourcePosition { line, column })
 }

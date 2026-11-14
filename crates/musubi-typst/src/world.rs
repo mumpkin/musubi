@@ -14,6 +14,7 @@ use typst_kit::files::FileStore;
 use typst_kit::fonts::{self, FontStore};
 
 use crate::entry;
+use crate::fallback::PatchedNote;
 use crate::files::VaultFiles;
 
 /// Compilation context of a vault. It is kept between compilations so that
@@ -27,6 +28,8 @@ pub struct VaultWorld {
 	/// The entry point of the compilation, which includes the note
 	/// (`entry.rs`).
 	entry: Source,
+	/// The note with elements replaced by notices, and its text.
+	patched: Option<(PatchedNote, Source)>,
 	time: Time,
 }
 
@@ -46,6 +49,7 @@ impl VaultWorld {
 			files: FileStore::new(VaultFiles::new(vault_root)),
 			note,
 			entry: entry::entry_source(note, ""),
+			patched: None,
 			time: Time::system(),
 		}
 	}
@@ -58,8 +62,38 @@ impl VaultWorld {
 			note_id(&entry::entry_path()),
 			note.get_with_slash(),
 		);
+		self.patched = None;
 		self.files.reset();
 		self.time.reset();
+	}
+
+	/// The note as it is on disk, even when the compilation uses a patched
+	/// copy.
+	pub fn original_note(&self) -> FileResult<Source> {
+		self.files.source(self.note)
+	}
+
+	/// Compiles `note` instead of the note on disk from now on.
+	pub fn patch_note(&mut self, note: PatchedNote) {
+		let text = Source::new(self.note, note.text());
+		self.patched = Some((note, text));
+	}
+
+	/// The patched note, which the compilation no longer uses until it is
+	/// given back with `patch_note`.
+	pub fn take_patched_note(&mut self) -> Option<PatchedNote> {
+		self.patched.take().map(|(note, _)| note)
+	}
+
+	pub fn patched_note(&self) -> Option<&PatchedNote> {
+		self.patched.as_ref().map(|(note, _)| note)
+	}
+
+	/// The byte of the note on disk that `byte` of the compiled note comes
+	/// from.
+	pub fn to_original(&self, byte: usize) -> usize {
+		self.patched_note()
+			.map_or(byte, |note| note.to_original(byte))
 	}
 
 	/// The note being compiled; the main file of the compilation is the
@@ -89,6 +123,11 @@ impl World for VaultWorld {
 	fn source(&self, id: FileId) -> FileResult<Source> {
 		if id == self.entry.id() {
 			return Ok(self.entry.clone());
+		}
+		if id == self.note
+			&& let Some((_, text)) = &self.patched
+		{
+			return Ok(text.clone());
 		}
 		self.files.source(id)
 	}
