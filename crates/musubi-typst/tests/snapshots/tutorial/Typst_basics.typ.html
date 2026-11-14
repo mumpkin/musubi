@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="en"><head><style>/* Alignment */
+mtable.right-align mtd,
+mtable mtd.right-align,
+mtable.left-align mtd.right-align,
+mtable.aligned mtd:nth-child(odd) {
+  justify-items: end;
+  text-align: right;
+}
+mtable.cases mtd,
+mtable.left-align mtd,
+mtable mtd.left-align,
+mtable.aligned mtd:nth-child(even),
+math:is(:not([display])) > mtable.multiline-equation mtd {
+  justify-items: start;
+  text-align: left;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.left-flush {
+  padding-left: 0;
+}
+mtable.cases mtd,
+mtable.aligned mtd,
+mtable mtd.flushed,
+mtable mtd.right-flush {
+  padding-right: 0;
+}
+
+/* Tables */
+mtable {
+  math-style: inherit;
+}
+mtd {
+  math-depth: auto-add;
+  math-style: compact;
+  math-shift: compact;
+}
+
+/* Equations */
+mtable.multiline-equation mtd {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+  padding: 0;
+}
+math > mtable.multiline-equation mtr:not(:last-child) mtd {
+  padding-bottom: 0.5em;
+}
+
+/* Fractions */
+mfrac {
+  padding-inline: 0;
+  margin-inline: 0.1em;
+}
+
+/* Accents */
+mover[accent="true" i] > :first-child {
+  font-feature-settings: "dtls";
+}
+mover.dotted[accent="true" i] > :first-child {
+  font-feature-settings: "dtls" 0;
+}
+
+/* Other rules for scriptlevel, displaystyle and math-shift */
+munder > :nth-child(2),
+munderover > :nth-child(2) {
+  math-shift: compact
+}
+munder[accentunder="true" i] > :not(:first-child),
+mover[accent="true" i] > :not(:first-child) {
+  math-depth: inherit;
+  math-style: inherit;
+  math-shift: inherit;
+}</style></head><body><h2 data-block="1">Typst basics</h2><p data-block="2">A note is a <a href="https://typst.app/docs">Typst</a> file. Most of it is plain text with a little markup. Press <code>i</code> to see how this note is written: the source is the best example.</p><h3 data-block="3">Headings</h3><p data-block="4">The first line with one <code>=</code> is the <strong>title</strong> of the note; it also names its file. <code>==</code> starts a section, <code>===</code> a subsection.</p><h3 data-block="5">Text</h3><ul><li data-block="6"><code>*strong*</code> gives <strong>strong</strong>, <code>_emphasis_</code> gives <em>emphasis</em>.</li><li data-block="7">Backticks give <code>inline code</code>.</li><li data-block="8">An empty line starts a new paragraph; a <code>\</code> at the end of a line breaks it.</li><li data-block="9">Web links: <code>#link("https://typst.app")[Typst]</code> gives <a href="https://typst.app">Typst</a>, which opens in your browser.</li><li data-block="10">A footnote: <code>#footnote[…]</code><sup id="loc-1" role="doc-noteref"><a href="#loc-2">1</a></sup>.</li></ul><h3 data-block="11">Lists</h3><ul data-block="12"><li><p>A line starting with <code>-</code> is a bullet.</p><ul><li>Indent it to nest it.</li></ul></li></ul><ol><li data-block="13">A line starting with <code>+</code> is numbered.</li><li data-block="14">Numbers follow by themselves.</li></ol><dl data-block="15"><dt>Term</dt><dd>A line starting with <code>/</code> and ending the term with <code>:</code> describes a term.</dd></dl><h3 data-block="16">Math</h3><p data-block="17">Between dollars in a sentence: <math><msup><mi>𝑎</mi><mn>2</mn></msup><mo>+</mo><msup><mi>𝑏</mi><mn>2</mn></msup><mo>=</mo><msup><mi>𝑐</mi><mn>2</mn></msup></math>. With spaces inside the dollars, on its own:</p><math display="block" data-block="18"><munderover><mo lspace="0em">∑</mo><mrow><mi>𝑘</mi><mo lspace="0em" rspace="0em">=</mo><mn>1</mn></mrow><mi>𝑛</mi></munderover><mi>𝑘</mi><mo>=</mo><mfrac><mrow><mi>𝑛</mi><mrow><mo>(</mo><mrow><mi>𝑛</mi><mo>+</mo><mn>1</mn></mrow><mo>)</mo></mrow></mrow><mn>2</mn></mfrac></math><h3 data-block="19">Code</h3><p data-block="20">Three backticks and the name of a language:</p><pre data-block="21"><code data-lang="python"><span style="color: #d73948">def</span> <span style="color: #4b69c6">greet</span>(name):
+    <span style="color: #d73948">return</span> <span style="color: #d73948">f</span><span style="color: #198810">"</span><span style="color: #198810">Hello, </span><span style="color: #8b41b1">{</span><span style="color: #8b41b1">name</span><span style="color: #8b41b1">}</span><span style="color: #198810">!</span><span style="color: #198810">"</span></code></pre><h3 data-block="22">Images</h3><p data-block="23">Paste an image (<code>Ctrl-v</code>) or drop one on the editor: Musubi copies it next to the note and writes the call for you. The image below is in the <code>Typst_basics.assets</code> folder:</p><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDI0IDEwMjQiPgoJPHJlY3Qgd2lkdGg9IjEwMjQiIGhlaWdodD0iMTAyNCIgcng9IjIyNCIgZmlsbD0iIzFlMWYyMiIvPgoJPHBhdGggZD0iTTMwMCA2NDBjMC0xMjAgOTAtMjAwIDIxMi0yMDBzMjEyIDgwIDIxMiAyMDBNMzYwIDM4NGM2MC02MCAyNDQtNjAgMzA0IDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwYWY2OCIgc3Ryb2tlLXdpZHRoPSI2NCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPgo=" width="1024" height="1024" style="display: block; width: 85.0394pt" data-block="24"><h3 data-block="25">Tables and quotes</h3><table data-block="26"><tr><td><strong>Write</strong></td><td><strong>To get</strong></td></tr><tr><td><code>*strong*</code></td><td><strong>strong</strong></td></tr><tr><td><code>_emphasis_</code></td><td><em>emphasis</em></td></tr><tr><td><code>$x^2$</code></td><td><math><msup><mi>𝑥</mi><mn>2</mn></msup></math></td></tr></table><blockquote data-block="27">A quote, with <code>#quote(block: true)[…]</code>.</blockquote><h3 data-block="28">Going further</h3><p data-block="29">Everything else Typst can do works too: functions, variables, shapes, grids. What the reading view cannot show as text is drawn as an image. The <a href="https://typst.app/docs/tutorial/">Typst tutorial</a> explains it all.</p><p data-block="30">Back to <a href="musubi://note/Welcome/Writing_Typst" class="musubi-link" data-target="Welcome/Writing_Typst">Writing Typst</a>.</p><section role="doc-endnotes" data-block="10"><ol style="list-style-type: none"><li id="loc-2"><sup role="doc-backlink"><a href="#loc-1">1</a></sup>Footnotes go to the end of the note.</li></ol></section></body></html>
