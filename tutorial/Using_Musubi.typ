@@ -51,8 +51,8 @@ They work everywhere except while typing text.
   [`Space e`], [Show or hide the explorer],
   [`Space b`], [Show or hide the backlinks],
   [`Space h`, `Space l`], [Panel on the left, on the right],
-  [`Space g`], [Graph of the links, or back to the note; its buttons keep
-  the linked notes or a folder],
+  [`Space g`], [Graph of the links, or back to the note: click selects,
+  double click opens; its panel keeps the linked notes or a folder],
   [`Space c`], [Review the flashcards],
   [`Space o`], [Home: find a note, recent and pinned notes],
   [`Space r`], [Switch between reading and editing; in the explorer, edit

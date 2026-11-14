@@ -1,7 +1,8 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- The graph of notes and links: zoom and pan with the wheel and the
      pointer, drag a note to move it, hover to read its title, click to
-     open it. Drawn on a canvas so that thousands of notes stay fluid. -->
+     select it, double click to open it. Drawn on a canvas so that
+     thousands of notes stay fluid. -->
 <script lang="ts">
 	import type { Simulation } from 'd3-force';
 	import { select } from 'd3-selection';
@@ -16,7 +17,6 @@
 	import type { Graph } from '../bindings/Graph.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
 	import {
-		boundsOf,
 		type GraphEdge,
 		type GraphModel,
 		type GraphPoint,
@@ -27,10 +27,15 @@
 	} from './graph-data.ts';
 	import { dragging } from './graph-drag.ts';
 	import { drawGraph, type GraphColors, themeColors } from './graph-draw.ts';
-	import { filterGraph, type GraphFilter } from './graph-filter.ts';
+	import {
+		EVERY_NOTE,
+		filterGraph,
+		type GraphFilter,
+	} from './graph-filter.ts';
+	import { frameOf } from './graph-frame.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
-	import GraphFilters from './GraphFilters.svelte';
+	import GraphPanel from './GraphPanel.svelte';
 
 	interface Props {
 		// Path of the note to highlight.
@@ -59,7 +64,9 @@
 	let model: GraphModel = { points: [], edges: [] };
 	// The whole graph of the vault, and the part of it shown.
 	let graph = $state.raw<Graph>();
-	let filter = $state<GraphFilter>('all');
+	let filter = $state<GraphFilter>(EVERY_NOTE);
+	// The note selected with a click: the filters keep the notes around it.
+	let selected = $state<string>();
 	let simulation: Simulation<GraphPoint, GraphEdge> | undefined;
 	let transform: ZoomTransform = zoomIdentity;
 	let hovered: GraphPoint | undefined;
@@ -69,9 +76,6 @@
 	// The first layout is framed to show every note; later ones keep the
 	// view the user chose.
 	let isFramed = false;
-	// Room around the notes when framing, in screen pixels.
-	const FRAME_MARGIN = 60;
-	const MAX_FRAME_ZOOM = 2;
 	// How settled the layout is when it is framed (`alpha` of d3-force,
 	// from 1 down to 0).
 	const SETTLED = 0.3;
@@ -96,6 +100,7 @@
 					transform,
 					colors,
 					current,
+					selected,
 					hovered,
 					ratio: window.devicePixelRatio,
 				});
@@ -131,25 +136,15 @@
 
 	// Zooms so that every note is in view, once.
 	function frameNotes(): void {
-		const bounds = boundsOf(model.points);
-		if (isFramed || !bounds || !canvas || !wrapper || !zoomer) {
+		if (isFramed || !canvas || !wrapper || !zoomer) {
 			return;
 		}
-		isFramed = true;
 		const { clientWidth, clientHeight } = wrapper;
-		const scale = Math.min(
-			MAX_FRAME_ZOOM,
-			(clientWidth - FRAME_MARGIN) / Math.max(bounds.width, 1),
-			(clientHeight - FRAME_MARGIN) / Math.max(bounds.height, 1),
-		);
-		const centre = zoomIdentity
-			.translate(clientWidth / HALF, clientHeight / HALF)
-			.scale(scale)
-			.translate(
-				-(bounds.left + bounds.width / HALF),
-				-(bounds.top + bounds.height / HALF),
-			);
-		zoomer.transform(select(canvas), centre);
+		const view = frameOf(model.points, clientWidth, clientHeight);
+		if (view) {
+			isFramed = true;
+			zoomer.transform(select(canvas), view);
+		}
 	}
 
 	$effect(() => {
@@ -163,10 +158,16 @@
 			.catch(() => undefined);
 	});
 
+	const centrePath = $derived(selected ?? current);
+	const titleOf = (path: string | undefined) => {
+		const node = graph?.nodes.find((entry) => entry.path === path);
+		return node && { path: node.path, title: node.title };
+	};
+
 	// The notes the filter keeps, laid out again when it changes.
 	$effect(() => {
 		if (graph) {
-			show(toModel(filterGraph(graph, filter, current)));
+			show(toModel(filterGraph(graph, filter, centrePath)));
 		}
 	});
 
@@ -211,7 +212,8 @@
 			simulation: () => simulation,
 			pointAt,
 		});
-		select(target).call(drags).call(zoomer);
+		// A double click opens a note: it does not zoom.
+		select(target).call(drags).call(zoomer).on('dblclick.zoom', null);
 		const centre = zoomIdentity.translate(
 			box.clientWidth / HALF,
 			box.clientHeight / HALF,
@@ -241,10 +243,23 @@
 		}
 	}
 
+	// A click selects a note, or clears the selection on the background;
+	// a double click, or `Enter`, opens it.
 	function handleClick(event: MouseEvent): void {
+		selected = pointAt(event.offsetX, event.offsetY)?.path;
+		draw();
+	}
+
+	function handleDoubleClick(event: MouseEvent): void {
 		const point = pointAt(event.offsetX, event.offsetY);
 		if (point) {
 			onOpen(point.path);
+		}
+	}
+
+	function handleKeydown(event: KeyboardEvent): void {
+		if (event.key === 'Enter' && selected !== undefined) {
+			onOpen(selected);
 		}
 	}
 </script>
@@ -253,10 +268,12 @@
 	bind:this={wrapper}
 	class="graph-view"
 >
-	<GraphFilters
+	<GraphPanel
 		{filter}
-		{current}
-		onChange={changeFilter}
+		centre={titleOf(centrePath)}
+		selected={titleOf(selected)}
+		onFilter={changeFilter}
+		{onOpen}
 	/>
 	<canvas
 		bind:this={canvas}
@@ -265,6 +282,8 @@
 		aria-label="Graph of the notes and their links"
 		onpointermove={handlePointerMove}
 		onclick={handleClick}
+		ondblclick={handleDoubleClick}
+		onkeydown={handleKeydown}
 	></canvas>
 </div>
 
