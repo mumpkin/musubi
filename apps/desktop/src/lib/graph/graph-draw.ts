@@ -45,8 +45,9 @@ export interface GraphScene {
 	current: string;
 	// Path of the note selected with a click.
 	selected: string | undefined;
-	// Notes grouped by folder: the nested circles of the folders.
-	isGrouped: boolean;
+	// Notes grouped by folder below this folder: the nested circles of the
+	// folders; `undefined` when not grouped.
+	groupBase: string | undefined;
 	hovered: GraphPoint | undefined;
 	// Canvas pixels per CSS pixel.
 	ratio: number;
@@ -70,14 +71,18 @@ const HALO_FILL_OPACITY = 0.08;
 const HALO_STROKE_OPACITY = 0.35;
 const GROUP_NAME_SIZE = 13;
 
-function drawHalos(context: CanvasRenderingContext2D, scene: GraphScene) {
+function drawHalos(
+	context: CanvasRenderingContext2D,
+	scene: GraphScene,
+	base: string,
+) {
 	const scale = scene.transform.k;
 	const size = String(GROUP_NAME_SIZE / scale);
 	context.font = `600 ${size}px system-ui, sans-serif`;
 	context.textAlign = 'center';
 	context.textBaseline = 'bottom';
 	context.lineWidth = 1 / scale;
-	for (const halo of halosAround(scene.model.points)) {
+	for (const halo of halosAround(scene.model.points, base)) {
 		const color = folderPalette.colorOf(halo.folder) ?? scene.colors.node;
 		context.fillStyle = color;
 		context.strokeStyle = color;
@@ -227,8 +232,8 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 		ratio * transform.x,
 		ratio * transform.y,
 	);
-	if (scene.isGrouped) {
-		drawHalos(context, scene);
+	if (scene.groupBase !== undefined) {
+		drawHalos(context, scene, scene.groupBase);
 	}
 	drawEdges(context, scene);
 	for (const point of scene.model.points) {

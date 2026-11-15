@@ -68,18 +68,19 @@ function links(model: GraphModel, isGrouped: boolean) {
 	});
 }
 
-// Lays out `model`; grouped, the notes of each folder gather in nested
-// circles.
+// Lays out `model`; grouped below the folder `groupBase`, the notes of
+// each folder gather in nested circles.
 export function simulate(
 	model: GraphModel,
-	isGrouped: boolean,
+	groupBase: string | undefined,
 ): Simulation<GraphPoint, GraphEdge> {
+	const isGrouped = groupBase !== undefined;
 	const pull = isGrouped ? GROUP_GRAVITY : CENTRE_PULL;
 	return forceSimulation(model.points)
 		.force('link', links(model, isGrouped))
 		.force('charge', repulsion(isGrouped))
 		.force('x', forceX<GraphPoint>(0).strength(pull))
 		.force('y', forceY<GraphPoint>(0).strength(pull))
-		.force('groups', isGrouped ? folderGroups() : null)
+		.force('groups', isGrouped ? folderGroups(groupBase) : null)
 		.force('collide', collision(model, isGrouped));
 }

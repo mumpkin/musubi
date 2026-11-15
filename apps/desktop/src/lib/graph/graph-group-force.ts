@@ -19,11 +19,12 @@ const ANCESTOR_FALLOFF = 0.4;
 const SEPARATION = 1;
 const SIBLING_GAP = 12;
 
-// The folder of `path` and every folder above it, nearest first.
-function foldersAbove(path: string): string[] {
+// The folder of `path` and every folder above it, nearest first, below
+// `base`.
+function foldersAbove(path: string, base: string): string[] {
 	const folders: string[] = [];
 	let folder = folderOf(path);
-	while (folder !== '') {
+	while (folder !== '' && folder !== base) {
 		folders.push(folder);
 		folder = folderOf(folder);
 	}
@@ -31,10 +32,10 @@ function foldersAbove(path: string): string[] {
 }
 
 // The middle of the notes of each folder, its subfolders included.
-function middles(points: GraphPoint[]): Map<string, Centre> {
+function middles(points: GraphPoint[], base: string): Map<string, Centre> {
 	const sums = new Map<string, Centre & { count: number }>();
 	for (const point of points) {
-		for (const folder of foldersAbove(point.path)) {
+		for (const folder of foldersAbove(point.path, base)) {
 			const sum = sums.get(folder) ?? { across: 0, down: 0, count: 0 };
 			sum.across += point.x ?? 0;
 			sum.down += point.y ?? 0;
@@ -52,11 +53,15 @@ function middles(points: GraphPoint[]): Map<string, Centre> {
 	return centres;
 }
 
-function pullTogether(points: GraphPoint[], alpha: number): void {
-	const centres = middles(points);
+function pullTogether(
+	points: GraphPoint[],
+	base: string,
+	alpha: number,
+): void {
+	const centres = middles(points, base);
 	for (const point of points) {
 		let strength = COHESION * alpha;
-		for (const folder of foldersAbove(point.path)) {
+		for (const folder of foldersAbove(point.path, base)) {
 			const centre = centres.get(folder);
 			if (centre) {
 				const across = centre.across - (point.x ?? 0);
@@ -105,12 +110,12 @@ function separate(
 
 // The blocks inside each folder: the cluster of its own notes, and its
 // subfolders.
-function blocksOf(points: GraphPoint[]): Map<string, Block[]> {
+function blocksOf(points: GraphPoint[], base: string): Map<string, Block[]> {
 	const blocks = new Map<string, Block[]>();
 	const add = (parent: string, block: Block) => {
 		blocks.set(parent, [...(blocks.get(parent) ?? []), block]);
 	};
-	for (const halo of halosAround(points)) {
+	for (const halo of halosAround(points, base)) {
 		add(folderOf(halo.folder), {
 			...halo,
 			holds: (point) => point.path.startsWith(`${halo.folder}/`),
@@ -123,8 +128,12 @@ function blocksOf(points: GraphPoint[]): Map<string, Block[]> {
 	return blocks;
 }
 
-function pushApart(points: GraphPoint[], alpha: number): void {
-	for (const blocks of blocksOf(points).values()) {
+function pushApart(
+	points: GraphPoint[],
+	base: string,
+	alpha: number,
+): void {
+	for (const blocks of blocksOf(points, base).values()) {
 		for (const [index, one] of blocks.entries()) {
 			for (const other of blocks.slice(index + 1)) {
 				separate(points, [one, other], alpha);
@@ -133,11 +142,12 @@ function pushApart(points: GraphPoint[], alpha: number): void {
 	}
 }
 
-export function folderGroups(): Force<GraphPoint, GraphEdge> {
+// Groups the notes by folder below `base` (`''`: the vault root).
+export function folderGroups(base: string): Force<GraphPoint, GraphEdge> {
 	let points: GraphPoint[] = [];
 	const force = (alpha: number): void => {
-		pullTogether(points, alpha);
-		pushApart(points, alpha);
+		pullTogether(points, base, alpha);
+		pushApart(points, base, alpha);
 	};
 	force.initialize = (nodes: GraphPoint[]): void => {
 		points = nodes;

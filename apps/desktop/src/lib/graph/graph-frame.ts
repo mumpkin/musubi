@@ -12,12 +12,16 @@ const MAX_FRAME_ZOOM = 2;
 const HALF = 2;
 
 // `bounds` grown to hold the circles of the folders of `points`.
-function withHalos(bounds: Bounds, points: GraphPoint[]): Bounds {
+function withHalos(
+	bounds: Bounds,
+	points: GraphPoint[],
+	base: string,
+): Bounds {
 	let left = bounds.left;
 	let top = bounds.top;
 	let right = bounds.left + bounds.width;
 	let bottom = bounds.top + bounds.height;
-	for (const halo of halosAround(points)) {
+	for (const halo of halosAround(points, base)) {
 		left = Math.min(left, halo.across - halo.radius);
 		top = Math.min(top, halo.down - halo.radius);
 		right = Math.max(right, halo.across + halo.radius);
@@ -32,13 +36,15 @@ function withHalos(bounds: Bounds, points: GraphPoint[]): Bounds {
 export function frameOf(
 	points: GraphPoint[],
 	size: { width: number; height: number },
-	isGrouped: boolean,
+	groupBase: string | undefined,
 ): ZoomTransform | undefined {
 	const notes = boundsOf(points);
 	if (!notes) {
 		return undefined;
 	}
-	const bounds = isGrouped ? withHalos(notes, points) : notes;
+	const bounds = groupBase === undefined
+		? notes
+		: withHalos(notes, points, groupBase);
 	const { width, height } = size;
 	const scale = Math.min(
 		MAX_FRAME_ZOOM,

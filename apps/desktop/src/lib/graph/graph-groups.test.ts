@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { GraphPoint } from './graph-data.ts';
 import { folderGroups } from './graph-group-force.ts';
-import { type Halo, halosAround } from './graph-groups.ts';
+import { groupMembers, type Halo, halosAround } from './graph-groups.ts';
 
 // A note of `path` at `across`, `down`.
 const placed = (path: string, across: number, down = 0): GraphPoint => ({
@@ -40,7 +40,7 @@ describe('halosAround', () => {
 			placed('Maths/B.typ', 0),
 			placed('Maths/Algebra/C.typ', 40),
 			placed('Welcome/Examples/Deep/D.typ', 90),
-		]);
+		], '');
 		expect(halos.map((halo) => halo.folder)).toEqual([
 			'Maths',
 			'Welcome',
@@ -66,13 +66,21 @@ describe('halosAround', () => {
 		const near = halosAround([
 			placed('Maths/B.typ', 0),
 			placed('Maths/C.typ', 10),
-		]);
+		], '');
 		const far = halosAround([
 			placed('Maths/B.typ', 0),
 			placed('Maths/C.typ', 200),
-		]);
+		], '');
 		const nearRadius = near[0]?.radius ?? 0;
 		expect(far[0]?.radius).toBeGreaterThan(nearRadius + 90);
+	});
+
+	it('leaves out the circles of a folder shown alone and above', () => {
+		const halos = halosAround([
+			placed('Welcome/A.typ', 0),
+			placed('Welcome/Examples/B.typ', 40),
+		], 'Welcome');
+		expect(halos.map((halo) => halo.folder)).toEqual(['Welcome/Examples']);
 	});
 
 	it('holds a pill whole', () => {
@@ -81,7 +89,7 @@ describe('halosAround', () => {
 			halfWidth: 50,
 			halfHeight: 8,
 		};
-		expect(halosAround([pill])[0]?.radius).toBeGreaterThanOrEqual(50);
+		expect(halosAround([pill], '')[0]?.radius).toBeGreaterThanOrEqual(50);
 	});
 });
 
@@ -96,10 +104,36 @@ describe('folderGroups', () => {
 			placed('Philo/D.typ', 110),
 		];
 		forceSimulation(points)
-			.force('groups', folderGroups())
+			.force('groups', folderGroups(''))
 			.stop()
 			.tick(TICKS);
-		const [maths, philo] = halosAround(points);
+		const [maths, philo] = halosAround(points, '');
 		expect(maths && philo && apart(maths, philo)).toBe(true);
+	});
+});
+
+describe('groupMembers', () => {
+	const points = [
+		placed('Welcome/A.typ', 0),
+		placed('Welcome/B.typ', 10),
+		placed('Welcome/Examples/C.typ', 20),
+		placed('Philo/D.typ', 30),
+		placed('E.typ', 40),
+	];
+	const [first, , , , root] = points;
+	const paths = (members: GraphPoint[]) =>
+		members.map((member) => member.path);
+
+	it('carries the folder of a note, its subfolders included', () => {
+		expect(first && paths(groupMembers(points, first, ''))).toEqual([
+			'Welcome/B.typ',
+			'Welcome/Examples/C.typ',
+		]);
+	});
+
+	it('leaves a note alone outside any circle, or when not grouped', () => {
+		expect(root && groupMembers(points, root, '')).toEqual([]);
+		expect(first && groupMembers(points, first, 'Welcome')).toEqual([]);
+		expect(first && groupMembers(points, first, undefined)).toEqual([]);
 	});
 });

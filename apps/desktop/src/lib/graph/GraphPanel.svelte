@@ -4,8 +4,12 @@
      notes, their grouping by folder, and the note selected with a click,
      to open. It folds down to its title. -->
 <script lang="ts">
+	import { slide } from 'svelte/transition';
+
+	import Icon from '../shell/Icon.svelte';
 	import { folderPalette } from '../vault/folder-palette.svelte.ts';
 	import ChoiceRow from './ChoiceRow.svelte';
+	import FolderList from './FolderList.svelte';
 	import { folderOf, type GraphFilter } from './graph-filter.ts';
 	import { graphOptions, type NodeShape } from './graph-options.svelte.ts';
 
@@ -40,10 +44,12 @@
 		graphOptions.setGrouped(grouping === 'folders');
 	}
 
-	function chooseFolder(event: Event): void {
-		const { value } = event.currentTarget as HTMLSelectElement;
-		onFilter({ kind: 'folder', folder: value });
+	function pickFolder(folder: string): void {
+		onFilter({ kind: 'folder', folder });
 	}
+
+	// Folding and unfolding the panel, smoothly.
+	const FOLD_MILLISECONDS = 160;
 
 	const kinds = $derived([
 		{ value: 'all', label: 'All' },
@@ -95,67 +101,65 @@
 			isFolded = !isFolded;
 		}}
 	>
+		<span class="chevron">
+			<Icon name={isFolded ? 'folded' : 'unfolded'} />
+		</span>
 		<span>Graph</span>
-		<span class="chevron">{isFolded ? '▴' : '▾'}</span>
 	</button>
 	{#if !isFolded}
-		<ChoiceRow
-			label="Show"
-			description="Notes shown"
-			choices={kinds}
-			checked={filter.kind}
-			onChoose={choose}
-		/>
-		{#if filter.kind === 'folder'}
-			<div class="folder-row">
-				<span class="label">In</span>
-				<select
-					value={folder}
-					aria-label="Folder shown"
-					onchange={chooseFolder}
-				>
-					<option value="">Vault root</option>
-					{#each folderPalette.folders as path (path)}
-						<option value={path}>{path}</option>
-					{/each}
-				</select>
-			</div>
-		{/if}
-		<p class="summary">{summary}</p>
-		<ChoiceRow
-			label="Nodes"
-			description="Shape of the notes"
-			choices={SHAPES}
-			checked={graphOptions.shape}
-			onChoose={chooseShape}
-		/>
-		<ChoiceRow
-			label="Group"
-			description="Grouping of the notes"
-			choices={GROUPS}
-			checked={graphOptions.isGrouped ? 'folders' : 'off'}
-			onChoose={chooseGrouping}
-		/>
-		{#if selected}
-			<div class="selected">
-				<span
-					class="dot"
-					style:background={colorOf(selected.path)}
-				></span>
-				<span
-					class="title"
-					title={selected.path}
-				>{selected.title}</span>
-				<button
-					type="button"
-					class="open"
-					title="Open the note (Enter, or a double click)"
-					onclick={() => {
-						onOpen(selected.path);
-					}}
-				>Open</button>
-			</div>
-		{/if}
+		<div
+			class="panel-body"
+			transition:slide={{ duration: FOLD_MILLISECONDS }}
+		>
+			<ChoiceRow
+				label="Show"
+				description="Notes shown"
+				choices={kinds}
+				checked={filter.kind}
+				onChoose={choose}
+			/>
+			{#if filter.kind === 'folder'}
+				<FolderList
+					picked={folder}
+					onPick={pickFolder}
+				/>
+			{/if}
+			<p class="summary">{summary}</p>
+			<ChoiceRow
+				label="Nodes"
+				description="Shape of the notes"
+				choices={SHAPES}
+				checked={graphOptions.shape}
+				onChoose={chooseShape}
+			/>
+			<ChoiceRow
+				label="Group"
+				description="Grouping of the notes"
+				choices={GROUPS}
+				checked={graphOptions.isGrouped ? 'folders' : 'off'}
+				onChoose={chooseGrouping}
+			/>
+			{#if selected}
+				<div class="selected">
+					<span
+						class="dot"
+						style:background={colorOf(selected.path)}
+					></span>
+					<span
+						class="title"
+						title={selected.path}
+					>{selected.title}</span>
+					<button
+						type="button"
+						class="open"
+						title="Open the note (Enter, or a double click)"
+						onclick={() => {
+							onOpen(selected.path);
+						}}
+					>Open</button>
+				</div>
+			{/if}
+		</div>
 	{/if}
 </div>
 
@@ -170,7 +174,7 @@
 		gap: 0.4rem;
 		width: 16rem;
 		max-width: calc(100% - 1.5rem);
-		padding: 0.4rem 0.6rem 0.6rem;
+		padding: 0.4rem 0.6rem;
 		border: 1px solid var(--border);
 		border-radius: 8px;
 		background: var(--background);
@@ -191,7 +195,8 @@
 
 	.panel-header {
 		display: flex;
-		justify-content: space-between;
+		gap: 0.3rem;
+		align-items: center;
 		padding: 0.1rem 0;
 		color: var(--muted);
 		font-size: 0.75rem;
@@ -200,28 +205,16 @@
 		text-transform: uppercase;
 	}
 
-	.folder-row {
+	.chevron {
+		display: grid;
+		place-items: center;
+		width: 1rem;
+	}
+
+	.panel-body {
 		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-	}
-
-	.label {
-		flex-shrink: 0;
-		width: 2.8rem;
-		color: var(--muted);
-		font-size: 0.8rem;
-	}
-
-	select {
-		flex: 1;
-		min-width: 0;
-		padding: 0.15rem 0.3rem;
-		border: 1px solid var(--border);
-		border-radius: 6px;
-		background: var(--surface);
-		color: var(--foreground);
-		font: inherit;
+		flex-direction: column;
+		gap: 0.4rem;
 	}
 
 	.summary {
