@@ -5,7 +5,7 @@ import type { ZoomTransform } from 'd3-zoom';
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
 import { folderOf } from './graph-filter.ts';
-import type { GroupLayout } from './graph-groups.ts';
+import { halosAround } from './graph-groups.ts';
 import { PILL_FONT } from './graph-options.svelte.ts';
 
 export interface GraphColors {
@@ -46,7 +46,7 @@ export interface GraphScene {
 	// Path of the note selected with a click.
 	selected: string | undefined;
 	// Notes grouped by folder: the nested circles of the folders.
-	groups: GroupLayout | undefined;
+	isGrouped: boolean;
 	hovered: GraphPoint | undefined;
 	// Canvas pixels per CSS pixel.
 	ratio: number;
@@ -70,18 +70,14 @@ const HALO_FILL_OPACITY = 0.08;
 const HALO_STROKE_OPACITY = 0.35;
 const GROUP_NAME_SIZE = 13;
 
-function drawHalos(
-	context: CanvasRenderingContext2D,
-	scene: GraphScene,
-	groups: GroupLayout,
-) {
+function drawHalos(context: CanvasRenderingContext2D, scene: GraphScene) {
 	const scale = scene.transform.k;
 	const size = String(GROUP_NAME_SIZE / scale);
 	context.font = `600 ${size}px system-ui, sans-serif`;
 	context.textAlign = 'center';
 	context.textBaseline = 'bottom';
 	context.lineWidth = 1 / scale;
-	for (const halo of groups.halos) {
+	for (const halo of halosAround(scene.model.points)) {
 		const color = folderPalette.colorOf(halo.folder) ?? scene.colors.node;
 		context.fillStyle = color;
 		context.strokeStyle = color;
@@ -231,8 +227,8 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 		ratio * transform.x,
 		ratio * transform.y,
 	);
-	if (scene.groups) {
-		drawHalos(context, scene, scene.groups);
+	if (scene.isGrouped) {
+		drawHalos(context, scene);
 	}
 	drawEdges(context, scene);
 	for (const point of scene.model.points) {

@@ -12,9 +12,10 @@ import {
 	type Simulation,
 } from 'd3-force';
 
+import { pillCollide } from './graph-collide.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
 import { folderOf } from './graph-filter.ts';
-import type { GroupLayout } from './graph-groups.ts';
+import { folderGroups } from './graph-group-force.ts';
 
 const LINK_DISTANCE = 40;
 const REPULSION = -60;
@@ -22,33 +23,26 @@ const REPULSION = -60;
 const REPULSION_RANGE = 400;
 const CENTRE_PULL = 0.04;
 const COLLISION_GAP = 2;
+const TITLE_ROOM = 12;
 // Pull of a note towards the centre of its folder, when grouped.
-const GROUP_PULL = 0.2;
+// Grouped, a stronger pull to the middle packs the groups together.
+const GROUP_GRAVITY = 0.03;
 // Grouped, notes only push their close neighbours: each cluster stays
 // in its circle.
-const GROUP_REPULSION = -30;
-const GROUP_REPULSION_RANGE = 60;
+const GROUP_REPULSION = -40;
+const GROUP_REPULSION_RANGE = 80;
 // Pull of a link between two folders, when grouped: still drawn, it no
 // longer drags a group into another.
 const CROSS_LINK_PULL = 0.02;
 
-// Pulls each note to the middle, or to the cluster of its folder when the
-// notes are grouped.
-function pulls(groups: GroupLayout | undefined) {
-	if (!groups) {
-		return {
-			across: forceX<GraphPoint>(0).strength(CENTRE_PULL),
-			down: forceY<GraphPoint>(0).strength(CENTRE_PULL),
-		};
-	}
-	const centreOf = (point: GraphPoint) =>
-		groups.clusters.get(folderOf(point.path));
-	return {
-		across: forceX<GraphPoint>((point) => centreOf(point)?.across ?? 0)
-			.strength(GROUP_PULL),
-		down: forceY<GraphPoint>((point) => centreOf(point)?.down ?? 0)
-			.strength(GROUP_PULL),
-	};
+// Dots are circles; pills are pushed apart as the rounded boxes they are.
+// Grouped, dots keep room for their titles.
+function collision(model: GraphModel, isGrouped: boolean) {
+	const isPills = model.points.some((point) => point.halfWidth !== undefined);
+	const room = isGrouped ? TITLE_ROOM : COLLISION_GAP;
+	return isPills
+		? pillCollide()
+		: forceCollide<GraphPoint>((point) => point.radius + room);
 }
 
 function repulsion(isGrouped: boolean) {
@@ -74,23 +68,18 @@ function links(model: GraphModel, isGrouped: boolean) {
 	});
 }
 
-// Lays out `model`, around the nested circles of `groups` when the notes
-// are grouped by folder.
+// Lays out `model`; grouped, the notes of each folder gather in nested
+// circles.
 export function simulate(
 	model: GraphModel,
-	groups: GroupLayout | undefined,
+	isGrouped: boolean,
 ): Simulation<GraphPoint, GraphEdge> {
-	const pull = pulls(groups);
-	const isGrouped = groups !== undefined;
+	const pull = isGrouped ? GROUP_GRAVITY : CENTRE_PULL;
 	return forceSimulation(model.points)
 		.force('link', links(model, isGrouped))
 		.force('charge', repulsion(isGrouped))
-		.force('x', pull.across)
-		.force('y', pull.down)
-		.force(
-			'collide',
-			forceCollide<GraphPoint>(
-				(point) => (point.halfWidth ?? point.radius) + COLLISION_GAP,
-			),
-		);
+		.force('x', forceX<GraphPoint>(0).strength(pull))
+		.force('y', forceY<GraphPoint>(0).strength(pull))
+		.force('groups', isGrouped ? folderGroups() : null)
+		.force('collide', collision(model, isGrouped));
 }

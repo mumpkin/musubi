@@ -15,8 +15,8 @@ and this project adheres to
   (links and backlinks), or the notes of a folder picked in a list, with
   its subfolders.
 - The graph can group its notes by folder: each folder is a circle of its
-  color, with the circles of its subfolders inside; links stay drawn
-  (Group, in its panel).
+  color, with the circles of its subfolders inside, that follows its notes
+  when they move; links stay drawn (Group, in its panel).
 - Notes of the graph take the color of their folder; while a graph is
   shown, the explorer shows that color next to each folder. The note of
   the pane is ringed.
