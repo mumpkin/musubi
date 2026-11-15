@@ -27,7 +27,7 @@ _Linked_ to the selected note (or the note of the pane) both ways, or the
 notes of a _Folder_ you pick, with its subfolders. It draws the notes as
 dots or as pills with their title inside, and can group the notes by
 folder: each folder is a circle of its color, with the circles of its
-subfolders inside. Notes
+subfolders inside, and dragging a note moves its whole group. Notes
 take the color of their folder: while the graph is shown, a dot of that
 color follows each folder in the explorer.
 

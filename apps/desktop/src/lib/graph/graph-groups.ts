@@ -23,10 +23,13 @@ export interface Halo extends Centre {
 }
 
 // The subfolders of each folder that holds notes of `points`, or above
-// one, by path.
-export function subfoldersOf(points: GraphPoint[]): Map<string, string[]> {
+// one, by path, from the folder `base` down.
+export function subfoldersOf(
+	points: GraphPoint[],
+	base: string,
+): Map<string, string[]> {
 	const children = new Map<string, string[]>();
-	const known = new Set<string>(['']);
+	const known = new Set<string>([base, '']);
 	for (const point of points) {
 		let folder = folderOf(point.path);
 		while (!known.has(folder)) {
@@ -79,10 +82,11 @@ export function circleAround(
 	return enclose(points.map(reachOf));
 }
 
-// The circle of each folder around its notes and its subfolders as they
-// are now, from the outer folders to the inner ones.
-export function halosAround(points: GraphPoint[]): Halo[] {
-	const children = subfoldersOf(points);
+// The circle of each folder below `base` (`''`: the vault root) around
+// its notes and its subfolders as they are now, from the outer folders to
+// the inner ones. `base` itself has no circle.
+export function halosAround(points: GraphPoint[], base: string): Halo[] {
+	const children = subfoldersOf(points, base);
 	const notes = new Map<string, Halo[]>();
 	for (const point of points) {
 		const reach = reachOf(point);
@@ -98,8 +102,23 @@ export function halosAround(points: GraphPoint[]): Halo[] {
 		halos.push(halo);
 		return halo;
 	};
-	for (const folder of children.get('') ?? []) {
+	for (const folder of children.get(base) ?? []) {
 		around(folder, 1);
 	}
 	return halos.sort((first, second) => first.depth - second.depth);
+}
+
+// The other notes of the group of `point`, grouped below `base`: its
+// folder with the subfolders in it. A note right in `base` is alone.
+export function groupMembers(
+	points: GraphPoint[],
+	point: GraphPoint,
+	base: string | undefined,
+): GraphPoint[] {
+	const folder = folderOf(point.path);
+	if (base === undefined || folder === base) {
+		return [];
+	}
+	return points.filter((other) =>
+		other !== point && other.path.startsWith(`${folder}/`));
 }

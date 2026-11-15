@@ -76,3 +76,16 @@ export function filterGraph(
 	});
 	return { nodes, links };
 }
+
+// The folder below which grouped notes get circles: the folder shown
+// alone, or the vault root; `undefined` when the notes are not grouped.
+export function groupBaseOf(
+	filter: GraphFilter,
+	centre: string,
+	isGrouped: boolean,
+): string | undefined {
+	if (!isGrouped) {
+		return undefined;
+	}
+	return filter.kind === 'folder' ? filter.folder ?? folderOf(centre) : '';
+}

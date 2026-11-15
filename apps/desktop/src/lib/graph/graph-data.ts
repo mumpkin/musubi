@@ -39,6 +39,17 @@ export function keepPosition(point: GraphPoint, old: GraphPoint): void {
 	/* eslint-enable id-length */
 }
 
+// Puts the notes of `next` already in `previous` where they were.
+export function carryPositions(previous: GraphModel, next: GraphModel): void {
+	const known = new Map(previous.points.map((point) => [point.path, point]));
+	for (const point of next.points) {
+		const old = known.get(point.path);
+		if (old) {
+			keepPosition(point, old);
+		}
+	}
+}
+
 export function toModel(graph: Graph): GraphModel {
 	const degrees = graph.nodes.map(() => 0);
 	for (const { source, target } of graph.links) {

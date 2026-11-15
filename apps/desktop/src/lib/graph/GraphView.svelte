@@ -17,10 +17,10 @@
 	import type { Graph } from '../bindings/Graph.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
 	import {
+		carryPositions,
 		type GraphEdge,
 		type GraphModel,
 		type GraphPoint,
-		keepPosition,
 		pointUnder,
 		readGraph,
 		toModel,
@@ -31,8 +31,10 @@
 		EVERY_NOTE,
 		filterGraph,
 		type GraphFilter,
+		groupBaseOf,
 	} from './graph-filter.ts';
 	import { frameOf } from './graph-frame.ts';
+	import { groupMembers } from './graph-groups.ts';
 	import { graphOptions, shapePoints } from './graph-options.svelte.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
@@ -78,7 +80,7 @@
 	// view the user chose.
 	let isFramed = false;
 	// Grouping the notes, or not, frames them again.
-	let wasGrouped = graphOptions.isGrouped;
+	let wasGrouped: string | undefined;
 	// How settled the layout is when it is framed (`alpha` of d3-force,
 	// from 1 down to 0).
 	const SETTLED = 0.1;
@@ -104,7 +106,7 @@
 					colors,
 					current,
 					selected,
-					isGrouped: graphOptions.isGrouped,
+					groupBase,
 					hovered,
 					ratio: window.devicePixelRatio,
 				});
@@ -121,16 +123,10 @@
 	// Positions of the notes already shown are kept when the graph is read
 	// again.
 	function show(next: GraphModel): void {
-		const known = new Map(model.points.map((point) => [point.path, point]));
-		for (const point of next.points) {
-			const old = known.get(point.path);
-			if (old) {
-				keepPosition(point, old);
-			}
-		}
+		carryPositions(model, next);
 		model = next;
 		simulation?.stop();
-		simulation = simulate(model, graphOptions.isGrouped).on('tick', () => {
+		simulation = simulate(model, groupBase).on('tick', () => {
 			if ((simulation?.alpha() ?? 0) < SETTLED) {
 				frameNotes();
 			}
@@ -144,8 +140,7 @@
 			return;
 		}
 		const { clientWidth: width, clientHeight: height } = wrapper;
-		const { isGrouped } = graphOptions;
-		const view = frameOf(model.points, { width, height }, isGrouped);
+		const view = frameOf(model.points, { width, height }, groupBase);
 		if (view) {
 			isFramed = true;
 			zoomer.transform(select(canvas), view);
@@ -164,6 +159,9 @@
 	});
 
 	const centrePath = $derived(selected ?? current);
+	const groupBase = $derived(
+		groupBaseOf(filter, centrePath, graphOptions.isGrouped),
+	);
 	const titleOf = (path: string | undefined) => {
 		const node = graph?.nodes.find((entry) => entry.path === path);
 		return node && { path: node.path, title: node.title };
@@ -175,8 +173,8 @@
 		if (graph) {
 			const next = toModel(filterGraph(graph, filter, centrePath));
 			shapePoints(next.points, graphOptions.shape);
-			if (graphOptions.isGrouped !== wasGrouped) {
-				wasGrouped = graphOptions.isGrouped;
+			if (groupBase !== wasGrouped) {
+				wasGrouped = groupBase;
 				isFramed = false;
 			}
 			show(next);
@@ -223,6 +221,7 @@
 			transform: () => transform,
 			simulation: () => simulation,
 			pointAt,
+			groupOf: (point) => groupMembers(model.points, point, groupBase),
 		});
 		// A double click opens a note: it does not zoom.
 		select(target).call(drags).call(zoomer).on('dblclick.zoom', null);
