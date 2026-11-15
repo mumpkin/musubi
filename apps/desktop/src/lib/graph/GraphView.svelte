@@ -33,7 +33,6 @@
 		type GraphFilter,
 	} from './graph-filter.ts';
 	import { frameOf } from './graph-frame.ts';
-	import { type GroupLayout, layoutGroups } from './graph-groups.ts';
 	import { graphOptions, shapePoints } from './graph-options.svelte.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
 	import { simulate } from './graph-simulation.ts';
@@ -64,8 +63,6 @@
 	let wrapper = $state<HTMLElement>();
 	let canvas = $state<HTMLCanvasElement>();
 	let model: GraphModel = { points: [], edges: [] };
-	// The nested circles of the folders, when the notes are grouped.
-	let groups: GroupLayout | undefined;
 	// The whole graph of the vault, and the part of it shown.
 	let graph = $state.raw<Graph>();
 	let filter = $state<GraphFilter>(EVERY_NOTE);
@@ -84,7 +81,7 @@
 	let wasGrouped = graphOptions.isGrouped;
 	// How settled the layout is when it is framed (`alpha` of d3-force,
 	// from 1 down to 0).
-	const SETTLED = 0.3;
+	const SETTLED = 0.1;
 
 	// A new theme: the canvas reads its colors again.
 	$effect(() => {
@@ -107,7 +104,7 @@
 					colors,
 					current,
 					selected,
-					groups,
+					isGrouped: graphOptions.isGrouped,
 					hovered,
 					ratio: window.devicePixelRatio,
 				});
@@ -133,9 +130,7 @@
 		}
 		model = next;
 		simulation?.stop();
-		const { isGrouped } = graphOptions;
-		groups = isGrouped ? layoutGroups(model.points) : undefined;
-		simulation = simulate(model, groups).on('tick', () => {
+		simulation = simulate(model, graphOptions.isGrouped).on('tick', () => {
 			if ((simulation?.alpha() ?? 0) < SETTLED) {
 				frameNotes();
 			}
@@ -149,7 +144,8 @@
 			return;
 		}
 		const { clientWidth: width, clientHeight: height } = wrapper;
-		const view = frameOf(model.points, { width, height }, groups);
+		const { isGrouped } = graphOptions;
+		const view = frameOf(model.points, { width, height }, isGrouped);
 		if (view) {
 			isFramed = true;
 			zoomer.transform(select(canvas), view);

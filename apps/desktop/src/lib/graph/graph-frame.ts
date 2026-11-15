@@ -3,7 +3,7 @@
 import { zoomIdentity, type ZoomTransform } from 'd3-zoom';
 
 import { type Bounds, boundsOf, type GraphPoint } from './graph-data.ts';
-import type { GroupLayout } from './graph-groups.ts';
+import { halosAround } from './graph-groups.ts';
 
 // Room around the notes, in screen pixels.
 const FRAME_MARGIN = 60;
@@ -11,12 +11,18 @@ const FRAME_MARGIN = 60;
 const MAX_FRAME_ZOOM = 2;
 const HALF = 2;
 
-// `bounds` grown to hold the circle of the whole vault.
-function withGroups(bounds: Bounds, groups: GroupLayout): Bounds {
-	const left = Math.min(bounds.left, -groups.radius);
-	const top = Math.min(bounds.top, -groups.radius);
-	const right = Math.max(bounds.left + bounds.width, groups.radius);
-	const bottom = Math.max(bounds.top + bounds.height, groups.radius);
+// `bounds` grown to hold the circles of the folders of `points`.
+function withHalos(bounds: Bounds, points: GraphPoint[]): Bounds {
+	let left = bounds.left;
+	let top = bounds.top;
+	let right = bounds.left + bounds.width;
+	let bottom = bounds.top + bounds.height;
+	for (const halo of halosAround(points)) {
+		left = Math.min(left, halo.across - halo.radius);
+		top = Math.min(top, halo.down - halo.radius);
+		right = Math.max(right, halo.across + halo.radius);
+		bottom = Math.max(bottom, halo.down + halo.radius);
+	}
 	return { left, top, width: right - left, height: bottom - top };
 }
 
@@ -26,13 +32,13 @@ function withGroups(bounds: Bounds, groups: GroupLayout): Bounds {
 export function frameOf(
 	points: GraphPoint[],
 	size: { width: number; height: number },
-	groups: GroupLayout | undefined,
+	isGrouped: boolean,
 ): ZoomTransform | undefined {
 	const notes = boundsOf(points);
 	if (!notes) {
 		return undefined;
 	}
-	const bounds = groups ? withGroups(notes, groups) : notes;
+	const bounds = isGrouped ? withHalos(notes, points) : notes;
 	const { width, height } = size;
 	const scale = Math.min(
 		MAX_FRAME_ZOOM,
