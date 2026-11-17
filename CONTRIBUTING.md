@@ -53,6 +53,9 @@ Svelte and Rust alike.
 - **Comments explain why, not what.** If code needs a comment to explain what
   it does, rename or extract instead.
 - **Tests are first-class code** and follow the same rules.
+- **Coverage only goes up**: CI fails when the coverage of the TypeScript
+  code falls under the thresholds of `vitest.config.ts`. Raise them when
+  tests are added; never lower them.
 
 The tools enforce what can be automated:
 

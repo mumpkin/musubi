@@ -25,7 +25,22 @@ export default defineConfig({
 		coverage: {
 			provider: 'v8',
 			include: ['apps/*/src/**/*.ts', 'packages/*/src/**/*.ts', 'tools/**/*.ts'],
-			exclude: ['**/*.test.ts', '**/bindings/**', 'tools/**/check-*.ts', 'apps/desktop/src/main.ts'],
+			// Scripts run by hand (`tools/helix/` drives the real Helix).
+			exclude: [
+				'**/*.test.ts',
+				'**/bindings/**',
+				'tools/**/check-*.ts',
+				'tools/helix/**',
+				'apps/desktop/src/main.ts',
+			],
+			// CI fails below these, set just under the coverage reached: raise
+			// them as tests are added, never lower them.
+			thresholds: {
+				statements: 60,
+				branches: 55,
+				functions: 57,
+				lines: 60,
+			},
 		},
 	},
 });
