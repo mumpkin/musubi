@@ -154,12 +154,15 @@ drops the changes.
 
 == Settings and themes
 
-`Space ,` opens the settings; every change applies at once.
+`Space ,` opens the settings; every change applies at once. The sections
+are listed on the left: the arrows move between them, `Tab` goes to their
+settings, `Escape` closes the window.
 
-- *Vault*: the open vault, the vaults opened before on this computer (a
-  click opens one), and "Open a folder…" for another; an empty folder
-  becomes a new vault, with this tutorial. Save your changes first.
-- *Theme*: Musubi follows the light or dark preference of the system, with
+- *Vaults and trash*: the open vault, the vaults opened before on this
+  computer ("Switch" opens one), and "Open a folder…" for another; an
+  empty folder becomes a new vault, with this tutorial. Save your changes
+  first.
+- *Appearance*: Musubi follows the light or dark preference of the system, with
   the colors of Ayu Light and Ayu Mirage, or uses the theme you choose
   (GitHub Light and GitHub Dark are there too).
   "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of

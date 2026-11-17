@@ -10,6 +10,10 @@ and this project adheres to
 
 ### Changed
 
+- The settings are laid out in sections listed on the left (Appearance,
+  Editor, Flashcards, Vaults and trash), each setting with a short
+  description, the themes as small previews of their colors. The window
+  fits the screen, scrolls inside and has a close button.
 - The graph stays still when you click a note; dragging a note moves only
   the notes around it, and a large graph settles three times faster.
 - The links of a note under the pointer or selected in the graph are drawn

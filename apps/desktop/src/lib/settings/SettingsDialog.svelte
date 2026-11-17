@@ -1,21 +1,17 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- Settings: the vault, the theme and autosave belong to this device, the
-     trash retention to the vault. Every change applies at once. -->
+<!-- Settings, in sections listed on the left: the arrows move between
+     them, Tab goes to their settings. The theme, the editor, flashcards and
+     the vaults belong to this device, the trash retention to the vault.
+     Every change applies at once. -->
 <script lang="ts">
-	import { Dialog, Switch } from 'bits-ui';
+	import { Dialog, Tabs } from 'bits-ui';
 
 	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
+	import Icon from '../shell/Icon.svelte';
 	import CardSetting from './CardSetting.svelte';
-	import {
-		AUTOSAVE_DELAY,
-		boundedNumber,
-		setAutosave,
-		setRelativeLineNumbers,
-		setTrashRetention,
-		setTrashSection,
-		TRASH_RETENTION,
-	} from './commands.ts';
+	import EditorSettings from './EditorSettings.svelte';
 	import ThemeSetting from './ThemeSetting.svelte';
+	import TrashSettings from './TrashSettings.svelte';
 	import VaultSetting from './VaultSetting.svelte';
 
 	interface Props {
@@ -42,54 +38,22 @@
 		onError,
 	}: Props = $props();
 
-	function saveAutosave(enabled: boolean, delay: number): void {
-		setAutosave(enabled, delay).then(onSettings).catch((error: unknown) => {
-			onError(String(error));
-		});
-	}
+	const SECTIONS = [
+		{ id: 'appearance', label: 'Appearance' },
+		{ id: 'editor', label: 'Editor' },
+		{ id: 'flashcards', label: 'Flashcards' },
+		{ id: 'files', label: 'Vaults and trash' },
+	] as const;
 
-	function toggleAutosave(enabled: boolean): void {
-		if (settings) {
-			saveAutosave(enabled, settings.autosaveDelaySeconds);
-		}
-	}
+	let section = $state<string>('appearance');
 
-	function showRelativeNumbers(relative: boolean): void {
-		setRelativeLineNumbers(relative).then(onSettings).catch(
-			(error: unknown) => {
-				onError(String(error));
-			},
+	// The dialog opens on its list of sections, ready for the arrows.
+	function focusSection(event: Event): void {
+		event.preventDefault();
+		const active = document.querySelector<HTMLElement>(
+			'.settings-section[data-state="active"]',
 		);
-	}
-
-	function showTrashSection(show: boolean): void {
-		setTrashSection(show).then(onSettings).catch((error: unknown) => {
-			onError(String(error));
-		});
-	}
-
-	function changeDelay(input: HTMLInputElement): void {
-		const delay = boundedNumber(input.value, AUTOSAVE_DELAY);
-		if (delay === undefined || !settings) {
-			input.value = String(settings?.autosaveDelaySeconds ?? '');
-			return;
-		}
-		saveAutosave(settings.autosave, delay);
-	}
-
-	function changeRetention(input: HTMLInputElement): void {
-		const days = boundedNumber(input.value, TRASH_RETENTION);
-		if (days === undefined) {
-			input.value = String(trashRetentionDays);
-			return;
-		}
-		setTrashRetention(days)
-			.then(() => {
-				trashRetentionDays = days;
-			})
-			.catch((error: unknown) => {
-				onError(String(error));
-			});
+		active?.focus();
 	}
 </script>
 
@@ -97,116 +61,187 @@
 	<Dialog.Portal>
 		<Dialog.Overlay class="palette-overlay" />
 		<Dialog.Content
-			class="palette settings"
+			class="settings"
 			aria-label="Settings"
+			onOpenAutoFocus={focusSection}
 		>
 			<header>
 				<Dialog.Title class="settings-title">Settings</Dialog.Title>
+				<Dialog.Close
+					class="settings-close"
+					aria-label="Close the settings"
+				>
+					<Icon name="close" />
+				</Dialog.Close>
 			</header>
-			<VaultSetting
-				root={vaultRoot}
-				onOpen={onVault}
-				{onError}
-			/>
-			<ThemeSetting {onError} />
-			{#if settings}
-				<section aria-labelledby="editor-heading">
-					<h3 id="editor-heading">Editor</h3>
-					<label class="line">
-						<Switch.Root
-							class="switch"
-							checked={settings.autosave}
-							onCheckedChange={(checked) => {
-								toggleAutosave(checked);
-							}}
-						>
-							<Switch.Thumb class="thumb" />
-						</Switch.Root>
-						Save automatically
-					</label>
-					<label class="line">
-						After
-						<input
-							type="number"
-							min={AUTOSAVE_DELAY.min}
-							max={AUTOSAVE_DELAY.max}
-							value={settings.autosaveDelaySeconds}
-							disabled={!settings.autosave}
-							onchange={(event) => {
-								changeDelay(event.currentTarget);
-							}}
+			<Tabs.Root
+				class="settings-body"
+				orientation="vertical"
+				bind:value={section}
+			>
+				<Tabs.List class="settings-sections">
+					{#each SECTIONS as { id, label } (id)}
+						<Tabs.Trigger
+							class="settings-section"
+							value={id}
+						>{label}</Tabs.Trigger>
+					{/each}
+				</Tabs.List>
+				<Tabs.Content
+					class="settings-page"
+					value="appearance"
+				>
+					<h3>Theme</h3>
+					<ThemeSetting {onError} />
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
+					value="editor"
+				>
+					<h3>Editor</h3>
+					{#if settings}
+						<EditorSettings
+							{settings}
+							{onSettings}
+							{onError}
 						/>
-						seconds without typing
-					</label>
-					<label class="line">
-						<Switch.Root
-							class="switch"
-							checked={settings.relativeLineNumbers}
-							onCheckedChange={showRelativeNumbers}
-						>
-							<Switch.Thumb class="thumb" />
-						</Switch.Root>
-						Relative line numbers
-					</label>
-				</section>
-			{/if}
-			{#if settings}
-				<CardSetting
-					{settings}
-					{onSettings}
-					{onError}
-				/>
-			{/if}
-			<section aria-labelledby="trash-heading">
-				<h3 id="trash-heading">Trash</h3>
-				{#if settings}
-					<label class="line">
-						<Switch.Root
-							class="switch"
-							checked={settings.showTrashSection}
-							onCheckedChange={showTrashSection}
-						>
-							<Switch.Thumb class="thumb" />
-						</Switch.Root>
-						Show the trash in the explorer
-					</label>
-				{/if}
-				<label class="line">
-					Keep deleted notes of this vault
-					<input
-						type="number"
-						min={TRASH_RETENTION.min}
-						max={TRASH_RETENTION.max}
-						value={trashRetentionDays}
-						disabled={isReadOnly}
-						onchange={(event) => {
-							changeRetention(event.currentTarget);
-						}}
+					{/if}
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
+					value="flashcards"
+				>
+					<h3>Review</h3>
+					{#if settings}
+						<CardSetting
+							{settings}
+							{onSettings}
+							{onError}
+						/>
+					{/if}
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
+					value="files"
+				>
+					<h3>Vaults</h3>
+					<VaultSetting
+						root={vaultRoot}
+						onOpen={onVault}
+						{onError}
 					/>
-					days (0: keep them)
-				</label>
-			</section>
+					<h3>Trash</h3>
+					<TrashSettings
+						{settings}
+						bind:trashRetentionDays
+						{isReadOnly}
+						{onSettings}
+						{onError}
+					/>
+				</Tabs.Content>
+			</Tabs.Root>
 		</Dialog.Content>
 	</Dialog.Portal>
 </Dialog.Root>
 
 <style>
+	:global(.settings) {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		z-index: 50;
+		display: grid;
+		grid-template-rows: auto 1fr;
+		width: min(48rem, 92vw);
+		height: min(34rem, 86vh);
+		overflow: hidden;
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		background: var(--background);
+		box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
+		color: var(--foreground);
+		transform: translate(-50%, -50%);
+	}
+
 	header {
-		padding: 0.75rem 1rem;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.6rem 0.75rem 0.6rem 1.25rem;
 		border-bottom: 1px solid var(--border);
 	}
 
 	:global(.settings-title) {
 		margin: 0;
 		font-size: 1rem;
+		font-weight: 600;
 	}
 
-	:global(.settings section) {
-		padding: 0.5rem 1rem 0.75rem;
+	:global(.settings-close) {
+		display: inline-flex;
+		padding: 0.3rem;
+		border: none;
+		border-radius: 4px;
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
 	}
 
-	:global(.settings h3) {
-		margin: 0.25rem 0 0.5rem;
+	:global(.settings-close:hover),
+	:global(.settings-close:focus-visible) {
+		outline: none;
+		background: var(--hover);
+		color: var(--foreground);
+	}
+
+	:global(.settings-body) {
+		display: grid;
+		grid-template-columns: 11rem 1fr;
+		min-height: 0;
+	}
+
+	:global(.settings-sections) {
+		display: grid;
+		align-content: start;
+		gap: 0.15rem;
+		padding: 0.75rem 0.5rem;
+		border-right: 1px solid var(--border);
+		background: var(--surface);
+	}
+
+	:global(.settings-section) {
+		padding: 0.4rem 0.75rem;
+		border: none;
+		border-radius: 5px;
+		background: none;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	:global(.settings-section:hover) {
+		background: var(--hover);
+	}
+
+	:global(.settings-section[data-state='active']) {
+		background: var(--selection);
+		font-weight: 600;
+	}
+
+	:global(.settings-section:focus-visible) {
+		outline: 2px solid var(--accent);
+		outline-offset: -2px;
+	}
+
+	:global(.settings-page) {
+		overflow-y: auto;
+		padding: 0.5rem 1.5rem 1.25rem;
+		outline: none;
+	}
+
+	:global(.settings-page h3) {
+		margin: 1rem 0 0.25rem;
 		color: var(--muted);
 		font-size: 0.75rem;
 		font-weight: 600;
@@ -214,31 +249,14 @@
 		text-transform: uppercase;
 	}
 
-	.line {
-		display: flex;
-		gap: 0.5rem;
-		align-items: center;
-		padding: 0.25rem 0;
+	:global(.settings-page h3:first-child) {
+		margin-bottom: 0.75rem;
 	}
 
-	input {
-		width: 4.5rem;
-		padding: 0.2rem 0.4rem;
+	:global(.settings .button) {
+		padding: 0.3rem 0.75rem;
 		border: 1px solid var(--border);
-		border-radius: 4px;
-		background: var(--background);
-		color: inherit;
-		font: inherit;
-	}
-
-	input:disabled {
-		color: var(--muted);
-	}
-
-	:global(.settings button:not(.choice, .switch)) {
-		padding: 0.2rem 0.6rem;
-		border: 1px solid var(--border);
-		border-radius: 4px;
+		border-radius: 5px;
 		background: var(--background);
 		color: inherit;
 		font: inherit;
@@ -246,45 +264,13 @@
 		cursor: pointer;
 	}
 
-	:global(.settings button:not(.choice, .switch):hover) {
+	:global(.settings .button:hover),
+	:global(.settings .button:focus-visible) {
+		outline: none;
 		background: var(--hover);
 	}
 
 	:global(.settings .danger) {
 		color: var(--error);
-	}
-
-	:global(.switch) {
-		display: inline-flex;
-		align-items: center;
-		width: 2rem;
-		height: 1.1rem;
-		padding: 0.1rem;
-		border: none;
-		border-radius: 1rem;
-		background: var(--border);
-		cursor: pointer;
-	}
-
-	:global(.switch[data-state='checked']) {
-		background: var(--accent);
-	}
-
-	:global(.switch:focus-visible) {
-		outline: 2px solid var(--accent);
-		outline-offset: 2px;
-	}
-
-	:global(.thumb) {
-		display: block;
-		width: 0.9rem;
-		height: 0.9rem;
-		border-radius: 50%;
-		background: var(--background);
-		transition: transform 0.15s;
-	}
-
-	:global(.thumb[data-state='checked']) {
-		transform: translateX(0.9rem);
 	}
 </style>
