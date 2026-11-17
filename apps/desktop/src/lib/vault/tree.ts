@@ -2,6 +2,7 @@
 // The explorer tree, built from the flat lists of the Rust core.
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
+import { naturalCompare } from './natural-order.ts';
 
 export interface FolderNode {
 	name: string;
@@ -21,11 +22,12 @@ function nameOf(path: string): string {
 	return path.slice(path.lastIndexOf('/') + 1);
 }
 
+// "Note 2" before "Note 10".
 const byName = (left: FolderNode, right: FolderNode): number =>
-	left.name.localeCompare(right.name);
+	naturalCompare(left.name, right.name);
 
 const byTitle = (left: NoteEntry, right: NoteEntry): number =>
-	left.title.localeCompare(right.title);
+	naturalCompare(left.title, right.title);
 
 export function buildTree(tree: VaultTree): FolderNode {
 	const root: FolderNode = { name: '', path: '', folders: [], notes: [] };
