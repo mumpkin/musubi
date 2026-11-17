@@ -27,6 +27,7 @@
 	import SearchPicker from './SearchPicker.svelte';
 	import { shellActions, typingCheck } from './shell-actions.ts';
 	import { shortcutHandler } from './shortcut-handler.ts';
+	import type { ShellAction } from './shortcuts.ts';
 	import { SidePanels } from './side-panels.svelte.ts';
 	import TitleBar from './TitleBar.svelte';
 	import TrashDialog from './TrashDialog.svelte';
@@ -102,7 +103,12 @@
 
 <Tooltip.Provider delayDuration={TOOLTIP_DELAY_MILLISECONDS}>
 	<div class="shell">
-		<TitleBar title={titleIn(files.tree, manager.currentPath)} />
+		<TitleBar
+			title={titleIn(files.tree, manager.currentPath)}
+			onAction={(action: ShellAction) => {
+				ACTIONS[action]();
+			}}
+		/>
 		<PaneGroup
 			direction="horizontal"
 			autoSaveId="musubi-shell"

@@ -8,6 +8,10 @@ command palette (`Space ?`) lists the same commands.
 == The window
 
 - *Title bar*: the title of the current note, and the buttons of the window.
+  Its icons, for the mouse, do what their shortcuts do (the tooltip names
+  both): on the left the explorer, find a note, search the text, home and
+  new note; on the right review, graph, backlinks, the command palette
+  (every other command) and the settings.
 - *Explorer*, on the left (`Space e`): folders and notes by title. Next to
   the vault name, the flashcards due, and a menu (…) to edit the tree as
   text, create a note or a folder, and review. A right click on a note or a
