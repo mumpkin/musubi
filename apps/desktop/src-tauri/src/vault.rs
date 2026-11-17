@@ -8,6 +8,7 @@ use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
 use ts_rs::TS;
 
+use crate::preferences::StartScreen;
 use crate::state::{AppState, DeviceSettings, OpenVault};
 
 /// The open vault, as the interface sees it.
@@ -22,11 +23,22 @@ pub struct VaultInfo {
 	#[ts(type = "number")]
 	pub trash_retention_days: u64,
 	pub tree: VaultTree,
-	/// The note to show first: the tutorial of a new vault.
+	/// The note to show first: the tutorial of a new vault, or the note
+	/// modified last when the preferences ask for it; none for the home
+	/// screen.
 	pub first_note: Option<String>,
 }
 
 const NO_VAULT: &str = "no vault is open";
+
+/// The note a vault opens on, as the preferences of the device ask: the
+/// note modified last, or none for the home screen.
+fn start_note(open: &OpenVault, settings: &DeviceSettings) -> Option<String> {
+	if settings.preferences.start_screen == StartScreen::Home {
+		return None;
+	}
+	open.vault.recently_modified(1).ok()?.into_iter().next()
+}
 
 fn info(open: &OpenVault) -> Result<VaultInfo, String> {
 	let root = open.vault.root();
@@ -64,13 +76,13 @@ pub fn open_vault(
 	state: State<'_, AppState>,
 ) -> Result<VaultInfo, String> {
 	let mut open = OpenVault::open(root, &data_dir(&app)?)?;
-	let first_note = welcome(&mut open)?;
-	let vault_info = VaultInfo {
-		first_note,
-		..info(&open)?
-	};
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
+	let first_note = welcome(&mut open)?;
+	let vault_info = VaultInfo {
+		first_note: first_note.or_else(|| start_note(&open, &settings)),
+		..info(&open)?
+	};
 	let opened = open.vault.root().to_path_buf();
 	// The vault of the last session, opened at launch, stays in the list.
 	if let Some(previous) = settings.last_vault.take()
@@ -123,14 +135,23 @@ pub fn current_vault(
 	state: State<'_, AppState>,
 ) -> Result<Option<VaultInfo>, String> {
 	let mut open = state.lock();
+	let settings = DeviceSettings::load(&config_dir(&app)?);
 	if open.is_none() {
-		let last = DeviceSettings::load(&config_dir(&app)?).last_vault;
 		let data = data_dir(&app)?;
-		*open = last
+		*open = settings
+			.last_vault
+			.clone()
 			.filter(|root| root.is_dir())
 			.and_then(|root| OpenVault::open(&root, &data).ok());
 	}
-	open.as_ref().map(info).transpose()
+	open.as_ref()
+		.map(|vault| {
+			Ok(VaultInfo {
+				first_note: start_note(vault, &settings),
+				..info(vault)?
+			})
+		})
+		.transpose()
 }
 
 /// Folders and notes of the open vault. Notes may have changed on disk:

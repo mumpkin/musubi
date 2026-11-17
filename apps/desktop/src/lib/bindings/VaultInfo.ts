@@ -10,6 +10,8 @@ export type VaultInfo = { root: string, name: string, readOnly: boolean,
  */
 trashRetentionDays: number, tree: VaultTree, 
 /**
- * The note to show first: the tutorial of a new vault.
+ * The note to show first: the tutorial of a new vault, or the note
+ * modified last when the preferences ask for it; none for the home
+ * screen.
  */
 firstNote: string | null, };

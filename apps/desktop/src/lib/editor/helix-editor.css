@@ -31,6 +31,11 @@
 	background: var(--hover);
 }
 
+/* The line of the cursor, when the preferences highlight it. */
+.helix-host .cm-activeLine {
+	background: var(--hover);
+}
+
 /* Completion of links and images. */
 .helix-host .cm-tooltip {
 	border: 1px solid var(--border);

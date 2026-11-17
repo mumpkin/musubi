@@ -45,9 +45,9 @@
 	// svelte-ignore state_referenced_locally
 	const files = new VaultState(vault.tree);
 	// svelte-ignore state_referenced_locally
-	const manager = new PaneManager(
-		vault.firstNote ?? vault.tree.notes[0]?.path ?? '',
-	);
+	// The core picks the first note (the tutorial, or the last note, as the
+	// preferences ask); without one, the home screen.
+	const manager = new PaneManager(vault.firstNote ?? '');
 	const dialogs = new ShellDialogs();
 	// svelte-ignore state_referenced_locally
 	let trashRetentionDays = $state(vault.trashRetentionDays);

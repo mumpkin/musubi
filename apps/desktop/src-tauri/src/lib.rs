@@ -6,6 +6,7 @@ mod commands;
 mod conflicts;
 mod explorer;
 mod links;
+mod preferences;
 mod reading;
 mod reviews;
 mod settings;
@@ -65,6 +66,7 @@ macro_rules! commands {
 			settings::set_trash_section,
 			settings::set_relative_line_numbers,
 			settings::set_trash_retention,
+			preferences::set_preferences,
 		]
 	};
 }

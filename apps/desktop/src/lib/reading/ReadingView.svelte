@@ -206,11 +206,14 @@
 		outline: none;
 	}
 
+	/* Font, size, width, spacing: the preferences (`preferences.ts`). */
 	.reading-view {
-		max-width: 46rem;
+		max-width: var(--reading-width, 72ch);
 		margin: 0 auto;
 		padding: 2rem 1.5rem 4rem;
-		line-height: 1.6;
+		font-family: var(--reading-font, inherit);
+		font-size: var(--reading-size, 1rem);
+		line-height: var(--line-spacing, 1.6);
 	}
 
 	:global(::highlight(musubi-search)) {

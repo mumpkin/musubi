@@ -4,12 +4,12 @@
 
 .reading-view h2 {
 	margin-top: 0;
-	font-size: 1.9rem;
+	font-size: 1.9em;
 }
 
 .reading-view h3 {
 	margin-top: 2rem;
-	font-size: 1.35rem;
+	font-size: 1.35em;
 }
 
 /* The math font of Typst, shipped with the app: its stretchy braces and
@@ -168,7 +168,7 @@ the icon is drawn as a mask, in the colour of the text around it. */
 }
 
 .reading-view nav[role='doc-toc'] h2 {
-	font-size: 1rem;
+	font-size: 1em;
 }
 
 /* The block of the `j` / `k` cursor: a faint tint of the text color,
