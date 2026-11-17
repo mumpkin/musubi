@@ -10,13 +10,28 @@
 
 	const { message, onDone }: Props = $props();
 
+	// Long enough to read: a short message stays four seconds, a longer
+	// one (an error that says what to do) up to ten.
 	const SHOWN_MILLISECONDS = 4000;
+	const LONGEST_MILLISECONDS = 10_000;
+	const SHORT_MESSAGE = 60;
+	const MILLISECONDS_PER_CHARACTER = 50;
+
+	const extra = $derived(Math.max(0, message.length - SHORT_MESSAGE));
+	const duration = $derived(Math.min(
+		LONGEST_MILLISECONDS,
+		SHOWN_MILLISECONDS + extra * MILLISECONDS_PER_CHARACTER,
+	));
+	// Messages of the core start in lower case.
+	const sentence = $derived(
+		message.charAt(0).toUpperCase() + message.slice(1),
+	);
 
 	$effect(() => {
 		if (message === '') {
 			return undefined;
 		}
-		const timer = setTimeout(onDone, SHOWN_MILLISECONDS);
+		const timer = setTimeout(onDone, duration);
 		return () => {
 			clearTimeout(timer);
 		};
@@ -27,7 +42,7 @@
 	<div
 		class="notice"
 		role="status"
-	>{message}</div>
+	>{sentence}</div>
 {/if}
 
 <style>

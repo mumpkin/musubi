@@ -30,6 +30,9 @@ and this project adheres to
 
 ### Changed
 
+- Error messages say what went wrong and what to do (a missing file, a
+  permission, a full disk…) instead of the raw message of the system, and
+  long ones stay longer on screen.
 - Large vaults are faster: listing notes, saving and finding a note by
   title no longer read every note (three times faster on 5,000 notes, the
   note picker thirty times).

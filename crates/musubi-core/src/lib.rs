@@ -33,7 +33,7 @@ pub use crate::archive::ARCHIVE_FOLDER;
 pub use crate::assets::{NewAsset, is_image};
 pub use crate::cards::{DueCard, DueRequest, ReviewClock};
 pub use crate::conflicts::{Conflict, Keep, conflict_of};
-pub use crate::error::VaultError;
+pub use crate::error::{VaultError, file_error};
 pub use crate::index::{
 	Backlink, Graph, GraphLink, GraphNode, IndexedCard, Sources, TextMatch,
 	VaultIndex,

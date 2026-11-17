@@ -155,7 +155,7 @@ pub fn import_theme(app: AppHandle) -> Result<Option<ThemeEntry>, String> {
 		return Ok(None);
 	};
 	let path = file.into_path().map_err(|error| error.to_string())?;
-	let text = fs::read_to_string(path).map_err(|error| error.to_string())?;
+	let text = fs::read_to_string(path).map_err(musubi_core::file_error)?;
 	let theme = parse(&text)?;
 	let folder = themes_dir(&app)?;
 	let taken: Vec<String> = read_themes(&folder)
@@ -163,9 +163,9 @@ pub fn import_theme(app: AppHandle) -> Result<Option<ThemeEntry>, String> {
 		.map(|entry| entry.id)
 		.collect();
 	let id = free_id(&theme.name, &taken);
-	fs::create_dir_all(&folder).map_err(|error| error.to_string())?;
+	fs::create_dir_all(&folder).map_err(musubi_core::file_error)?;
 	fs::write(folder.join(format!("{id}.{JSON_EXTENSION}")), text)
-		.map_err(|error| error.to_string())?;
+		.map_err(musubi_core::file_error)?;
 	Ok(Some(ThemeEntry { id, theme }))
 }
 
@@ -178,7 +178,7 @@ pub fn remove_theme(id: &str, app: AppHandle) -> Result<(), String> {
 		return Err(format!("no imported theme {id}"));
 	}
 	fs::remove_file(folder.join(format!("{id}.{JSON_EXTENSION}")))
-		.map_err(|error| error.to_string())?;
+		.map_err(musubi_core::file_error)?;
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
 	if settings.theme.as_deref() == Some(id) {
