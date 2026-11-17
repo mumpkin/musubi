@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-<!-- The vault section of the settings: the open vault, the vaults opened
-     before on this device, and a folder picker for another one (a new
-     empty folder becomes a vault with the tutorial). -->
+<!-- The vaults of this device: the open one, the ones opened before, and a
+     folder picker for another one (a new empty folder becomes a vault with
+     the tutorial). -->
 <script lang="ts">
 	import { knownVaults, pickFolder } from '../vault/vault.ts';
 
@@ -42,55 +42,76 @@
 		path.slice(path.lastIndexOf('/') + 1);
 </script>
 
-<section aria-labelledby="vault-heading">
-	<h3 id="vault-heading">Vault</h3>
-	<p
-		class="current"
-		title={root}
-	><strong>{nameOf(root)}</strong> <span>{root}</span></p>
+<ul
+	class="vaults"
+	aria-label="Vaults"
+>
+	<li class="vault current">
+		<span class="where">
+			<strong>{nameOf(root)}</strong>
+			<span class="path">{root}</span>
+		</span>
+		<span class="badge">Open</span>
+	</li>
 	{#each others as vault (vault)}
-		<button
-			class="choice vault"
-			title="Open {vault}"
-			onclick={() => {
-				onOpen(vault);
-			}}
-		><strong>{nameOf(vault)}</strong> <span>{vault}</span></button>
+		<li class="vault">
+			<span class="where">
+				<strong>{nameOf(vault)}</strong>
+				<span class="path">{vault}</span>
+			</span>
+			<button
+				class="button"
+				title="Open {vault}"
+				onclick={() => {
+					onOpen(vault);
+				}}
+			>Switch</button>
+		</li>
 	{/each}
-	<button onclick={choose}>Open a folder…</button>
-</section>
+</ul>
+<button
+	class="button"
+	onclick={choose}
+>Open a folder…</button>
 
 <style>
-	.current,
+	.vaults {
+		margin: 0 0 0.75rem;
+		padding: 0;
+		border: 1px solid var(--border);
+		border-radius: 6px;
+		list-style: none;
+	}
+
 	.vault {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.vault:last-child {
+		border-bottom: none;
+	}
+
+	.where {
+		display: grid;
+		min-width: 0;
+	}
+
+	.path {
 		overflow: hidden;
-		margin: 0 0 0.35rem;
+		color: var(--muted);
+		font-size: 0.8rem;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
 
-	.current span,
-	.vault span {
-		color: var(--muted);
+	.badge {
+		color: var(--accent);
 		font-size: 0.8rem;
-	}
-
-	.vault {
-		display: block;
-		width: 100%;
-		padding: 0.25rem 0.5rem;
-		border: 1px solid var(--border);
-		border-radius: 4px;
-		background: var(--background);
-		color: inherit;
-		font: inherit;
-		text-align: left;
-		cursor: pointer;
-	}
-
-	.vault:hover,
-	.vault:focus-visible {
-		outline: none;
-		background: var(--hover);
+		font-weight: 600;
 	}
 </style>
