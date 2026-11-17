@@ -51,9 +51,11 @@ const LINK_OPACITY = 0.45;
 const LINK_FLOOR = 0.1;
 const LINKS_IN_VIEW = 400;
 // Links of the note that stands out, and the fading of the others.
-const FOCUS_LINK_OPACITY = 0.9;
+// Kept mild: the other links and notes stay readable around it.
+const FOCUS_LINK_OPACITY = 0.7;
 const FOCUS_LINK_WIDTH = 1.5;
-const FADED = 0.2;
+const FADED_LINKS = 0.5;
+const FADED = 0.4;
 // Halos of the groups of notes.
 const HALO_FILL_OPACITY = 0.08;
 const HALO_STROKE_OPACITY = 0.35;
@@ -132,7 +134,7 @@ function drawEdges(context: CanvasRenderingContext2D, frame: Frame) {
 	const links = linksInView(frame);
 	const crowd = Math.sqrt(LINKS_IN_VIEW / Math.max(links.length, 1));
 	const opacity = Math.max(LINK_FLOOR, Math.min(1, crowd) * LINK_OPACITY);
-	context.globalAlpha = focus ? opacity * FADED : opacity;
+	context.globalAlpha = focus ? opacity * FADED_LINKS : opacity;
 	context.strokeStyle = scene.colors.link;
 	context.lineWidth = 1 / scene.transform.k;
 	strokeLinks(context, links);
