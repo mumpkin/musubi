@@ -13,7 +13,9 @@ use crate::conflicts::conflict_of;
 use crate::error::VaultError;
 use crate::naming::{self, Folder};
 use crate::paths;
+use crate::settings::read_settings;
 use crate::title;
+use crate::title_cache::{Listing, TitleCache};
 
 /// Version of the vault format this build reads and writes.
 pub const FORMAT: u64 = 0;
@@ -52,6 +54,13 @@ pub struct Vault {
 	pub read_only: bool,
 	/// Days before trash entries are purged; `0` keeps them.
 	pub trash_retention_days: u64,
+	titles: TitleCache,
+}
+
+/// A listing of the vault under way: the tree so far and the titles.
+struct Walk<'cache> {
+	tree: VaultTree,
+	titles: Listing<'cache>,
 }
 
 impl Vault {
@@ -80,6 +89,7 @@ impl Vault {
 				.get(TRASH_RETENTION)
 				.and_then(serde_json::Value::as_u64)
 				.unwrap_or(DEFAULT_RETENTION_DAYS),
+			titles: TitleCache::default(),
 		})
 	}
 
@@ -94,8 +104,12 @@ impl Vault {
 	///
 	/// An I/O error if a folder cannot be read.
 	pub fn tree(&self) -> Result<VaultTree, VaultError> {
-		let mut tree = VaultTree::default();
-		self.collect(&self.root, &mut tree)?;
+		let mut walk = Walk {
+			tree: VaultTree::default(),
+			titles: self.titles.listing(),
+		};
+		self.collect(&self.root, &mut walk)?;
+		let mut tree = walk.tree;
 		tree.folders.sort();
 		tree.notes.sort_by(|left, right| left.path.cmp(&right.path));
 		tree.pinned = self
@@ -109,7 +123,7 @@ impl Vault {
 	fn collect(
 		&self,
 		folder: &Path,
-		tree: &mut VaultTree,
+		walk: &mut Walk,
 	) -> Result<(), VaultError> {
 		for entry in fs::read_dir(folder)? {
 			let path = entry?.path();
@@ -127,24 +141,27 @@ impl Vault {
 				{
 					continue;
 				}
-				tree.folders.push(paths::relative(&self.root, &path));
-				self.collect(&path, tree)?;
+				walk.tree.folders.push(paths::relative(&self.root, &path));
+				self.collect(&path, walk)?;
 			} else if is_note(&path) && conflict_of(name).is_none() {
-				tree.notes.push(self.entry(&path));
+				let note = self.entry(&path, &mut walk.titles);
+				walk.tree.notes.push(note);
 			}
 		}
 		Ok(())
 	}
 
-	fn entry(&self, path: &Path) -> NoteEntry {
-		let stem = path
-			.file_stem()
-			.map(|stem| stem.to_string_lossy())
-			.unwrap_or_default();
-		let title = fs::read_to_string(path)
-			.ok()
-			.and_then(|source| title::heading_title(&source))
-			.unwrap_or_else(|| title::stem_title(&stem));
+	fn entry(&self, path: &Path, titles: &mut Listing) -> NoteEntry {
+		let title = titles.title(path, || {
+			let stem = path
+				.file_stem()
+				.map(|stem| stem.to_string_lossy())
+				.unwrap_or_default();
+			fs::read_to_string(path)
+				.ok()
+				.and_then(|source| title::heading_title(&source))
+				.unwrap_or_else(|| title::stem_title(&stem))
+		});
 		NoteEntry {
 			path: paths::relative(&self.root, path),
 			title,
@@ -298,13 +315,4 @@ fn names_in(directory: &Path) -> Result<Vec<String>, VaultError> {
 		.filter_map(Result::ok)
 		.map(|entry| entry.file_name().to_string_lossy().into_owned())
 		.collect())
-}
-
-/// Fields of `vault.json`; a missing or unreadable file has none, which
-/// means the default values.
-pub(crate) fn read_settings(settings: &Path) -> serde_json::Value {
-	fs::read_to_string(settings)
-		.ok()
-		.and_then(|text| serde_json::from_str(&text).ok())
-		.unwrap_or(serde_json::Value::Null)
 }

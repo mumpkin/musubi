@@ -21,6 +21,7 @@ use ts_rs::TS;
 
 pub use self::cards::IndexedCard;
 pub use self::graph::{Graph, GraphLink, GraphNode};
+pub use self::refresh::Sources;
 pub use self::text_search::TextMatch;
 use crate::error::VaultError;
 

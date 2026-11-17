@@ -17,6 +17,13 @@ use crate::error::VaultError;
 use crate::passages::passages;
 use crate::vault::{NoteEntry, Vault};
 
+/// What the index is built from: the vault, and the compiler that reads
+/// its notes.
+pub struct Sources<'vault> {
+	pub vault: &'vault Vault,
+	pub compiler: &'vault mut NoteCompiler,
+}
+
 /// What tells whether a file changed since it was indexed.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Stamp {
@@ -199,20 +206,38 @@ impl VaultIndex {
 		vault: &Vault,
 		compiler: &mut NoteCompiler,
 	) -> Result<usize, VaultError> {
+		self.refresh_reporting(Sources { vault, compiler }, &mut |_, _| ())
+	}
+
+	/// As [`Self::refresh`], calling `progress` with the notes indexed so
+	/// far and the notes to index, after each note.
+	///
+	/// # Errors
+	///
+	/// An I/O error while reading the vault, or a SQLite error.
+	pub fn refresh_reporting(
+		&mut self,
+		sources: Sources,
+		progress: &mut dyn FnMut(usize, usize),
+	) -> Result<usize, VaultError> {
+		let Sources { vault, compiler } = sources;
 		let stored = self.stamps()?;
 		let notes = vault.tree()?.notes;
+		let mut changed = Vec::new();
+		for entry in &notes {
+			let current = stamp(&vault.root().join(&entry.path))?;
+			if stored.get(&entry.path) != Some(&current) {
+				changed.push((entry, current));
+			}
+		}
 		let mut indexer = Indexer {
 			transaction: self.connection.transaction()?,
 			vault,
 			compiler,
 		};
-		let mut indexed = 0;
-		for entry in &notes {
-			let current = stamp(&vault.root().join(&entry.path))?;
-			if stored.get(&entry.path) != Some(&current) {
-				indexer.index_note(entry, current)?;
-				indexed += 1;
-			}
+		for (done, (entry, current)) in changed.iter().enumerate() {
+			indexer.index_note(entry, *current)?;
+			progress(done + 1, changed.len());
 		}
 		let present: HashSet<&str> =
 			notes.iter().map(|entry| entry.path.as_str()).collect();
@@ -223,6 +248,6 @@ impl VaultIndex {
 			indexer.forget(path)?;
 		}
 		indexer.transaction.commit()?;
-		Ok(indexed)
+		Ok(changed.len())
 	}
 }

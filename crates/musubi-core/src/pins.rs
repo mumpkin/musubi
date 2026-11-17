@@ -5,7 +5,8 @@
 use serde_json::Value;
 
 use crate::error::VaultError;
-use crate::vault::{self, Vault};
+use crate::settings;
+use crate::vault::Vault;
 
 const PINNED: &str = "pinned";
 
@@ -14,7 +15,7 @@ impl Vault {
 	/// some may point to notes that no longer exist.
 	#[must_use]
 	pub fn pinned(&self) -> Vec<String> {
-		vault::read_settings(&self.settings_file())
+		settings::read_settings(&self.settings_file())
 			.get(PINNED)
 			.and_then(Value::as_array)
 			.map(|pins| {

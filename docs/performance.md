@@ -50,9 +50,23 @@ Release build, Linux, warm disk cache, averages in milliseconds.
 Over budget at 5,000 notes: `search_notes` (×3.5), `vault_tree` (×2.3),
 `write_note` (×1.4) and the first opening (13 s with the window waiting).
 
+### After #201
+
+| Operation (5,000 notes)       | Before | After | Budget |
+| ----------------------------- | -----: | ----: | -----: |
+| Refresh with nothing changed  |   62.7 |  23.8 |      — |
+| `vault_tree` (refresh + tree) |  117.0 |  42.2 |     50 |
+| `search_notes`, one keystroke |   56.5 |   1.9 |     16 |
+| `write_note` (save + refresh) |   68.4 |  31.2 |     50 |
+
+Listing the vault keeps the titles of the notes between listings and reads
+a note again only when its time or size changed; the note picker searches
+the titles of the index. The first opening still compiles every note, now
+behind a screen that counts the notes indexed.
+
 ## Findings
 
-- `Vault::tree` reads and parses **every note** to get its title. It runs on
+- (Fixed in #201) `Vault::tree` reads and parses **every note** to get its title. It runs on
   every refresh, on every keystroke of the note picker, and twice per
   `vault_tree` (once inside the refresh). Titles are already in the index:
   the tree and the picker can take them from there, and the refresh can

@@ -19,6 +19,7 @@ mod search;
 mod settings;
 mod tasks;
 pub mod title;
+mod title_cache;
 pub mod trash;
 mod trash_folder;
 mod trash_links;
@@ -34,7 +35,8 @@ pub use crate::cards::{DueCard, DueRequest, ReviewClock};
 pub use crate::conflicts::{Conflict, Keep, conflict_of};
 pub use crate::error::VaultError;
 pub use crate::index::{
-	Backlink, Graph, GraphLink, GraphNode, IndexedCard, TextMatch, VaultIndex,
+	Backlink, Graph, GraphLink, GraphNode, IndexedCard, Sources, TextMatch,
+	VaultIndex,
 };
 pub use crate::rename::save_note;
 pub use crate::search::{NoteMatch, search_headings, search_titles};
