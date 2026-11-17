@@ -2,13 +2,14 @@
 // The colors of the folders of the open vault, shared by the explorer and
 // the graph.
 import { assignFolderColors, fallbackFolderColor } from './folder-colors.ts';
+import { naturalPathCompare } from './natural-order.ts';
 
 class FolderPalette {
 	private colors = $state(new Map<string, string>());
 
-	// Every folder of the vault, by path.
+	// Every folder of the vault, in the order of the explorer.
 	get folders(): string[] {
-		return [...this.colors.keys()].sort();
+		return [...this.colors.keys()].sort(naturalPathCompare);
 	}
 
 	// The folders of the vault were read again.
