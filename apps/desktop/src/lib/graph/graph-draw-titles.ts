@@ -172,9 +172,7 @@ export function drawTitles(context: CanvasRenderingContext2D, frame: Frame) {
 	for (const halo of frame.halos) {
 		writeFolder(writing, halo);
 	}
-	if (frame.focus === undefined) {
-		context.font = TITLE_FONT;
-		context.fillStyle = frame.scene.colors.label;
-		writeNotes(writing, frame.scene.byDegree, false);
-	}
+	context.font = TITLE_FONT;
+	context.fillStyle = frame.scene.colors.label;
+	writeNotes(writing, frame.scene.byDegree, false);
 }

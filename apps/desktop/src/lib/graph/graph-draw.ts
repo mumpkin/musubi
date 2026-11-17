@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Draws the graph on a canvas, in the colors of the theme. Only what is in
-// view is drawn. A note under the pointer, or selected, stands out with its
-// links and linked notes; the rest fades.
+// view is drawn. The links of a note under the pointer, or selected, are
+// drawn over the others; nothing else changes color, so that moving the
+// pointer from note to note does not flicker.
 import type { ZoomTransform } from 'd3-zoom';
 
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
@@ -51,11 +52,8 @@ const LINK_OPACITY = 0.45;
 const LINK_FLOOR = 0.1;
 const LINKS_IN_VIEW = 400;
 // Links of the note that stands out, and the fading of the others.
-// Kept mild: the other links and notes stay readable around it.
 const FOCUS_LINK_OPACITY = 0.7;
 const FOCUS_LINK_WIDTH = 1.5;
-const FADED_LINKS = 0.5;
-const FADED = 0.4;
 // Halos of the groups of notes.
 const HALO_FILL_OPACITY = 0.08;
 const HALO_STROKE_OPACITY = 0.35;
@@ -134,7 +132,7 @@ function drawEdges(context: CanvasRenderingContext2D, frame: Frame) {
 	const links = linksInView(frame);
 	const crowd = Math.sqrt(LINKS_IN_VIEW / Math.max(links.length, 1));
 	const opacity = Math.max(LINK_FLOOR, Math.min(1, crowd) * LINK_OPACITY);
-	context.globalAlpha = focus ? opacity * FADED_LINKS : opacity;
+	context.globalAlpha = opacity;
 	context.strokeStyle = scene.colors.link;
 	context.lineWidth = 1 / scene.transform.k;
 	strokeLinks(context, links);
@@ -234,10 +232,8 @@ function drawNode(
 	point: GraphPoint,
 	frame: Frame,
 ) {
-	const { scene, focus, near } = frame;
+	const { scene } = frame;
 	const scale = scene.transform.k;
-	const isFaded = focus !== undefined && point !== focus && !near.has(point);
-	context.globalAlpha = isFaded ? FADED : 1;
 	context.fillStyle = fillOf(point, scene);
 	traceNode(context, point, { grow: 0, scale });
 	context.fill();
@@ -245,7 +241,6 @@ function drawNode(
 		drawPillTitle(context, point, scale);
 	}
 	drawRing(context, point, scene);
-	context.globalAlpha = 1;
 }
 
 function frameOfScene(scene: GraphScene): Frame {
