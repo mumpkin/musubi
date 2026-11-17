@@ -5,13 +5,13 @@
 <script lang="ts">
 	import '../editor/helix-editor.css';
 
-	import { history } from '@codemirror/commands';
 	import { EditorState, Prec } from '@codemirror/state';
 	import { drawSelection, EditorView } from '@codemirror/view';
 	import {
 		type EditorHost,
 		type EditorMode,
 		helix,
+		helixHistory,
 		modeField,
 		type PromptKind,
 	} from '@musubi/editor';
@@ -116,7 +116,7 @@
 			state: EditorState.create({
 				doc,
 				extensions: [
-					history(),
+					helixHistory(),
 					drawSelection(),
 					openOnEnter,
 					treeDecorations(),

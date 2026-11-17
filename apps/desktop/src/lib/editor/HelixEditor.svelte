@@ -3,7 +3,6 @@
 <script lang="ts">
 	import './helix-editor.css';
 
-	import { history } from '@codemirror/commands';
 	import {
 		Compartment,
 		EditorState,
@@ -18,6 +17,7 @@
 		type EditorHost,
 		type EditorMode,
 		helix,
+		helixHistory,
 		lineNumberGutter,
 		type PromptKind,
 		typstLanguage,
@@ -172,7 +172,7 @@
 		return [
 			numbers.of(lineNumberGutter(editorSettings.relativeLineNumbers)),
 			options.of(editorOptions(editorSettings)),
-			history(),
+			helixHistory(),
 			drawSelection(),
 			typstLanguage(),
 			EditorView.updateListener.of(reportChanges),

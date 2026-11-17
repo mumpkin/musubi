@@ -33,6 +33,9 @@ and this project adheres to
 - Error messages say what went wrong and what to do (a missing file, a
   permission, a full disk…) instead of the raw message of the system, and
   long ones stay longer on screen.
+- `u` undoes as in Helix: a whole insert session at once, however long
+  it lasted, and each command of normal mode on its own; before, changes
+  were grouped by time.
 - Large vaults are faster: listing notes, saving and finding a note by
   title no longer read every note (three times faster on 5,000 notes, the
   note picker thirty times).
