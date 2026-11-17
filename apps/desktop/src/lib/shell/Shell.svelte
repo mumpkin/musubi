@@ -18,6 +18,7 @@
 	import { ShellDialogs } from './dialogs.svelte.ts';
 	import Explorer from './Explorer.svelte';
 	import { PANE_SIZES, TOOLTIP_DELAY_MILLISECONDS } from './layout.ts';
+	import MissingLinkDialog from './MissingLinkDialog.svelte';
 	import NewEntryDialog from './NewEntryDialog.svelte';
 	import { NoteActions } from './note-actions.ts';
 	import NotePane from './NotePane.svelte';
@@ -220,6 +221,11 @@
 />
 
 <UnsavedDialog prompt={notes.unsaved} />
+
+<MissingLinkDialog
+	prompt={notes.missing}
+	titleOf={(path: string) => titleIn(files.tree, path)}
+/>
 
 <TrashDialog
 	bind:open={dialogs.isTrashOpen}
