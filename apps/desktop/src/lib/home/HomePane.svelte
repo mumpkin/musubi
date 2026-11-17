@@ -54,6 +54,23 @@
 			}}
 		>Search the text… <kbd>Space /</kbd></button>
 	</div>
+	{#if data.isEmpty}
+		<p class="empty">This vault has no note yet.</p>
+		<div class="find">
+			<button
+				class="entry field"
+				onclick={() => {
+					data.onStart('newNote');
+				}}
+			>New note <kbd>Space n</kbd></button>
+			<button
+				class="entry field"
+				onclick={() => {
+					data.onStart('openTutorial');
+				}}
+			>Open the tutorial, a tour of Musubi</button>
+		</div>
+	{/if}
 	{#if data.dueCount > 0}
 		<button
 			class="entry review"
@@ -92,6 +109,11 @@
 		margin: 0 auto;
 		padding: 2.5rem 1.5rem;
 		outline: none;
+	}
+
+	.empty {
+		margin: 0 0 0.5rem;
+		color: var(--muted);
 	}
 
 	.find {

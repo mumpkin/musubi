@@ -25,6 +25,12 @@ describe('PaneManager', () => {
 		expect(manager.panes).toHaveLength(1);
 	});
 
+	it('splits the home screen into a second home screen', () => {
+		const manager = new PaneManager('');
+		manager.split();
+		expect(manager.panes.map((pane) => pane.mode)).toEqual(['home', 'home']);
+	});
+
 	it('renders a note again after a save', () => {
 		const manager = new PaneManager('Note.typ');
 		manager.saved('Note.typ');
