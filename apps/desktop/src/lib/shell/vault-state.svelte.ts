@@ -8,6 +8,7 @@ import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { editorSettings } from '../editor/editor-settings.svelte.ts';
+import { applyPreferences } from '../settings/preferences.ts';
 import { listConflicts } from '../vault/conflicts.ts';
 import { pinNote, recentNotes } from '../vault/explorer.ts';
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
@@ -88,6 +89,7 @@ export class VaultState {
 	private applySettings(settings: DeviceSettings): void {
 		this.settings = settings;
 		editorSettings.relativeLineNumbers = settings.relativeLineNumbers;
+		applyPreferences(settings.preferences);
 	}
 
 	setTree(tree: VaultTree): void {

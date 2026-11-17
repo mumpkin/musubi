@@ -10,6 +10,8 @@ use musubi_typst::NoteCompiler;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
+use crate::preferences::Preferences;
+
 /// A vault, its Typst compiler, which keeps its caches between
 /// compilations, and its index.
 pub struct OpenVault {
@@ -84,6 +86,7 @@ pub struct DeviceSettings {
 	pub show_trash_section: bool,
 	/// Flashcards seen for the first time each day, at most.
 	pub new_cards_per_day: u32,
+	pub preferences: Preferences,
 }
 
 const DEFAULT_AUTOSAVE_DELAY_SECONDS: u32 = 2;
@@ -101,6 +104,7 @@ impl Default for DeviceSettings {
 			relative_line_numbers: false,
 			show_trash_section: true,
 			new_cards_per_day: DEFAULT_NEW_CARDS_PER_DAY,
+			preferences: Preferences::default(),
 		}
 	}
 }

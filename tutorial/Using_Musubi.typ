@@ -158,25 +158,31 @@ drops the changes.
 are listed on the left: the arrows move between them, `Tab` goes to their
 settings, `Escape` closes the window.
 
-- *Vaults and trash*: the open vault, the vaults opened before on this
-  computer ("Switch" opens one), and "Open a folder…" for another; an
-  empty folder becomes a new vault, with this tutorial. Save your changes
-  first.
+- *General*: the size of the whole interface, and what a vault opens on:
+  the note modified last, or the home screen.
 - *Appearance*: Musubi follows the light or dark preference of the system, with
   the colors of Ayu Light and Ayu Mirage, or uses the theme you choose
   (GitHub Light and GitHub Dark are there too).
   "Import a theme" adds one from a JSON file; the guide `docs/themes.md` of
   the repository describes the format. The palette has the same commands:
   type `theme` in it.
+- *Reading*: the font and size of the notes, the length of their lines
+  and the space between them.
 - *Editor*: save automatically after a few seconds without typing;
   relative line numbers, as in Helix: the other lines show their distance
-  to the cursor, handy for `5j`.
+  to the cursor, handy for `5j`. Then the font and size of the source,
+  wrapping long lines, highlighting the line of the cursor, and the width
+  of one level of indentation.
+- *Graph*: dots or pills, grouped by folder or not, as in its panel.
 - *Flashcards*: how many new cards a review brings each day (20 by
   default).
-- *Trash of this vault*: how many days deleted notes stay in the trash
-  (0 keeps them).
+- *Vaults and trash*: the open vault, the vaults opened before on this
+  computer ("Switch" opens one), and "Open a folder…" for another; an
+  empty folder becomes a new vault, with this tutorial. Save your changes
+  first. Then whether the explorer shows the trash, and how many days
+  deleted notes stay in the trash of this vault (0 keeps them).
 
-The theme and autosave are settings of this computer; the trash delay
+Every setting belongs to this computer, except the trash delay, which
 belongs to the vault, so every copy of it uses the same.
 
 == Where your notes live

@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- More preferences in the settings: the size of the whole interface; the
+  font, text size, line width and line spacing of the reading view; the
+  font and text size of the editor, wrapping of long lines, highlighting
+  of the cursor line and the width of indentation; the shape and grouping
+  the graph opens with; and whether a vault opens on the note modified
+  last or on the home screen.
+
 ### Changed
 
 - The settings are laid out in sections listed on the left (Appearance,

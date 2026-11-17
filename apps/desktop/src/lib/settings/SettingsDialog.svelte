@@ -10,6 +10,10 @@
 	import Icon from '../shell/Icon.svelte';
 	import CardSetting from './CardSetting.svelte';
 	import EditorSettings from './EditorSettings.svelte';
+	import EditorTextSettings from './EditorTextSettings.svelte';
+	import GeneralSettings from './GeneralSettings.svelte';
+	import GraphSettings from './GraphSettings.svelte';
+	import ReadingSettings from './ReadingSettings.svelte';
 	import ThemeSetting from './ThemeSetting.svelte';
 	import TrashSettings from './TrashSettings.svelte';
 	import VaultSetting from './VaultSetting.svelte';
@@ -39,13 +43,16 @@
 	}: Props = $props();
 
 	const SECTIONS = [
+		{ id: 'general', label: 'General' },
 		{ id: 'appearance', label: 'Appearance' },
+		{ id: 'reading', label: 'Reading' },
 		{ id: 'editor', label: 'Editor' },
+		{ id: 'graph', label: 'Graph' },
 		{ id: 'flashcards', label: 'Flashcards' },
 		{ id: 'files', label: 'Vaults and trash' },
 	] as const;
 
-	let section = $state<string>('appearance');
+	let section = $state<string>('general');
 
 	// The dialog opens on its list of sections, ready for the arrows.
 	function focusSection(event: Event): void {
@@ -89,6 +96,19 @@
 				</Tabs.List>
 				<Tabs.Content
 					class="settings-page"
+					value="general"
+				>
+					<h3>General</h3>
+					{#if settings}
+						<GeneralSettings
+							{settings}
+							{onSettings}
+							{onError}
+						/>
+					{/if}
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
 					value="appearance"
 				>
 					<h3>Theme</h3>
@@ -96,16 +116,42 @@
 				</Tabs.Content>
 				<Tabs.Content
 					class="settings-page"
+					value="reading"
+				>
+					<h3>Reading view</h3>
+					{#if settings}
+						<ReadingSettings
+							{settings}
+							{onSettings}
+							{onError}
+						/>
+					{/if}
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
 					value="editor"
 				>
-					<h3>Editor</h3>
+					<h3>Saving</h3>
 					{#if settings}
 						<EditorSettings
 							{settings}
 							{onSettings}
 							{onError}
 						/>
+						<h3>Text</h3>
+						<EditorTextSettings
+							{settings}
+							{onSettings}
+							{onError}
+						/>
 					{/if}
+				</Tabs.Content>
+				<Tabs.Content
+					class="settings-page"
+					value="graph"
+				>
+					<h3>Graph</h3>
+					<GraphSettings />
 				</Tabs.Content>
 				<Tabs.Content
 					class="settings-page"

@@ -31,6 +31,7 @@
 	import { noteAssets } from '../vault/assets.ts';
 	import { linkSource } from '../vault/links.ts';
 	import { diskChange } from './disk-change.ts';
+	import { editorOptions } from './editor-options.ts';
 	import { editorSettings } from './editor-settings.svelte.ts';
 	import { imagePaste, type ImageTarget, listenForDrops } from './images.ts';
 	import { PROMPT_LABELS, runPrompt } from './prompt.ts';
@@ -148,8 +149,10 @@
 		}
 	}
 
-	// The line numbers follow the setting at once.
+	// The line numbers and the options of the preferences follow the
+	// settings at once.
 	const numbers = new Compartment();
+	const options = new Compartment();
 
 	$effect(() => {
 		const gutter = lineNumberGutter(editorSettings.relativeLineNumbers);
@@ -158,11 +161,17 @@
 		});
 	});
 
+	$effect(() => {
+		const chosen = editorOptions(editorSettings);
+		untrack(() => {
+			view?.dispatch({ effects: options.reconfigure(chosen) });
+		});
+	});
+
 	function extensions(): Extension[] {
 		return [
 			numbers.of(lineNumberGutter(editorSettings.relativeLineNumbers)),
-			// Notes are prose: long lines wrap.
-			EditorView.lineWrapping,
+			options.of(editorOptions(editorSettings)),
 			history(),
 			drawSelection(),
 			typstLanguage(),
@@ -277,8 +286,13 @@
 		min-height: 0;
 	}
 
+	/* Font and size follow the preferences (`settings/preferences.ts`). */
 	.editor :global(.cm-editor) {
 		height: 100%;
-		font-size: 0.95rem;
+		font-size: var(--editor-size, 0.95rem);
+	}
+
+	.editor :global(.cm-scroller) {
+		font-family: var(--editor-font, monospace);
 	}
 </style>
