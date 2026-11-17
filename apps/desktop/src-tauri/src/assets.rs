@@ -33,7 +33,7 @@ pub fn import_image(
 	if !musubi_core::is_image(&name) {
 		return Err(not_an_image(&name));
 	}
-	let bytes = fs::read(source).map_err(|error| error.to_string())?;
+	let bytes = fs::read(source).map_err(musubi_core::file_error)?;
 	let open = state.lock();
 	let open = open.as_ref().ok_or(NO_VAULT)?;
 	open.vault

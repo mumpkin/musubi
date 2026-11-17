@@ -33,8 +33,8 @@ fn device_id(app: &AppHandle) -> Result<String, String> {
 	}
 	// A randomly seeded hasher gives 64 random bits without a dependency.
 	let id = format!("{:016x}", RandomState::new().build_hasher().finish());
-	fs::create_dir_all(&folder).map_err(|error| error.to_string())?;
-	fs::write(&file, &id).map_err(|error| error.to_string())?;
+	fs::create_dir_all(&folder).map_err(musubi_core::file_error)?;
+	fs::write(&file, &id).map_err(musubi_core::file_error)?;
 	Ok(id)
 }
 

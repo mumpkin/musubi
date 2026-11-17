@@ -133,8 +133,8 @@ impl DeviceSettings {
 	pub fn save(&self, config: &Path) -> Result<(), String> {
 		let text = serde_json::to_string_pretty(self)
 			.map_err(|error| error.to_string())?;
-		fs::create_dir_all(config).map_err(|error| error.to_string())?;
+		fs::create_dir_all(config).map_err(musubi_core::file_error)?;
 		fs::write(config.join(SETTINGS_FILE), text)
-			.map_err(|error| error.to_string())
+			.map_err(musubi_core::file_error)
 	}
 }
