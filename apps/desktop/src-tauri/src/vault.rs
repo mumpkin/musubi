@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use musubi_core::VaultTree;
 use serde::Serialize;
-use tauri::{AppHandle, Manager, State};
+use tauri::{AppHandle, Emitter, Manager, State};
 use ts_rs::TS;
 
 use crate::preferences::StartScreen;
@@ -61,6 +61,20 @@ pub fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {
 		.map_err(|error| error.to_string())
 }
 
+/// Event telling the interface how far the indexing of a vault being
+/// opened is, as `[done, total]`, every few notes.
+const INDEX_PROGRESS: &str = "index-progress";
+const PROGRESS_STEP: usize = 20;
+
+fn reporter(app: &AppHandle) -> impl FnMut(usize, usize) + '_ {
+	move |done, total| {
+		if done % PROGRESS_STEP == 0 || done == total {
+			// The window may not listen yet: progress is only a courtesy.
+			let _ = app.emit(INDEX_PROGRESS, [done, total]);
+		}
+	}
+}
+
 /// Where the indexes of vaults are kept: data of this device only.
 fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {
 	app.path()
@@ -75,7 +89,8 @@ pub fn open_vault(
 	app: AppHandle,
 	state: State<'_, AppState>,
 ) -> Result<VaultInfo, String> {
-	let mut open = OpenVault::open(root, &data_dir(&app)?)?;
+	let mut open =
+		OpenVault::open(root, &data_dir(&app)?, &mut reporter(&app))?;
 	let config = config_dir(&app)?;
 	let mut settings = DeviceSettings::load(&config);
 	let first_note = welcome(&mut open)?;
@@ -142,7 +157,9 @@ pub fn current_vault(
 			.last_vault
 			.clone()
 			.filter(|root| root.is_dir())
-			.and_then(|root| OpenVault::open(&root, &data).ok());
+			.and_then(|root| {
+				OpenVault::open(&root, &data, &mut reporter(&app)).ok()
+			});
 	}
 	open.as_ref()
 		.map(|vault| {

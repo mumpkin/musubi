@@ -83,8 +83,8 @@ impl Bench {
 			vault.tree().map(|_| ()).map_err(Into::into)
 		})?;
 		time("search_notes, one keystroke", RUNS, || {
-			let tree = vault.tree()?;
-			let _matches = search_titles(&tree.notes, "note 4");
+			let indexed = index.notes()?;
+			let _matches = search_titles(&indexed, "note 4");
 			Ok(())
 		})?;
 		time("search_text", RUNS, || {

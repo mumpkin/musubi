@@ -14,6 +14,15 @@ use crate::vault::{
 	FORMAT, MUSUBI_FOLDER, SETTINGS_FILE, TRASH_RETENTION, Vault,
 };
 
+/// Fields of `vault.json`; a missing or unreadable file has none, which
+/// means the default values.
+pub(crate) fn read_settings(settings: &Path) -> Value {
+	fs::read_to_string(settings)
+		.ok()
+		.and_then(|text| serde_json::from_str(&text).ok())
+		.unwrap_or(Value::Null)
+}
+
 impl Vault {
 	pub(crate) fn settings_file(&self) -> PathBuf {
 		self.root().join(MUSUBI_FOLDER).join(SETTINGS_FILE)

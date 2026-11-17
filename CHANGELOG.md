@@ -13,7 +13,8 @@ and this project adheres to
 - Icons in the title bar for the mouse: explorer, find a note, search the
   text, home, new note, review, graph, backlinks, the command palette and
   the settings, each naming its action and shortcut on hover.
-
+- Opening a vault shows how many notes are left to index instead of a
+  blank window.
 - More preferences in the settings: the size of the whole interface; the
   font, text size, line width and line spacing of the reading view; the
   font and text size of the editor, wrapping of long lines, highlighting
@@ -23,6 +24,9 @@ and this project adheres to
 
 ### Changed
 
+- Large vaults are faster: listing notes, saving and finding a note by
+  title no longer read every note (three times faster on 5,000 notes, the
+  note picker thirty times).
 - The settings are laid out in sections listed on the left (Appearance,
   Editor, Flashcards, Vaults and trash), each setting with a short
   description, the themes as small previews of their colors. The window

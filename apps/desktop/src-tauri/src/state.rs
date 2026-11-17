@@ -5,7 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard, PoisonError};
 
-use musubi_core::{Vault, VaultIndex};
+use musubi_core::{Sources, Vault, VaultIndex};
 use musubi_typst::NoteCompiler;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
@@ -22,8 +22,13 @@ pub struct OpenVault {
 
 impl OpenVault {
 	/// Opens the vault at `root`, purges its old trash entries and brings
-	/// its index, stored in `data_dir`, up to date.
-	pub fn open(root: &Path, data_dir: &Path) -> Result<Self, String> {
+	/// its index, stored in `data_dir`, up to date; `progress` hears of
+	/// each note indexed (done, to do).
+	pub fn open(
+		root: &Path,
+		data_dir: &Path,
+		progress: &mut dyn FnMut(usize, usize),
+	) -> Result<Self, String> {
 		let vault = Vault::open(root).map_err(|error| error.to_string())?;
 		// A trash that cannot be purged now will be on the next opening.
 		let _ = vault
@@ -37,7 +42,13 @@ impl OpenVault {
 			compiler,
 			index,
 		};
-		open.refresh_index()?;
+		let sources = Sources {
+			vault: &open.vault,
+			compiler: &mut open.compiler,
+		};
+		open.index
+			.refresh_reporting(sources, progress)
+			.map_err(|error| error.to_string())?;
 		Ok(open)
 	}
 

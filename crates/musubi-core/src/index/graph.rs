@@ -8,6 +8,7 @@ use ts_rs::TS;
 
 use super::VaultIndex;
 use crate::error::VaultError;
+use crate::vault::NoteEntry;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, TS)]
 #[ts(export)]
@@ -46,6 +47,25 @@ impl VaultIndex {
 			})
 		})?;
 		Ok(nodes.collect::<Result<_, _>>()?)
+	}
+
+	/// The notes indexed and their titles, by path: what the note picker
+	/// searches, without listing the vault at each keystroke.
+	///
+	/// # Errors
+	///
+	/// A SQLite error.
+	pub fn notes(&self) -> Result<Vec<NoteEntry>, VaultError> {
+		let mut statement = self
+			.connection
+			.prepare("SELECT path, title FROM notes ORDER BY path")?;
+		let rows = statement.query_map([], |row| {
+			Ok(NoteEntry {
+				path: row.get(0)?,
+				title: row.get(1)?,
+			})
+		})?;
+		Ok(rows.collect::<Result<_, _>>()?)
 	}
 
 	/// Every note and the links between them.

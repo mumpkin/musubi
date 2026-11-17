@@ -46,7 +46,8 @@ pub fn search_notes(
 ) -> Result<Vec<NoteMatch>, String> {
 	let open = state.lock();
 	let open = open.as_ref().ok_or(NO_VAULT)?;
-	let notes = open.vault.tree().map_err(|error| error.to_string())?.notes;
+	// The titles of the index: no listing of the vault at each keystroke.
+	let notes = open.index.notes().map_err(|error| error.to_string())?;
 	Ok(musubi_core::search_titles(&notes, query))
 }
 
