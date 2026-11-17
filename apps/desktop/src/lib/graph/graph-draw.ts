@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Draws the graph on a canvas, in the colors of the theme. Only what is in
 // view is drawn. The links of a note under the pointer, or selected, are
-// drawn over the others; nothing else changes color, so that moving the
-// pointer from note to note does not flicker.
+// drawn over the others, which fade, as the titles of the other notes do;
+// every change fades smoothly, and the notes keep their color.
 import type { ZoomTransform } from 'd3-zoom';
 
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphColors } from './graph-colors.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
 import { drawTitles } from './graph-draw-titles.ts';
+import type { Fades } from './graph-fades.ts';
 import { folderOf } from './graph-filter.ts';
 import { type Halo, halosAround } from './graph-groups.ts';
 import { PILL_FONT, PILL_FONT_SIZE } from './graph-options.svelte.ts';
@@ -28,6 +29,8 @@ export interface GraphScene {
 	// The notes linked to each note, and the notes most linked first.
 	neighbours: ReadonlyMap<GraphPoint, ReadonlySet<GraphPoint>>;
 	byDegree: readonly GraphPoint[];
+	// What fades in and out from frame to frame.
+	fades: Fades;
 	// Canvas pixels per CSS pixel, and the size of the canvas in CSS pixels.
 	ratio: number;
 	size: { width: number; height: number };
@@ -54,6 +57,7 @@ const LINKS_IN_VIEW = 400;
 // Links of the note that stands out, and the fading of the others.
 const FOCUS_LINK_OPACITY = 0.7;
 const FOCUS_LINK_WIDTH = 1.5;
+const FADED_LINKS = 0.4;
 // Halos of the groups of notes.
 const HALO_FILL_OPACITY = 0.08;
 const HALO_STROKE_OPACITY = 0.35;
@@ -128,22 +132,23 @@ function strokeLinks(
 }
 
 function drawEdges(context: CanvasRenderingContext2D, frame: Frame) {
-	const { scene, focus } = frame;
+	const { scene } = frame;
 	const links = linksInView(frame);
 	const crowd = Math.sqrt(LINKS_IN_VIEW / Math.max(links.length, 1));
 	const opacity = Math.max(LINK_FLOOR, Math.min(1, crowd) * LINK_OPACITY);
-	context.globalAlpha = opacity;
+	const fading = 1 - scene.fades.level * (1 - FADED_LINKS);
+	context.globalAlpha = opacity * fading;
 	context.strokeStyle = scene.colors.link;
 	context.lineWidth = 1 / scene.transform.k;
 	strokeLinks(context, links);
-	if (focus) {
-		context.globalAlpha = FOCUS_LINK_OPACITY;
-		context.strokeStyle = scene.colors.current;
-		context.lineWidth = FOCUS_LINK_WIDTH / scene.transform.k;
+	context.strokeStyle = scene.colors.current;
+	context.lineWidth = FOCUS_LINK_WIDTH / scene.transform.k;
+	for (const [point, strength] of scene.fades.links()) {
+		context.globalAlpha = FOCUS_LINK_OPACITY * strength;
 		strokeLinks(
 			context,
 			links.filter(([source, target]) =>
-				source === focus || target === focus),
+				source === point || target === point),
 		);
 	}
 	context.globalAlpha = 1;
@@ -246,6 +251,7 @@ function drawNode(
 function frameOfScene(scene: GraphScene): Frame {
 	const focus = scene.hovered
 		?? scene.model.points.find((point) => point.path === scene.selected);
+	scene.fades.begin(performance.now(), focus);
 	return {
 		scene,
 		area: viewArea(scene.transform, scene.size),
@@ -257,10 +263,15 @@ function frameOfScene(scene: GraphScene): Frame {
 	};
 }
 
-export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
+// Draws `scene`; returns whether a fade is still under way, which needs
+// another frame.
+export function drawGraph(
+	canvas: HTMLCanvasElement,
+	scene: GraphScene,
+): boolean {
 	const context = canvas.getContext('2d');
 	if (!context) {
-		return;
+		return false;
 	}
 	const { transform, ratio } = scene;
 	context.setTransform(1, 0, 0, 1, 0, 0);
@@ -284,4 +295,5 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 	}
 	context.setTransform(ratio, 0, 0, ratio, 0, 0);
 	drawTitles(context, frame);
+	return scene.fades.isMoving;
 }

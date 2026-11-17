@@ -28,8 +28,9 @@ and this project adheres to
 - A note dropped in the graph stays under the pointer instead of jumping
   away; the notes around it settle, then it is free again.
 - Moving the pointer over the notes of the graph no longer makes them
-  flicker: only the links of the note under the pointer are drawn over the
-  others, and every note keeps its color and its title.
+  flicker: every note keeps its color, and the titles and links of the
+  other notes fade gently instead of at once. Titles also fade in and out
+  as they come and go.
 
 ## [0.5.0] - 2026-11-15
 

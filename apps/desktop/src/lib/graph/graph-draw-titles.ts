@@ -4,7 +4,9 @@
 // first the notes marked (of the pane, selected, under the pointer) and
 // the notes linked to the one that stands out, then the names of the
 // folders, then the most linked notes, as long as their dot is large
-// enough to tell apart. Pills hold their own title.
+// enough to tell apart. Pills hold their own title. While a note stands
+// out, the titles of the others fade; titles fade in and out as they come
+// and go (`graph-fades.ts`).
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
 import type { GraphPoint } from './graph-data.ts';
 import type { Frame } from './graph-draw.ts';
@@ -27,6 +29,8 @@ const MIN_TITLED_DOT = 3;
 const MIN_NAMED_HALO = 24;
 // Same as the smallest dot drawn, see `graph-draw.ts`.
 const MIN_DOT = 1.5;
+// Titles of the other notes while one stands out.
+const FADED_TITLE = 0.3;
 
 let widths: { titles: TextWidths; folders: TextWidths } | undefined;
 
@@ -45,6 +49,16 @@ function write(
 	const { context } = writing;
 	context.strokeText(text, at.across, at.top);
 	context.fillText(text, at.across, at.top);
+}
+
+// How strongly the title of `point` shows: fully for the note that stands
+// out and its linked notes, faded for the others meanwhile.
+function strengthOf(writing: Writing, point: GraphPoint): number {
+	const { frame } = writing;
+	const isNear = point === frame.focus || frame.near.has(point)
+		|| point.path === frame.scene.current;
+	const target = frame.focus === undefined || isNear ? 1 : FADED_TITLE;
+	return frame.scene.fades.title(point, target);
 }
 
 function isOnScreen(frame: Frame, box: LabelBox): boolean {
@@ -82,7 +96,9 @@ function writeNote(writing: Writing, point: GraphPoint, isForced: boolean) {
 		}
 		const isLast = line === tries - 1;
 		if (writing.space.take(at.box) || (isForced && isLast)) {
+			writing.context.globalAlpha = strengthOf(writing, point);
 			write(writing, point.title, at);
+			writing.context.globalAlpha = 1;
 			writing.written.add(point);
 			return;
 		}
@@ -175,4 +191,14 @@ export function drawTitles(context: CanvasRenderingContext2D, frame: Frame) {
 	context.font = TITLE_FONT;
 	context.fillStyle = frame.scene.colors.label;
 	writeNotes(writing, frame.scene.byDegree, false);
+	writeLeaving(writing);
+}
+
+// The titles no longer written, fading out where they were.
+function writeLeaving(writing: Writing) {
+	for (const [point, strength] of writing.frame.scene.fades.leaving()) {
+		writing.context.globalAlpha = strength;
+		write(writing, point.title, noteBox(writing, point, 0));
+	}
+	writing.context.globalAlpha = 1;
 }
