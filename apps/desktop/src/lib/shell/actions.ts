@@ -28,7 +28,15 @@ export type IconName
 		| 'unarchive'
 		| 'cards'
 		| 'more'
-		| 'conflict';
+		| 'conflict'
+		| 'explorer'
+		| 'backlinks'
+		| 'find'
+		| 'searchText'
+		| 'home'
+		| 'graph'
+		| 'commands'
+		| 'settings';
 
 export interface PaneAction {
 	label: string;

@@ -10,6 +10,10 @@ and this project adheres to
 
 ### Added
 
+- Icons in the title bar for the mouse: explorer, find a note, search the
+  text, home, new note, review, graph, backlinks, the command palette and
+  the settings, each naming its action and shortcut on hover.
+
 - More preferences in the settings: the size of the whole interface; the
   font, text size, line width and line spacing of the reading view; the
   font and text size of the editor, wrapping of long lines, highlighting

@@ -11,17 +11,25 @@
 	import Circle from '@lucide/svelte/icons/circle';
 	import Clock from '@lucide/svelte/icons/clock';
 	import Columns2 from '@lucide/svelte/icons/columns-2';
+	import Command from '@lucide/svelte/icons/command';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import FilePlus from '@lucide/svelte/icons/file-plus';
 	import FolderPlus from '@lucide/svelte/icons/folder-plus';
 	import Cards from '@lucide/svelte/icons/gallery-vertical-end';
 	import GitCompare from '@lucide/svelte/icons/git-compare';
+	import House from '@lucide/svelte/icons/house';
 	import Minus from '@lucide/svelte/icons/minus';
 	import Notebook from '@lucide/svelte/icons/notebook';
+	import PanelLeft from '@lucide/svelte/icons/panel-left';
+	import PanelRight from '@lucide/svelte/icons/panel-right';
 	import Pencil from '@lucide/svelte/icons/pencil';
 	import Pin from '@lucide/svelte/icons/pin';
+	import Search from '@lucide/svelte/icons/search';
+	import Settings from '@lucide/svelte/icons/settings';
 	import Square from '@lucide/svelte/icons/square';
+	import TextSearch from '@lucide/svelte/icons/text-search';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import Waypoints from '@lucide/svelte/icons/waypoints';
 	import Cross from '@lucide/svelte/icons/x';
 
 	import type { IconName } from './actions.ts';
@@ -53,6 +61,14 @@
 		cards: Cards,
 		more: Ellipsis,
 		conflict: GitCompare,
+		explorer: PanelLeft,
+		backlinks: PanelRight,
+		find: Search,
+		searchText: TextSearch,
+		home: House,
+		graph: Waypoints,
+		commands: Command,
+		settings: Settings,
 	} as const;
 
 	const SIZE_PIXELS = 15;

@@ -1,17 +1,21 @@
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <!-- Title bar in the style of the app, replacing the one of the system: it
      moves the window (drag, double click to maximize) and holds the window
-     buttons. -->
+     buttons, and, with a vault open, the main actions for the mouse. -->
 <script lang="ts">
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 
 	import Icon from './Icon.svelte';
+	import ShellToolbar from './ShellToolbar.svelte';
+	import type { ShellAction } from './shortcuts.ts';
 
 	interface Props {
 		title: string;
+		// Runs an action of the toolbar; without it, no toolbar.
+		onAction?: (action: ShellAction) => void;
 	}
 
-	const { title }: Props = $props();
+	const { title, onAction }: Props = $props();
 
 	// Outside Tauri (in a browser) there is no window to control.
 	function windowAction(action: 'minimize' | 'toggleMaximize' | 'close') {
@@ -29,19 +33,33 @@
 		class="app"
 		data-tauri-drag-region
 	>Musubi</span>
+	{#if onAction}
+		<ShellToolbar
+			side="start"
+			{onAction}
+		/>
+	{/if}
 	<span
 		class="title"
 		data-tauri-drag-region
 	>{title}</span>
+	{#if onAction}
+		<ShellToolbar
+			side="end"
+			{onAction}
+		/>
+	{/if}
 	<div class="buttons">
 		<button
 			aria-label="Minimize"
+			title="Minimize"
 			onclick={windowAction('minimize')}
 		>
 			<Icon name="minimize" />
 		</button>
 		<button
 			aria-label="Maximize"
+			title="Maximize"
 			onclick={windowAction('toggleMaximize')}
 		>
 			<Icon name="maximize" />
@@ -49,6 +67,7 @@
 		<button
 			class="close"
 			aria-label="Close"
+			title="Close"
 			onclick={windowAction('close')}
 		>
 			<Icon name="close" />
@@ -75,7 +94,10 @@
 
 	.title {
 		flex: 1;
+		overflow: hidden;
 		color: var(--muted);
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.buttons {
