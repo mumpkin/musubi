@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- The graph stays still when you click a note; dragging a note moves only
+  the notes around it, and a large graph settles three times faster.
+- A note under the pointer or selected in the graph stands out with its
+  links and linked notes, and the rest fades.
+- Titles in the graph never cover one another: they appear as you zoom in,
+  the most linked notes first, and folder names show only where they fit.
+  Small dots are easier to click.
+
+### Fixed
+
+- Pills of the graph no longer pile up on large vaults.
+
 ## [0.5.0] - 2026-11-15
 
 ### Added

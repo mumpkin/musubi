@@ -10,6 +10,8 @@ import type { GraphEdge, GraphPoint } from './graph-data.ts';
 // Room between two pills, and how much of an overlap a step removes.
 const PILL_GAP = 4;
 const STRENGTH = 0.7;
+// Passes per step: one pass leaves crowded pills overlapping.
+const ITERATIONS = 3;
 const HALF = 2;
 
 interface Box {
@@ -19,10 +21,16 @@ interface Box {
 	halfHeight: number;
 }
 
+// Where the pill of `point` is heading this step, as d3 collisions do.
+const headingAcross = (point: GraphPoint): number =>
+	(point.x ?? 0) + (point.vx ?? 0);
+const headingDown = (point: GraphPoint): number =>
+	(point.y ?? 0) + (point.vy ?? 0);
+
 function boxOf(point: GraphPoint): Box {
 	return {
-		across: point.x ?? 0,
-		down: point.y ?? 0,
+		across: headingAcross(point),
+		down: headingDown(point),
 		halfWidth: (point.halfWidth ?? point.radius) + PILL_GAP / HALF,
 		halfHeight: (point.halfHeight ?? point.radius) + PILL_GAP / HALF,
 	};
@@ -68,9 +76,6 @@ function separateLeaves(
 	}
 }
 
-const across = (point: GraphPoint): number => point.x ?? 0;
-const down = (point: GraphPoint): number => point.y ?? 0;
-
 // Separates `point` from the pills near it, found in `tree`.
 function separateFrom(
 	tree: Quadtree<GraphPoint>,
@@ -101,9 +106,11 @@ export function pillCollide(): Force<GraphPoint, GraphEdge> {
 			halfWidth: Math.max(0, ...boxes.map((box) => box.halfWidth)),
 			halfHeight: Math.max(0, ...boxes.map((box) => box.halfHeight)),
 		};
-		const tree = quadtree(points, across, down);
-		for (const point of points) {
-			separateFrom(tree, point, largest);
+		for (let pass = 0; pass < ITERATIONS; pass += 1) {
+			const tree = quadtree(points, headingAcross, headingDown);
+			for (const point of points) {
+				separateFrom(tree, point, largest);
+			}
 		}
 	};
 	force.initialize = (nodes: GraphPoint[]): void => {

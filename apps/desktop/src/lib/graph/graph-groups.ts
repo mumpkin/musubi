@@ -22,6 +22,20 @@ export interface Halo extends Centre {
 	depth: number;
 }
 
+// Adds `item` to the list of `key` in `lists`.
+export function pushTo<Item>(
+	lists: Map<string, Item[]>,
+	key: string,
+	item: Item,
+): void {
+	const list = lists.get(key);
+	if (list) {
+		list.push(item);
+	} else {
+		lists.set(key, [item]);
+	}
+}
+
 // The subfolders of each folder that holds notes of `points`, or above
 // one, by path, from the folder `base` down.
 export function subfoldersOf(
@@ -35,7 +49,7 @@ export function subfoldersOf(
 		while (!known.has(folder)) {
 			known.add(folder);
 			const parent = folderOf(folder);
-			children.set(parent, [...(children.get(parent) ?? []), folder]);
+			pushTo(children, parent, folder);
 			folder = parent;
 		}
 	}
@@ -90,7 +104,7 @@ export function halosAround(points: GraphPoint[], base: string): Halo[] {
 	const notes = new Map<string, Halo[]>();
 	for (const point of points) {
 		const reach = reachOf(point);
-		notes.set(reach.folder, [...(notes.get(reach.folder) ?? []), reach]);
+		pushTo(notes, reach.folder, reach);
 	}
 	const halos: Halo[] = [];
 	const around = (folder: string, depth: number): Halo => {

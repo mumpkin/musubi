@@ -22,6 +22,9 @@ const REPULSION = -60;
 // Beyond this distance notes stop pushing: faster on large vaults.
 const REPULSION_RANGE = 400;
 const CENTRE_PULL = 0.04;
+// Past this many notes the pull to the centre weakens, or it would crush a
+// large graph into a crowded disc.
+const PULL_NOTES = 100;
 const COLLISION_GAP = 2;
 const TITLE_ROOM = 12;
 // Pull of a note towards the centre of its folder, when grouped.
@@ -75,7 +78,8 @@ export function simulate(
 	groupBase: string | undefined,
 ): Simulation<GraphPoint, GraphEdge> {
 	const isGrouped = groupBase !== undefined;
-	const pull = isGrouped ? GROUP_GRAVITY : CENTRE_PULL;
+	const crowd = Math.min(1, Math.sqrt(PULL_NOTES / model.points.length));
+	const pull = isGrouped ? GROUP_GRAVITY : CENTRE_PULL * crowd;
 	return forceSimulation(model.points)
 		.force('link', links(model, isGrouped))
 		.force('charge', repulsion(isGrouped))

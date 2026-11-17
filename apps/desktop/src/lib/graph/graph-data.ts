@@ -24,6 +24,7 @@ export interface GraphModel {
 }
 
 const BASE_RADIUS = 3;
+const FULL_TURN = Math.PI + Math.PI;
 
 // Bigger nodes for notes with more links, growing slowly.
 export function radiusFor(degree: number): number {
@@ -39,15 +40,22 @@ export function keepPosition(point: GraphPoint, old: GraphPoint): void {
 	/* eslint-enable id-length */
 }
 
-// Puts the notes of `next` already in `previous` where they were.
-export function carryPositions(previous: GraphModel, next: GraphModel): void {
+// Puts the notes of `next` already in `previous` where they were; returns
+// how many were.
+export function carryPositions(
+	previous: GraphModel,
+	next: GraphModel,
+): number {
 	const known = new Map(previous.points.map((point) => [point.path, point]));
+	let carried = 0;
 	for (const point of next.points) {
 		const old = known.get(point.path);
-		if (old) {
+		if (old?.x !== undefined) {
 			keepPosition(point, old);
+			carried += 1;
 		}
 	}
+	return carried;
 }
 
 export function toModel(graph: Graph): GraphModel {
@@ -69,25 +77,116 @@ export async function readGraph(): Promise<Graph> {
 	return invoke<Graph>('vault_graph');
 }
 
-// Whether `across`, `down` (graph coordinates) is on the note as drawn:
-// its disc, or its pill.
-function isOn(point: GraphPoint, across: number, down: number): boolean {
+// How far `across`, `down` (graph coordinates) is from the note as drawn,
+// its disc or its pill: 0 or less on it.
+function gapTo(point: GraphPoint, across: number, down: number): number {
 	const awayAcross = Math.abs((point.x ?? 0) - across);
 	const awayDown = Math.abs((point.y ?? 0) - down);
 	if (point.halfWidth !== undefined && point.halfHeight !== undefined) {
-		return awayAcross <= point.halfWidth && awayDown <= point.halfHeight;
+		return Math.hypot(
+			Math.max(awayAcross - point.halfWidth, 0),
+			Math.max(awayDown - point.halfHeight, 0),
+		);
 	}
-	return Math.hypot(awayAcross, awayDown) <= point.radius;
+	return Math.hypot(awayAcross, awayDown) - point.radius;
 }
 
-// The note drawn at `across`, `down` (graph coordinates). The last drawn,
-// on top, wins.
+// The note drawn at `across`, `down` (graph coordinates): the last drawn,
+// on top, wins. Off every note, the nearest one within `slack` graph units,
+// so that small dots stay easy to hit.
 export function pointUnder(
 	points: GraphPoint[],
-	across: number,
-	down: number,
+	{ across, down }: { across: number; down: number },
+	slack = 0,
 ): GraphPoint | undefined {
-	return points.findLast((point) => isOn(point, across, down));
+	const onTop = points.findLast((point) => gapTo(point, across, down) <= 0);
+	if (onTop || slack <= 0) {
+		return onTop;
+	}
+	let nearest: GraphPoint | undefined;
+	let best = slack;
+	for (const point of points) {
+		const gap = gapTo(point, across, down);
+		if (gap <= best) {
+			best = gap;
+			nearest = point;
+		}
+	}
+	return nearest;
+}
+
+// The path of an end of a link: an index before the simulation reads the
+// links, the note itself after.
+function pathOfEnd(end: GraphEdge['source'], model: GraphModel): string {
+	if (typeof end === 'object') {
+		return end.path;
+	}
+	return model.points[Number(end)]?.path ?? '';
+}
+
+// Whether `next` shows the same notes and links as `previous`: laying it
+// out again would only move them for nothing.
+export function sameNotes(previous: GraphModel, next: GraphModel): boolean {
+	const samePoints = previous.points.length === next.points.length
+		&& previous.points.every(
+			(point, index) => point.path === next.points[index]?.path,
+		);
+	return samePoints
+		&& previous.edges.length === next.edges.length
+		&& previous.edges.every((edge, index) => {
+			const other = next.edges[index];
+			const ends = (end: GraphEdge['source'], model: GraphModel) =>
+				pathOfEnd(end, model);
+			return other !== undefined
+				&& ends(edge.source, previous) === ends(other.source, next)
+				&& ends(edge.target, previous) === ends(other.target, next);
+		});
+}
+
+// The notes linked to each note of `model`.
+export function neighboursOf(
+	model: GraphModel,
+): Map<GraphPoint, Set<GraphPoint>> {
+	const neighbours = new Map<GraphPoint, Set<GraphPoint>>(
+		model.points.map((point) => [point, new Set()]),
+	);
+	const pointOf = (end: GraphEdge['source']) =>
+		typeof end === 'object' ? end : model.points[Number(end)];
+	for (const edge of model.edges) {
+		const source = pointOf(edge.source);
+		const target = pointOf(edge.target);
+		if (source && target) {
+			neighbours.get(source)?.add(target);
+			neighbours.get(target)?.add(source);
+		}
+	}
+	return neighbours;
+}
+
+// Room around a note placed next to a linked one, in graph units.
+const NEAR = 20;
+
+// Puts each note of `model` without a position next to a linked note that
+// has one: a note that appears does not fly in from the middle.
+export function placeNearNeighbours(model: GraphModel): void {
+	const neighbours = neighboursOf(model);
+	for (const point of model.points) {
+		if (point.x !== undefined) {
+			continue;
+		}
+		const placed = [...(neighbours.get(point) ?? [])]
+			.find((other) => other.x !== undefined);
+		if (placed) {
+			const angle = Math.random() * FULL_TURN;
+			keepPosition(point, {
+				...placed,
+				// eslint-disable-next-line id-length
+				x: (placed.x ?? 0) + Math.cos(angle) * NEAR,
+				// eslint-disable-next-line id-length
+				y: (placed.y ?? 0) + Math.sin(angle) * NEAR,
+			});
+		}
+	}
 }
 
 export interface Bounds {
