@@ -22,6 +22,11 @@ The next step is in the *graph* of the links: press `Space g`, find the note
 named _Writing Typst_, click it to select it, then double click it (or
 press `Enter`) to open it. `Space g` again leaves the graph.
 
+Under the pointer, or selected, a note stands out with its links and the
+notes it is linked to; the others fade. Titles appear as you zoom in, never
+covering one another. Clicking a note leaves the others where they are;
+dragging it moves only the notes around it.
+
 The panel in its corner chooses what it shows: _All_ the notes, the notes
 _Linked_ to the selected note (or the note of the pane) both ways, or the
 notes of a _Folder_ you pick, with its subfolders. It draws the notes as

@@ -1,42 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Draws the graph on a canvas, in the colors of the theme.
+// Draws the graph on a canvas, in the colors of the theme. Only what is in
+// view is drawn. A note under the pointer, or selected, stands out with its
+// links and linked notes; the rest fades.
 import type { ZoomTransform } from 'd3-zoom';
 
 import { folderPalette } from '../vault/folder-palette.svelte.ts';
+import type { GraphColors } from './graph-colors.ts';
 import type { GraphEdge, GraphModel, GraphPoint } from './graph-data.ts';
+import { drawTitles } from './graph-draw-titles.ts';
 import { folderOf } from './graph-filter.ts';
-import { halosAround } from './graph-groups.ts';
-import { PILL_FONT } from './graph-options.svelte.ts';
-
-export interface GraphColors {
-	link: string;
-	node: string;
-	current: string;
-	hovered: string;
-	label: string;
-	background: string;
-}
-
-// The colors of CSS variables, resolved: the canvas cannot read
-// `var(--accent)` nor `light-dark(…)`.
-export function themeColors(element: Element): GraphColors {
-	const probe = document.createElement('span');
-	element.append(probe);
-	const resolve = (variable: string): string => {
-		probe.style.color = `var(${variable})`;
-		return getComputedStyle(probe).color;
-	};
-	const colors = {
-		link: resolve('--muted'),
-		node: resolve('--muted'),
-		current: resolve('--accent'),
-		hovered: resolve('--foreground'),
-		label: resolve('--foreground'),
-		background: resolve('--background'),
-	};
-	probe.remove();
-	return colors;
-}
+import { type Halo, halosAround } from './graph-groups.ts';
+import { PILL_FONT, PILL_FONT_SIZE } from './graph-options.svelte.ts';
+import { type Area, isInside, viewArea } from './graph-view-area.ts';
 
 export interface GraphScene {
 	model: GraphModel;
@@ -49,41 +24,61 @@ export interface GraphScene {
 	// folders; `undefined` when not grouped.
 	groupBase: string | undefined;
 	hovered: GraphPoint | undefined;
-	// Canvas pixels per CSS pixel.
+	// The notes linked to each note, and the notes most linked first.
+	neighbours: ReadonlyMap<GraphPoint, ReadonlySet<GraphPoint>>;
+	byDegree: readonly GraphPoint[];
+	// Canvas pixels per CSS pixel, and the size of the canvas in CSS pixels.
 	ratio: number;
+	size: { width: number; height: number };
 }
 
-// Labels of every node show from this zoom level on.
-const LABEL_ZOOM = 1.4;
-const LABEL_SIZE = 12;
-const LABEL_GAP = 4;
+// What a frame draws, worked out once.
+export interface Frame {
+	scene: GraphScene;
+	area: Area;
+	halos: Halo[];
+	// The note that stands out, and the notes linked to it.
+	focus: GraphPoint | undefined;
+	near: ReadonlySet<GraphPoint>;
+}
+
 const FULL_CIRCLE = Math.PI + Math.PI;
+const HALF = 2;
+// Links in the muted color of the theme, see-through: they read on light
+// and dark themes without hiding the notes. The more links in view, the
+// fainter, down to a floor.
+const LINK_OPACITY = 0.45;
+const LINK_FLOOR = 0.1;
+const LINKS_IN_VIEW = 400;
+// Links of the note that stands out, and the fading of the others.
+const FOCUS_LINK_OPACITY = 0.9;
+const FOCUS_LINK_WIDTH = 1.5;
+const FADED = 0.2;
+// Halos of the groups of notes.
+const HALO_FILL_OPACITY = 0.08;
+const HALO_STROKE_OPACITY = 0.35;
+// Rings around the note of the pane, the selected one and the one under
+// the pointer, in screen pixels: the fill keeps the color of the folder.
+const CURRENT_RING = 2.5;
+const HOVER_RING = 1.5;
+const RING_GAP = 2;
+// A dot is never smaller than this on screen, in pixels.
+const MIN_DOT = 1.5;
+// Titles inside pills: dark text reads on every color of the folders,
+// which all have a mid lightness. Below this size on screen, in pixels,
+// they are not written.
+const PILL_TEXT = '#1b1f24';
+const MIN_PILL_TEXT = 5;
 
 function endpoint(end: GraphEdge['source']): GraphPoint | undefined {
 	return typeof end === 'object' ? end : undefined;
 }
 
-// Links in the muted color of the theme, see-through: they read on light
-// and dark themes without hiding the notes.
-const LINK_OPACITY = 0.45;
-// Halos of the groups of notes, and the names of their folders.
-const HALO_FILL_OPACITY = 0.08;
-const HALO_STROKE_OPACITY = 0.35;
-const GROUP_NAME_SIZE = 13;
-
-function drawHalos(
-	context: CanvasRenderingContext2D,
-	scene: GraphScene,
-	base: string,
-) {
-	const scale = scene.transform.k;
-	const size = String(GROUP_NAME_SIZE / scale);
-	context.font = `600 ${size}px system-ui, sans-serif`;
-	context.textAlign = 'center';
-	context.textBaseline = 'bottom';
-	context.lineWidth = 1 / scale;
-	for (const halo of halosAround(scene.model.points, base)) {
-		const color = folderPalette.colorOf(halo.folder) ?? scene.colors.node;
+function drawHalos(context: CanvasRenderingContext2D, frame: Frame) {
+	context.lineWidth = 1 / frame.scene.transform.k;
+	for (const halo of frame.halos) {
+		const color = folderPalette.colorOf(halo.folder)
+			?? frame.scene.colors.node;
 		context.fillStyle = color;
 		context.strokeStyle = color;
 		context.beginPath();
@@ -92,39 +87,67 @@ function drawHalos(
 		context.fill();
 		context.globalAlpha = HALO_STROKE_OPACITY;
 		context.stroke();
-		context.globalAlpha = 1;
-		const name = halo.folder.slice(halo.folder.lastIndexOf('/') + 1);
-		const top = halo.down - halo.radius - LABEL_GAP / scale;
-		context.fillText(name, halo.across, top);
 	}
-}
-
-function drawEdges(context: CanvasRenderingContext2D, scene: GraphScene) {
-	context.globalAlpha = LINK_OPACITY;
-	context.strokeStyle = scene.colors.link;
-	context.lineWidth = 1 / scene.transform.k;
-	context.beginPath();
-	for (const edge of scene.model.edges) {
-		const source = endpoint(edge.source);
-		const target = endpoint(edge.target);
-		if (source && target) {
-			context.moveTo(source.x ?? 0, source.y ?? 0);
-			context.lineTo(target.x ?? 0, target.y ?? 0);
-		}
-	}
-	context.stroke();
 	context.globalAlpha = 1;
 }
 
-// Rings around the note of the pane, the selected one and the one under
-// the pointer, in screen pixels: the fill keeps the color of the folder.
-const CURRENT_RING = 2.5;
-const HOVER_RING = 1.5;
-const RING_GAP = 2;
-const HALF = 2;
-// Titles inside pills: dark text reads on every color of the folders,
-// which all have a mid lightness.
-const PILL_TEXT = '#1b1f24';
+const acrossOf = (point: GraphPoint): number => point.x ?? 0;
+const downOf = (point: GraphPoint): number => point.y ?? 0;
+
+// Whether the link from `source` to `target` may cross the view: both
+// ends are not on the same outer side of it.
+function crossesView(area: Area, source: GraphPoint, target: GraphPoint) {
+	const across = [acrossOf(source), acrossOf(target)];
+	const down = [downOf(source), downOf(target)];
+	return Math.max(...across) >= area.left
+		&& Math.min(...across) <= area.right
+		&& Math.max(...down) >= area.top
+		&& Math.min(...down) <= area.bottom;
+}
+
+function linksInView(frame: Frame): [GraphPoint, GraphPoint][] {
+	return frame.scene.model.edges.flatMap((edge) => {
+		const source = endpoint(edge.source);
+		const target = endpoint(edge.target);
+		return source && target && crossesView(frame.area, source, target)
+			? [[source, target] as [GraphPoint, GraphPoint]]
+			: [];
+	});
+}
+
+function strokeLinks(
+	context: CanvasRenderingContext2D,
+	links: [GraphPoint, GraphPoint][],
+) {
+	context.beginPath();
+	for (const [source, target] of links) {
+		context.moveTo(source.x ?? 0, source.y ?? 0);
+		context.lineTo(target.x ?? 0, target.y ?? 0);
+	}
+	context.stroke();
+}
+
+function drawEdges(context: CanvasRenderingContext2D, frame: Frame) {
+	const { scene, focus } = frame;
+	const links = linksInView(frame);
+	const crowd = Math.sqrt(LINKS_IN_VIEW / Math.max(links.length, 1));
+	const opacity = Math.max(LINK_FLOOR, Math.min(1, crowd) * LINK_OPACITY);
+	context.globalAlpha = focus ? opacity * FADED : opacity;
+	context.strokeStyle = scene.colors.link;
+	context.lineWidth = 1 / scene.transform.k;
+	strokeLinks(context, links);
+	if (focus) {
+		context.globalAlpha = FOCUS_LINK_OPACITY;
+		context.strokeStyle = scene.colors.current;
+		context.lineWidth = FOCUS_LINK_WIDTH / scene.transform.k;
+		strokeLinks(
+			context,
+			links.filter(([source, target]) =>
+				source === focus || target === focus),
+		);
+	}
+	context.globalAlpha = 1;
+}
 
 function fillOf(point: GraphPoint, scene: GraphScene): string {
 	return folderPalette.colorOf(folderOf(point.path)) ?? scene.colors.node;
@@ -146,18 +169,19 @@ function ringOf(
 	return undefined;
 }
 
-// The outline of `point`, grown by `grow` graph units: its disc or its
-// pill.
+// The outline of `point`, grown by `grow` graph units: its disc, never
+// smaller than `MIN_DOT` on screen, or its pill.
 function traceNode(
 	context: CanvasRenderingContext2D,
 	point: GraphPoint,
-	grow: number,
+	{ grow, scale }: { grow: number; scale: number },
 ) {
 	const across = point.x ?? 0;
 	const down = point.y ?? 0;
 	context.beginPath();
 	if (point.halfWidth === undefined || point.halfHeight === undefined) {
-		context.arc(across, down, point.radius + grow, 0, FULL_CIRCLE);
+		const radius = Math.max(point.radius, MIN_DOT / scale);
+		context.arc(across, down, radius + grow, 0, FULL_CIRCLE);
 		return;
 	}
 	const halfWidth = point.halfWidth + grow;
@@ -171,8 +195,15 @@ function traceNode(
 	);
 }
 
-// The title written inside a pill.
-function drawPillTitle(context: CanvasRenderingContext2D, point: GraphPoint) {
+// The title written inside a pill, when it is large enough to read.
+function drawPillTitle(
+	context: CanvasRenderingContext2D,
+	point: GraphPoint,
+	scale: number,
+) {
+	if (PILL_FONT_SIZE * scale < MIN_PILL_TEXT) {
+		return;
+	}
 	context.fillStyle = PILL_TEXT;
 	context.font = PILL_FONT;
 	context.textAlign = 'center';
@@ -180,39 +211,53 @@ function drawPillTitle(context: CanvasRenderingContext2D, point: GraphPoint) {
 	context.fillText(point.title, point.x ?? 0, point.y ?? 0);
 }
 
-function drawNode(
+function drawRing(
 	context: CanvasRenderingContext2D,
 	point: GraphPoint,
 	scene: GraphScene,
 ) {
-	context.fillStyle = fillOf(point, scene);
-	traceNode(context, point, 0);
-	context.fill();
-	if (point.halfWidth !== undefined) {
-		drawPillTitle(context, point);
-	}
 	const ring = ringOf(point, scene);
 	if (ring) {
 		const scale = scene.transform.k;
 		context.strokeStyle = ring.color;
 		context.lineWidth = ring.width / scale;
-		traceNode(context, point, (RING_GAP + ring.width / HALF) / scale);
+		const grow = (RING_GAP + ring.width / HALF) / scale;
+		traceNode(context, point, { grow, scale });
 		context.stroke();
 	}
 }
 
-function drawLabel(
+function drawNode(
 	context: CanvasRenderingContext2D,
 	point: GraphPoint,
-	scene: GraphScene,
+	frame: Frame,
 ) {
+	const { scene, focus, near } = frame;
 	const scale = scene.transform.k;
-	context.fillStyle = scene.colors.label;
-	context.font = `${String(LABEL_SIZE / scale)}px system-ui, sans-serif`;
-	context.textAlign = 'center';
-	context.textBaseline = 'top';
-	const top = (point.y ?? 0) + point.radius + LABEL_GAP / scale;
-	context.fillText(point.title, point.x ?? 0, top);
+	const isFaded = focus !== undefined && point !== focus && !near.has(point);
+	context.globalAlpha = isFaded ? FADED : 1;
+	context.fillStyle = fillOf(point, scene);
+	traceNode(context, point, { grow: 0, scale });
+	context.fill();
+	if (point.halfWidth !== undefined) {
+		drawPillTitle(context, point, scale);
+	}
+	drawRing(context, point, scene);
+	context.globalAlpha = 1;
+}
+
+function frameOfScene(scene: GraphScene): Frame {
+	const focus = scene.hovered
+		?? scene.model.points.find((point) => point.path === scene.selected);
+	return {
+		scene,
+		area: viewArea(scene.transform, scene.size),
+		halos: scene.groupBase === undefined
+			? []
+			: halosAround(scene.model.points, scene.groupBase),
+		focus,
+		near: (focus && scene.neighbours.get(focus)) ?? new Set(),
+	};
 }
 
 export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
@@ -232,21 +277,14 @@ export function drawGraph(canvas: HTMLCanvasElement, scene: GraphScene) {
 		ratio * transform.x,
 		ratio * transform.y,
 	);
-	if (scene.groupBase !== undefined) {
-		drawHalos(context, scene, scene.groupBase);
-	}
-	drawEdges(context, scene);
+	const frame = frameOfScene(scene);
+	drawHalos(context, frame);
+	drawEdges(context, frame);
 	for (const point of scene.model.points) {
-		drawNode(context, point, scene);
-	}
-	const isZoomedIn = transform.k >= LABEL_ZOOM;
-	for (const point of scene.model.points) {
-		const isMarked = point === scene.hovered
-			|| point.path === scene.current
-			|| point.path === scene.selected;
-		const isPill = point.halfWidth !== undefined;
-		if (!isPill && (isZoomedIn || isMarked)) {
-			drawLabel(context, point, scene);
+		if (isInside(frame.area, point)) {
+			drawNode(context, point, frame);
 		}
 	}
+	context.setTransform(ratio, 0, 0, ratio, 0, 0);
+	drawTitles(context, frame);
 }

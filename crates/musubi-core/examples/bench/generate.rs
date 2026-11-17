@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! A reproducible vault of `notes` notes: nested folders, paragraphs, a few
-//! headings, formulas, flashcards and links. Some notes are linked far more
-//! than others, as in a real vault.
+//! headings, formulas, flashcards and links. As in a real vault, most links
+//! stay within a folder, and some notes are linked far more than others.
 
 use std::fmt::Write as _;
 use std::fs;
@@ -9,6 +9,9 @@ use std::io;
 use std::path::Path;
 
 const NOTES_PER_FOLDER: usize = 40;
+// Out of `LINK_DRAWS`, links that go to a note of the same folder.
+const LOCAL_LINKS: usize = 7;
+const LINK_DRAWS: usize = 10;
 const MAX_DEPTH: usize = 3;
 const WORDS: [&str; 24] = [
 	"lorem",
@@ -85,15 +88,44 @@ fn folders(count: usize, random: &mut Random) -> Vec<String> {
 	folders.into_iter().map(|(path, _)| path).collect()
 }
 
-/// Path of each note from the vault root, without extension.
-fn note_paths(notes: usize, random: &mut Random) -> Vec<String> {
-	let folders = folders(notes.div_ceil(NOTES_PER_FOLDER), random);
-	(0..notes)
-		.map(|number| {
-			let folder = &folders[random.below(folders.len())];
-			format!("{folder}/Note_{number}")
-		})
-		.collect()
+/// The notes: their path from the vault root, without extension, and the
+/// notes of each folder, by number.
+struct Notes {
+	paths: Vec<String>,
+	folder_of: Vec<usize>,
+	in_folder: Vec<Vec<usize>>,
+}
+
+impl Notes {
+	fn new(notes: usize, random: &mut Random) -> Self {
+		let folders = folders(notes.div_ceil(NOTES_PER_FOLDER), random);
+		let mut in_folder = vec![Vec::new(); folders.len()];
+		let mut paths = Vec::with_capacity(notes);
+		let mut folder_of = Vec::with_capacity(notes);
+		for number in 0..notes {
+			let folder = random.below(folders.len());
+			in_folder[folder].push(number);
+			folder_of.push(folder);
+			paths.push(format!("{}/Note_{number}", folders[folder]));
+		}
+		Self {
+			paths,
+			folder_of,
+			in_folder,
+		}
+	}
+
+	/// The target of a link from note `number`: mostly a note of its
+	/// folder, otherwise one of the most linked notes of the vault.
+	fn link_from(&self, number: usize, random: &mut Random) -> &str {
+		let near = &self.in_folder[self.folder_of[number]];
+		let target = if random.below(LINK_DRAWS) < LOCAL_LINKS {
+			near[random.below(near.len())]
+		} else {
+			random.skewed(self.paths.len())
+		};
+		&self.paths[target]
+	}
 }
 
 fn paragraph(random: &mut Random, links: &[String]) -> String {
@@ -112,12 +144,12 @@ fn paragraph(random: &mut Random, links: &[String]) -> String {
 	text
 }
 
-fn note(number: usize, paths: &[String], random: &mut Random) -> String {
+fn note(number: usize, notes: &Notes, random: &mut Random) -> String {
 	let mut source =
 		String::from("#import \"@local/musubi:0.1.0\": card, note-link\n\n");
 	let _ = writeln!(source, "= Note {number} {}\n", random.word());
 	let links: Vec<String> = (0..random.below(6))
-		.map(|_| paths[random.skewed(paths.len())].clone())
+		.map(|_| notes.link_from(number, random).to_owned())
 		.collect();
 	for (section, chunk) in links.chunks(2).enumerate() {
 		let _ = writeln!(source, "== Part {section}\n");
@@ -139,16 +171,17 @@ fn note(number: usize, paths: &[String], random: &mut Random) -> String {
 /// the paths of the notes, from the root and with extension.
 pub fn vault(root: &Path, notes: usize, seed: u64) -> io::Result<Vec<String>> {
 	let mut random = Random::new(seed);
-	let paths = note_paths(notes, &mut random);
-	for (number, path) in paths.iter().enumerate() {
+	let notes = Notes::new(notes, &mut random);
+	for (number, path) in notes.paths.iter().enumerate() {
 		let file = root.join(format!("{path}.typ"));
 		if let Some(folder) = file.parent() {
 			fs::create_dir_all(folder)?;
 		}
-		fs::write(file, note(number, &paths, &mut random))?;
+		fs::write(file, note(number, &notes, &mut random))?;
 	}
-	Ok(paths
-		.into_iter()
+	Ok(notes
+		.paths
+		.iter()
 		.map(|path| format!("{path}.typ"))
 		.collect())
 }

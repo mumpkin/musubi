@@ -14,7 +14,8 @@ cargo run --release -p musubi-core --example bench -- --write /tmp/big 2000
 The benchmark (`crates/musubi-core/examples/bench/`) generates a
 reproducible vault: nested folders (about 40 notes each, up to 3 levels),
 notes of a few paragraphs with headings, formulas, flashcards and 0 to 5
-links, a few notes being linked far more than the others. It then times what
+links, most of them to a note of the same folder, a few notes being linked
+far more than the others. It then times what
 the app asks of the core, in the order of the Tauri commands. `--write`
 only writes a vault, to open in the app and test the interface by hand.
 
@@ -63,3 +64,21 @@ Over budget at 5,000 notes: `search_notes` (×3.5), `vault_tree` (×2.3),
 - `render_note` and `toggle_task` also hold that lock during a compilation:
   a slow note delays search and backlinks.
 - Search, backlinks, the graph data and compilation itself are fast.
+
+## Graph view (2026-11-17)
+
+Measured in the app window on 2,000 generated notes (about 3,000 links),
+before and after #199.
+
+| Measure                                    | Before |  After |
+| ------------------------------------------ | -----: | -----: |
+| First layout, grouped by folder            |  9.3 s |  2.6 s |
+| First layout, dots                         |      — |  2.2 s |
+| Mean move of every note after a click      |  1,128 |      0 |
+| Mean move of notes far from a dragged note |     73 |   0.02 |
+| Frame while zooming, 95th percentile       |  20 ms |  17 ms |
+| Folder grouping force, per step            |  13 ms | 0.6 ms |
+| Whole simulation step, grouped             |  12 ms |   7 ms |
+
+Pills are slower to lay out (7 s for 2,000 notes) and a few still touch on
+crowded graphs: past a few hundred notes, dots read better.

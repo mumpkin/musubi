@@ -4,7 +4,6 @@
      select it, double click to open it. Drawn on a canvas so that
      thousands of notes stay fluid. -->
 <script lang="ts">
-	import type { Simulation } from 'd3-force';
 	import { select } from 'd3-selection';
 	import {
 		zoom,
@@ -16,17 +15,10 @@
 
 	import type { Graph } from '../bindings/Graph.ts';
 	import { themes } from '../theme/theme-state.svelte.ts';
-	import {
-		carryPositions,
-		type GraphEdge,
-		type GraphModel,
-		type GraphPoint,
-		pointUnder,
-		readGraph,
-		toModel,
-	} from './graph-data.ts';
+	import { type GraphColors, themeColors } from './graph-colors.ts';
+	import { type GraphPoint, readGraph, toModel } from './graph-data.ts';
 	import { dragging } from './graph-drag.ts';
-	import { drawGraph, type GraphColors, themeColors } from './graph-draw.ts';
+	import { drawGraph } from './graph-draw.ts';
 	import {
 		EVERY_NOTE,
 		filterGraph,
@@ -35,9 +27,9 @@
 	} from './graph-filter.ts';
 	import { frameOf } from './graph-frame.ts';
 	import { groupMembers } from './graph-groups.ts';
+	import { GraphLayout } from './graph-layout.ts';
 	import { graphOptions, shapePoints } from './graph-options.svelte.ts';
 	import { graphPresence } from './graph-presence.svelte.ts';
-	import { simulate } from './graph-simulation.ts';
 	import GraphPanel from './GraphPanel.svelte';
 
 	interface Props {
@@ -64,13 +56,11 @@
 
 	let wrapper = $state<HTMLElement>();
 	let canvas = $state<HTMLCanvasElement>();
-	let model: GraphModel = { points: [], edges: [] };
 	// The whole graph of the vault, and the part of it shown.
 	let graph = $state.raw<Graph>();
 	let filter = $state<GraphFilter>(EVERY_NOTE);
 	// The note selected with a click: the filters keep the notes around it.
 	let selected = $state<string>();
-	let simulation: Simulation<GraphPoint, GraphEdge> | undefined;
 	let transform: ZoomTransform = zoomIdentity;
 	let hovered: GraphPoint | undefined;
 	let colors: GraphColors | undefined;
@@ -101,38 +91,35 @@
 			frame = 0;
 			if (canvas && colors) {
 				drawGraph(canvas, {
-					model,
+					model: layout.model,
 					transform,
 					colors,
 					current,
 					selected,
 					groupBase,
 					hovered,
+					neighbours: layout.neighbours,
+					byDegree: layout.byDegree,
 					ratio: window.devicePixelRatio,
+					size: {
+						width: canvas.clientWidth,
+						height: canvas.clientHeight,
+					},
 				});
 			}
 		});
 	}
 
 	// The note under a point of the canvas (CSS pixels).
-	function pointAt(left: number, top: number): GraphPoint | undefined {
-		const [across, down] = transform.invert([left, top]);
-		return pointUnder(model.points, across, down);
-	}
+	const pointAt = (left: number, top: number): GraphPoint | undefined =>
+		layout.pointAt(transform, [left, top]);
 
-	// Positions of the notes already shown are kept when the graph is read
-	// again.
-	function show(next: GraphModel): void {
-		carryPositions(model, next);
-		model = next;
-		simulation?.stop();
-		simulation = simulate(model, groupBase).on('tick', () => {
-			if ((simulation?.alpha() ?? 0) < SETTLED) {
-				frameNotes();
-			}
-			draw();
-		});
-	}
+	const layout = new GraphLayout(() => {
+		if ((layout.simulation?.alpha() ?? 0) < SETTLED) {
+			frameNotes();
+		}
+		draw();
+	});
 
 	// Zooms so that every note is in view, once.
 	function frameNotes(): void {
@@ -140,7 +127,11 @@
 			return;
 		}
 		const { clientWidth: width, clientHeight: height } = wrapper;
-		const view = frameOf(model.points, { width, height }, groupBase);
+		const view = frameOf(
+			layout.model.points,
+			{ width, height },
+			groupBase,
+		);
 		if (view) {
 			isFramed = true;
 			zoomer.transform(select(canvas), view);
@@ -167,17 +158,21 @@
 		return node && { path: node.path, title: node.title };
 	};
 
-	// The notes the filter keeps, laid out again when it or the shape of
-	// the notes changes.
+	// The notes the filter keeps, laid out again when they, their shape or
+	// their grouping change; selecting a note in the whole graph moves
+	// nothing.
 	$effect(() => {
 		if (graph) {
-			const next = toModel(filterGraph(graph, filter, centrePath));
-			shapePoints(next.points, graphOptions.shape);
+			const model = toModel(filterGraph(graph, filter, centrePath));
+			const shape = graphOptions.shape;
+			shapePoints(model.points, shape);
 			if (groupBase !== wasGrouped) {
 				wasGrouped = groupBase;
 				isFramed = false;
 			}
-			show(next);
+			if (!layout.show({ model, groupBase, shape })) {
+				draw();
+			}
 		}
 	});
 
@@ -219,9 +214,11 @@
 		zoomer = zooming();
 		const drags = dragging(target, {
 			transform: () => transform,
-			simulation: () => simulation,
+			simulation: () => layout.simulation,
 			pointAt,
-			groupOf: (point) => groupMembers(model.points, point, groupBase),
+			groupOf: (point) =>
+				groupMembers(layout.model.points, point, groupBase),
+			freeAround: (point) => layout.freeAround(point, groupBase),
 		});
 		// A double click opens a note: it does not zoom.
 		select(target).call(drags).call(zoomer).on('dblclick.zoom', null);
@@ -238,7 +235,7 @@
 		return () => {
 			leave();
 			observer.disconnect();
-			simulation?.stop();
+			layout.stop();
 			cancelAnimationFrame(frame);
 		};
 	});
