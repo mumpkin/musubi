@@ -345,6 +345,46 @@
 	},
 	{
 		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "iab\u001biCD\u001bu",
+		"text": "abone two\nthree four\n\nfive.six seven\n",
+		"starts": "ab[one two\nthree four\n\nfive.six seven\n",
+		"ends": "abo]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "ab|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "wcX\u001bu",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "one ]two\nthree four\n\nfive.six seven\n",
+		"cursors": "one| two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "oline\u001bu",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "iab\rcd\u001bu",
+		"text": "one two\nthree four\n\nfive.six seven\n",
+		"starts": "[one two\nthree four\n\nfive.six seven\n",
+		"ends": "o]ne two\nthree four\n\nfive.six seven\n",
+		"cursors": "|one two\nthree four\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
+		"keys": "xdxdu",
+		"text": "three four\n\nfive.six seven\n",
+		"starts": "[three four\n\nfive.six seven\n",
+		"ends": "three four\n]\nfive.six seven\n",
+		"cursors": "three four|\n\nfive.six seven\n"
+	},
+	{
+		"initialText": "one two\nthree four\n\nfive.six seven\n",
 		"keys": "xs[a-z]+\r",
 		"text": "one two\nthree four\n\nfive.six seven\n",
 		"starts": "[one [two\nthree four\n\nfive.six seven\n",

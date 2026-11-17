@@ -2,6 +2,8 @@
 // Key sequences replayed in the real Helix and in the Musubi editor.
 // `\x1b` is Escape and `\r` is Enter. Every case ends in normal mode.
 
+import { UNDO_CASES } from './helix-undo-cases.ts';
+
 export interface HelixCase {
 	text: string;
 	keys: string;
@@ -62,6 +64,7 @@ export const HELIX_CASES: HelixCase[] = [
 	{ text: LINES, keys: 'wCC' },
 	{ text: LINES, keys: 'wdu' },
 	{ text: LINES, keys: 'wduU' },
+	...UNDO_CASES,
 	{ text: LINES, keys: 'xs[a-z]+\r' },
 	{ text: WORDS, keys: 'xso\r' },
 	{ text: LINES, keys: 'wyp' },

@@ -28,3 +28,4 @@ export {
 	typstToken,
 } from './syntax-colors.ts';
 export { typstLanguage } from './typst-language.ts';
+export { helixHistory } from './undo-history.ts';

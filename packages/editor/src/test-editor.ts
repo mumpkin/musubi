@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // An editor without a view, for tests: commands run on its state.
-import { history } from '@codemirror/commands';
 import {
 	EditorSelection,
 	EditorState,
@@ -14,6 +13,7 @@ import { insertOrigins } from './insert.ts';
 import { jumpLabelsField } from './jump-labels.ts';
 import { type EditorMode, modeField } from './mode.ts';
 import { searchPatternField } from './search.ts';
+import { helixHistory } from './undo-history.ts';
 
 export class TestEditor implements CommandTarget {
 	state: EditorState;
@@ -30,7 +30,7 @@ export class TestEditor implements CommandTarget {
 				insertOrigins,
 				jumpLabelsField,
 				searchPatternField,
-				history(),
+				helixHistory(),
 				EditorState.allowMultipleSelections.of(true),
 			],
 		});

@@ -11,6 +11,7 @@ import { motionCommands } from './motions.ts';
 import { navigationCommands } from './navigation.ts';
 import { objectCommands } from './objects.ts';
 import { searchCommands } from './search.ts';
+import { commandTarget } from './undo-history.ts';
 
 export const commands = {
 	...motionCommands,
@@ -50,12 +51,14 @@ export function runCommand(
 	context: CommandContext,
 	argument?: string,
 ): void {
-	const { count } = context;
+	// Whatever the command dispatches is one undo step.
+	const stepped = { ...context, target: commandTarget(context.target) };
+	const { count } = stepped;
 	if (count === undefined || !REPEATED.has(name)) {
-		commands[name](context, argument);
+		commands[name](stepped, argument);
 		return;
 	}
 	for (let time = 0; time < Math.min(count, MAX_REPEAT); time += 1) {
-		commands[name]({ ...context, count: undefined }, argument);
+		commands[name]({ ...stepped, count: undefined }, argument);
 	}
 }
