@@ -10,6 +10,9 @@ and this project adheres to
 
 ### Added
 
+- The home screen of an empty vault offers to create a note or open the
+  tutorial.
+
 - Icons in the title bar for the mouse: explorer, find a note, search the
   text, home, new note, review, graph, backlinks, the command palette and
   the settings, each naming its action and shortcut on hover.
@@ -41,6 +44,8 @@ and this project adheres to
 
 ### Fixed
 
+- Splitting the home screen opens a second home screen instead of an
+  empty pane with an error.
 - Pills of the graph no longer pile up on large vaults.
 - A note dropped in the graph stays under the pointer instead of jumping
   away; the notes around it settle, then it is free again.

@@ -55,7 +55,16 @@
 	const panels = new SidePanels(manager);
 	const editing = treeEditing(files, manager, panels);
 	const dueCounts = new DueCounts(() => files.loads);
-	const home = homeData({ files, dueCounts, manager, dialogs });
+	const home = homeData({
+		files,
+		dueCounts,
+		manager,
+		dialogs,
+		// The actions are defined below; this runs on a click, after them.
+		start: (way) => {
+			ACTIONS[way]();
+		},
+	});
 
 	// Back in the window or after a save: the notes may have changed.
 	function loadTree(): void {

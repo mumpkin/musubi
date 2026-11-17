@@ -159,9 +159,10 @@ export class PaneManager {
 		const pane = this.panes[this.focusedIndex];
 		if (pane && this.canSplit) {
 			this.direction = direction;
+			// Without a note (the home screen), the new pane is a home too.
 			this.panes.push({
 				path: pane.path,
-				mode: otherMode(pane.mode),
+				mode: pane.path === '' ? 'home' : otherMode(pane.mode),
 				loads: 0,
 			});
 			this.focusAfterRender(this.panes.length - 1);
