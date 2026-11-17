@@ -38,7 +38,7 @@ pub use crate::index::{
 	Backlink, Graph, GraphLink, GraphNode, IndexedCard, Sources, TextMatch,
 	VaultIndex,
 };
-pub use crate::rename::save_note;
+pub use crate::rename::{retarget_links, save_note};
 pub use crate::search::{NoteMatch, search_headings, search_titles};
 pub use crate::tasks::toggle_task;
 pub use crate::trash::TrashEntry;

@@ -58,7 +58,8 @@ function markMissingLinks(
 		const path = linkedNotePath(link);
 		if (path !== undefined && !exists(path)) {
 			link.classList.add(MISSING_LINK_CLASS);
-			link.title = 'This note does not exist yet: click to create it';
+			link.title = `No note at ${path.replace(/\.typ$/u, '')}: click to `
+				+ 'create it, or to open a note with a near name';
 		}
 	}
 }

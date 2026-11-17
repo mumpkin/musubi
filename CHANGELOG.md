@@ -12,6 +12,10 @@ and this project adheres to
 
 - The home screen of an empty vault offers to create a note or open the
   tutorial.
+- A link to a missing note that names an existing note almost exactly
+  (spaces for `_`, other case or accents) offers to open that note, or to
+  fix every link to it in the vault, before creating anything. Creating a
+  note that needs a new folder asks first, naming the folder.
 - Icons in the title bar for the mouse: explorer, find a note, search the
   text, home, new note, review, graph, backlinks, the command palette and
   the settings, each naming its action and shortcut on hover.

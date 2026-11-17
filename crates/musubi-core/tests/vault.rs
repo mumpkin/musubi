@@ -229,3 +229,21 @@ fn lists_the_notes_modified_last() {
 		["C.typ", "B.typ"]
 	);
 }
+
+#[test]
+fn points_links_that_miss_their_note_at_it() {
+	let directory = vault_with(&[
+		("My folder/A.typ", "= A\n"),
+		(
+			"B.typ",
+			"= B\n#note-link(\"My_folder/A\")[the A] and \
+			 #note-link(\"Other\")[other]\n",
+		),
+	]);
+	let vault = open(directory.path());
+	musubi_core::retarget_links(&vault, "My_folder/A", "My folder/A")
+		.expect("retarget");
+	let source = vault.read_note("B.typ").expect("read");
+	assert!(source.contains("#note-link(\"My folder/A\")[the A]"));
+	assert!(source.contains("#note-link(\"Other\")[other]"));
+}

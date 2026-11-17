@@ -155,6 +155,29 @@ pub(crate) fn update_notes(
 	Ok(())
 }
 
+/// Points every link to the target `from` (a path without extension) at
+/// `to` instead: links that miss their note by a near miss in its name.
+///
+/// # Errors
+///
+/// An I/O error while reading or writing a note.
+pub fn retarget_links(
+	vault: &Vault,
+	from: &str,
+	to: &str,
+) -> Result<(), VaultError> {
+	// Empty titles: the text of the links stays as it is.
+	update_notes(
+		vault,
+		&Renaming {
+			old_target: from,
+			new_target: to,
+			old_title: "",
+			new_title: "",
+		},
+	)
+}
+
 /// Saves `content` as `note`; if its title changed, renames the note and
 /// updates the vault. Returns the path of the note after saving.
 ///

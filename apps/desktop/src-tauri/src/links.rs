@@ -38,6 +38,21 @@ pub fn create_linked_note(
 	open.refresh_index()
 }
 
+/// Points every link to the target `from` at `to` (paths without
+/// extension), a note that exists under a near name.
+#[tauri::command(async)]
+pub fn retarget_links(
+	from: &str,
+	to: &str,
+	state: State<'_, AppState>,
+) -> Result<(), String> {
+	let mut open = state.lock();
+	let open = open.as_mut().ok_or(NO_VAULT)?;
+	musubi_core::retarget_links(&open.vault, from, to)
+		.map_err(|error| error.to_string())?;
+	open.refresh_index()
+}
+
 /// Notes whose title fuzzily matches `query`, best first.
 #[tauri::command(async)]
 pub fn search_notes(

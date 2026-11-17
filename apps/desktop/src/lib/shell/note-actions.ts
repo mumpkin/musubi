@@ -5,10 +5,15 @@
 import type { Conflict } from '../bindings/Conflict.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
 import { archiveEntry, moveEntry } from '../vault/explorer.ts';
+import { nearNote, retargetLinks } from '../vault/missing-links.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
-import { isArchived, titleIn } from '../vault/tree.ts';
+import { isArchived, parentOf, titleIn } from '../vault/tree.ts';
 import { writeNote } from '../vault/vault.ts';
 import type { TrashActions } from './actions.ts';
+import {
+	type MissingLinkChoice,
+	MissingLinkPrompt,
+} from './missing-link-prompt.svelte.ts';
 import type { PaneManager } from './pane-manager.svelte.ts';
 import type { PaneState } from './panes.ts';
 import { UnsavedPrompt } from './unsaved-prompt.svelte.ts';
@@ -17,6 +22,8 @@ import type { VaultState } from './vault-state.svelte.ts';
 export class NoteActions {
 	// Asked before a note with unsaved changes leaves its pane.
 	readonly unsaved = new UnsavedPrompt();
+	// Asked before following a link to a missing note, when in doubt.
+	readonly missing = new MissingLinkPrompt();
 	private readonly files: VaultState;
 	private readonly manager: PaneManager;
 
@@ -24,13 +31,59 @@ export class NoteActions {
 		this.files = files;
 		this.manager = manager;
 		manager.askUnsaved = this.settleUnsaved;
-		// A link to a missing note creates it, titled from the link.
+		// A link to a missing note creates it, titled from the link, unless
+		// a note with a near name exists or folders would be created.
 		manager.followLink = (path, text) => {
 			this.run(async () => {
-				await files.prepareLink(path, text);
-				manager.open(path);
+				const target = await this.targetOf(path, text);
+				if (target !== undefined) {
+					manager.open(target);
+				}
 			});
 		};
+	}
+
+	// The note to open for a link to `path`: the note itself, the near note
+	// or the note created, as asked; `undefined` when cancelled.
+	private async targetOf(
+		path: string,
+		text: string,
+	): Promise<string | undefined> {
+		const { files } = this;
+		if (files.notePaths.has(path)) {
+			return path;
+		}
+		const near = nearNote(path, files.notePaths);
+		const folder = parentOf(path);
+		const isNewFolder = folder !== ''
+			&& !files.tree.folders.includes(folder);
+		const choice = near === undefined && !isNewFolder
+			? 'create'
+			: await this.missing.ask({
+					path,
+					near,
+					newFolder: isNewFolder ? folder : undefined,
+				});
+		return this.settleMissing(choice, { path, text, near });
+	}
+
+	private async settleMissing(
+		choice: MissingLinkChoice,
+		link: { path: string; text: string; near: string | undefined },
+	): Promise<string | undefined> {
+		if (choice === 'cancel') {
+			return undefined;
+		}
+		if (choice === 'create' || link.near === undefined) {
+			await this.files.prepareLink(link.path, link.text);
+			return link.path;
+		}
+		if (choice === 'fix') {
+			await retargetLinks(link.path, link.near);
+			await this.files.load();
+			this.manager.reload();
+		}
+		return link.near;
 	}
 
 	// What the trash section of the explorer needs.

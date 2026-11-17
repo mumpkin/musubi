@@ -36,6 +36,7 @@ macro_rules! commands {
 			vault::open_tutorial,
 			links::backlinks,
 			links::create_linked_note,
+			links::retarget_links,
 			links::search_notes,
 			links::search_sections,
 			links::search_text,
