@@ -23,7 +23,8 @@ named _Writing Typst_, click it to select it, then double click it (or
 press `Enter`) to open it. `Space g` again leaves the graph.
 
 Under the pointer, or selected, a note shows its links over the others and
-the titles of the notes it is linked to. Titles appear as you zoom in, never
+the titles of the notes it is linked to; the other titles and links fade
+gently. Titles appear as you zoom in, never
 covering one another. Clicking a note leaves the others where they are;
 dragging it moves only the notes around it.
 

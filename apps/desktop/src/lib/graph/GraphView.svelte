@@ -19,6 +19,7 @@
 	import { type GraphPoint, readGraph, toModel } from './graph-data.ts';
 	import { dragging } from './graph-drag.ts';
 	import { drawGraph } from './graph-draw.ts';
+	import { Fades } from './graph-fades.ts';
 	import {
 		EVERY_NOTE,
 		filterGraph,
@@ -63,6 +64,7 @@
 	let selected = $state<string>();
 	let transform: ZoomTransform = zoomIdentity;
 	let hovered: GraphPoint | undefined;
+	const fades = new Fades();
 	let colors: GraphColors | undefined;
 	let frame = 0;
 	let zoomer: ZoomBehavior<HTMLCanvasElement, unknown> | undefined;
@@ -90,7 +92,7 @@
 		frame = requestAnimationFrame(() => {
 			frame = 0;
 			if (canvas && colors) {
-				drawGraph(canvas, {
+				const isFading = drawGraph(canvas, {
 					model: layout.model,
 					transform,
 					colors,
@@ -100,12 +102,16 @@
 					hovered,
 					neighbours: layout.neighbours,
 					byDegree: layout.byDegree,
+					fades,
 					ratio: window.devicePixelRatio,
 					size: {
 						width: canvas.clientWidth,
 						height: canvas.clientHeight,
 					},
 				});
+				if (isFading) {
+					draw();
+				}
 			}
 		});
 	}
