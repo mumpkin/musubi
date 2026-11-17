@@ -70,6 +70,11 @@ class Holds {
 		}
 	}
 
+	// Holds `point` where it is too, until the layout settles.
+	keep(point: GraphPoint): void {
+		this.held.push(point);
+	}
+
 	release(): void {
 		for (const point of this.held) {
 			point.fx = null;
@@ -107,12 +112,17 @@ class Press {
 		}
 	}
 
+	// A dropped note stays under the pointer while the notes around it
+	// settle, then is free again.
 	finish(event: DragEvent): void {
+		const { point } = event.subject;
 		if (this.isMoving) {
+			this.holds.keep(point);
 			this.context.simulation()?.alphaTarget(0);
+			return;
 		}
-		event.subject.point.fx = null;
-		event.subject.point.fy = null;
+		point.fx = null;
+		point.fy = null;
 	}
 
 	// The first move of a drag wakes the notes around the dragged one.

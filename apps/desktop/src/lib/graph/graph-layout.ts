@@ -43,6 +43,9 @@ export class GraphLayout {
 	byDegree: GraphPoint[] = [];
 	private groupBase: string | undefined;
 	private shape: NodeShape | undefined;
+	// A new layout takes extra steps each frame until it settles or a note
+	// is dragged; after that the layout moves at its own pace.
+	private isLayingOut = false;
 	private readonly onTick: () => void;
 
 	constructor(onTick: () => void) {
@@ -70,6 +73,7 @@ export class GraphLayout {
 			(one, other) => other.degree - one.degree,
 		);
 		this.simulation?.stop();
+		this.isLayingOut = true;
 		const isMostlyKnown = carried > model.points.length / HALF;
 		this.simulation = simulate(model, groupBase)
 			.alpha(isMostlyKnown ? REFIT : 1)
@@ -80,11 +84,14 @@ export class GraphLayout {
 		return true;
 	}
 
-	// Extra steps within the budget of a frame, unless a note is dragged.
+	// Extra steps within the budget of a frame, for a new layout only: once
+	// a note is dragged, catching up would make it jump when dropped.
 	private catchUp(): void {
 		const simulation = this.simulation;
-		// While a note is dragged, the layout follows the pointer at its pace.
-		if (!simulation || simulation.alphaTarget() > 0) {
+		if (simulation && simulation.alphaTarget() > 0) {
+			this.isLayingOut = false;
+		}
+		if (!simulation || !this.isLayingOut) {
 			return;
 		}
 		const start = performance.now();

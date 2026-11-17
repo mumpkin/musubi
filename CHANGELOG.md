@@ -21,6 +21,10 @@ and this project adheres to
 ### Fixed
 
 - Pills of the graph no longer pile up on large vaults.
+- A note dropped in the graph stays under the pointer instead of jumping
+  away; the notes around it settle, then it is free again.
+- The links of a note under the pointer stand out less harshly from the
+  others.
 
 ## [0.5.0] - 2026-11-15
 
