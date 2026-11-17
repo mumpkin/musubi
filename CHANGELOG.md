@@ -12,8 +12,8 @@ and this project adheres to
 
 - The graph stays still when you click a note; dragging a note moves only
   the notes around it, and a large graph settles three times faster.
-- A note under the pointer or selected in the graph stands out with its
-  links and linked notes, and the rest fades.
+- The links of a note under the pointer or selected in the graph are drawn
+  over the others, with the titles of the notes it is linked to.
 - Titles in the graph never cover one another: they appear as you zoom in,
   the most linked notes first, and folder names show only where they fit.
   Small dots are easier to click.
@@ -23,8 +23,9 @@ and this project adheres to
 - Pills of the graph no longer pile up on large vaults.
 - A note dropped in the graph stays under the pointer instead of jumping
   away; the notes around it settle, then it is free again.
-- The links of a note under the pointer stand out less harshly from the
-  others.
+- Moving the pointer over the notes of the graph no longer makes them
+  flicker: only the links of the note under the pointer are drawn over the
+  others, and every note keeps its color and its title.
 
 ## [0.5.0] - 2026-11-15
 
