@@ -12,8 +12,7 @@ const trackedRustFiles = execFileSync('git', ['ls-files', '*.rs'], {
 	.filter((path) => path !== '');
 
 const tooLong = trackedRustFiles.filter((path) =>
-	isTooLong(readFileSync(path, 'utf8')),
-);
+	isTooLong(readFileSync(path, 'utf8')));
 
 if (tooLong.length > 0) {
 	console.error(`Files over ${String(MAX_LINES_PER_FILE)} non-blank lines:`);

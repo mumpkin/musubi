@@ -43,8 +43,7 @@ export const insertOrigins = StateField.define<InsertOrigin[] | null>({
 // Cursors to type at, for the selections `origins`.
 export function insertCursors(origins: InsertOrigin[]): EditorSelection {
 	return EditorSelection.create(origins.map((origin) =>
-		EditorSelection.cursor(origin.side === 'before' ? origin.from : origin.to),
-	));
+		EditorSelection.cursor(origin.side === 'before' ? origin.from : origin.to)));
 }
 
 // The selections to restore when leaving insert mode. After `i` the cursor
@@ -53,6 +52,5 @@ export function restoredSelection(origins: InsertOrigin[]): EditorSelection {
 	return EditorSelection.create(origins.map((origin) =>
 		origin.side === 'before'
 			? EditorSelection.range(origin.to, origin.from)
-			: EditorSelection.range(origin.from, origin.to),
-	));
+			: EditorSelection.range(origin.from, origin.to)));
 }

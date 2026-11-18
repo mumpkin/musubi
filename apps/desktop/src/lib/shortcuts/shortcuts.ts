@@ -3,31 +3,31 @@
 // `Space w` the pane commands as the window menu of Helix. Keys of a
 // sequence are separated by spaces; `C-p` is Ctrl and p.
 
-export type ShellAction
-	= | 'palette'
-		| 'findNote'
-		| 'searchText'
-		| 'newNote'
-		| 'deleteNote'
-		| 'deleteFolder'
-		| 'showTrash'
-		| 'openTutorial'
-		| 'togglePin'
-		| 'toggleArchive'
-		| 'settings'
-		| 'toggleExplorer'
-		| 'toggleBacklinks'
-		| 'toggleGraph'
-		| 'review'
-		| 'reviewNote'
-		| 'home'
-		| 'toggleMode'
-		| 'split'
-		| 'splitBelow'
-		| 'closePane'
-		| 'nextPane'
-		| 'leftPanel'
-		| 'rightPanel';
+export type ShellAction =
+	| 'palette'
+	| 'findNote'
+	| 'searchText'
+	| 'newNote'
+	| 'deleteNote'
+	| 'deleteFolder'
+	| 'showTrash'
+	| 'openTutorial'
+	| 'togglePin'
+	| 'toggleArchive'
+	| 'settings'
+	| 'toggleExplorer'
+	| 'toggleBacklinks'
+	| 'toggleGraph'
+	| 'review'
+	| 'reviewNote'
+	| 'home'
+	| 'toggleMode'
+	| 'split'
+	| 'splitBelow'
+	| 'closePane'
+	| 'nextPane'
+	| 'leftPanel'
+	| 'rightPanel';
 
 // Commands of the palette for each action.
 interface ActionLabel {

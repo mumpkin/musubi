@@ -39,8 +39,7 @@ function deleteSelections(context: CommandContext): void {
 		state.selection.ranges.map((range) => asCharacters(state, range)),
 	);
 	const cursors = state.selection.ranges.map((range) =>
-		EditorSelection.cursor(changes.mapPos(range.from)),
-	);
+		EditorSelection.cursor(changes.mapPos(range.from)));
 	target.dispatch({
 		changes,
 		selection: EditorSelection.create(cursors, state.selection.mainIndex),

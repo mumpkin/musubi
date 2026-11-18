@@ -110,6 +110,5 @@ export function findCommitMessageErrors(
 	}
 
 	return SUBJECT_RULES.filter((rule) => rule.isBroken(subject)).map((rule) =>
-		rule.describe(subject),
-	);
+		rule.describe(subject));
 }

@@ -108,8 +108,7 @@ export const modeCommands = {
 	collapseSelection: ({ target }) => {
 		const { state } = target;
 		const selection = mapRanges(state, (range) =>
-			toRange(characterAt(state, cursorOf(range))),
-		);
+			toRange(characterAt(state, cursorOf(range))));
 		target.dispatch({ selection });
 	},
 	commandLine: ({ host }) => {
