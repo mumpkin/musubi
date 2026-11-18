@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import { describe, expect, it, vi } from 'vitest';
 
+import { ACTION_LABELS, type ShellAction } from '../shortcuts/shortcuts.ts';
 import { paletteCommands } from './palette.ts';
-import { ACTION_LABELS, type ShellAction } from './shortcuts.ts';
 
 describe('paletteCommands', () => {
 	const names = Object.keys(ACTION_LABELS) as ShellAction[];

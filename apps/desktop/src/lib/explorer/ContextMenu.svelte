@@ -6,8 +6,8 @@
 <script lang="ts">
 	import { tick } from 'svelte';
 
+	import Icon from '../ui/Icon.svelte';
 	import type { MenuItem } from './explorer-menu.ts';
-	import Icon from './Icon.svelte';
 
 	interface OpenMenu {
 		left: number;

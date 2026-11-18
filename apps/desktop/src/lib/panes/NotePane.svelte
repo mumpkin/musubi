@@ -8,8 +8,8 @@
 	import type { HomeData } from '../home/home-data.ts';
 	import HomePane from '../home/HomePane.svelte';
 	import ReviewPane from '../review/ReviewPane.svelte';
+	import type { PaneAction } from '../ui/actions.ts';
 	import { writeNote } from '../vault/vault.ts';
-	import type { PaneAction } from './actions.ts';
 	import EditingPane from './EditingPane.svelte';
 	import PaneHeader from './PaneHeader.svelte';
 	import { MODE_LABELS, type PaneEvents, type PaneState } from './panes.ts';

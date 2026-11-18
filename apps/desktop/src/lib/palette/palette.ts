@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Commands of the palette: the shell actions, then the notes to open.
 import type { NoteEntry } from '../bindings/NoteEntry.ts';
-import type { PaletteCommand } from './actions.ts';
-import { ACTION_LABELS, type ShellAction, shortcutLabel } from './shortcuts.ts';
+import { ACTION_LABELS, type ShellAction, shortcutLabel } from '../shortcuts/shortcuts.ts';
+import type { PaletteCommand } from '../ui/actions.ts';
 
 export function paletteCommands(
 	actions: Record<ShellAction, () => void>,

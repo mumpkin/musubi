@@ -6,11 +6,11 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import { graphPresence } from '../graph/graph-presence.svelte.ts';
+	import Icon from '../ui/Icon.svelte';
 	import { folderPalette } from '../vault/folder-palette.svelte.ts';
 	import type { FolderNode } from '../vault/tree.ts';
 	import { dragEntry, dropFolder } from './drag-drop.ts';
 	import Self from './ExplorerFolder.svelte';
-	import Icon from './Icon.svelte';
 
 	interface Props {
 		folder: FolderNode;

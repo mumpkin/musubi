@@ -4,19 +4,19 @@
 // status bar.
 import type { Conflict } from '../bindings/Conflict.ts';
 import type { VaultTree } from '../bindings/VaultTree.ts';
+import {
+	type MissingLinkChoice,
+	MissingLinkPrompt,
+} from '../dialogs/missing-link-prompt.svelte.ts';
+import { UnsavedPrompt } from '../dialogs/unsaved-prompt.svelte.ts';
+import type { PaneManager } from '../panes/pane-manager.svelte.ts';
+import type { PaneState } from '../panes/panes.ts';
+import type { TrashActions } from '../ui/actions.ts';
 import { archiveEntry, moveEntry } from '../vault/explorer.ts';
 import { nearNote, retargetLinks } from '../vault/missing-links.ts';
 import { trashFolder, trashNote } from '../vault/trash.ts';
 import { isArchived, parentOf, titleIn } from '../vault/tree.ts';
 import { writeNote } from '../vault/vault.ts';
-import type { TrashActions } from './actions.ts';
-import {
-	type MissingLinkChoice,
-	MissingLinkPrompt,
-} from './missing-link-prompt.svelte.ts';
-import type { PaneManager } from './pane-manager.svelte.ts';
-import type { PaneState } from './panes.ts';
-import { UnsavedPrompt } from './unsaved-prompt.svelte.ts';
 import type { VaultState } from './vault-state.svelte.ts';
 
 export class NoteActions {

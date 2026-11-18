@@ -10,9 +10,7 @@ use percent_encoding::percent_decode_str;
 use tauri::State;
 use tauri::ipc::{InvokeBody, Request};
 
-use crate::state::AppState;
-
-const NO_VAULT: &str = "no vault is open";
+use crate::state::{AppState, Message as _};
 
 fn not_an_image(name: &str) -> String {
 	format!("{name} is not an image Musubi can show")
@@ -34,17 +32,11 @@ pub fn import_image(
 		return Err(not_an_image(&name));
 	}
 	let bytes = fs::read(source).map_err(musubi_core::file_error)?;
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.add_asset(
-			note,
-			&NewAsset {
-				name: &name,
-				bytes: &bytes,
-			},
-		)
-		.map_err(|error| error.to_string())
+	let asset = NewAsset {
+		name: &name,
+		bytes: &bytes,
+	};
+	state.with_open(|open| open.vault.add_asset(note, &asset).message())
 }
 
 /// A header of `request`, percent-decoded: headers carry only ASCII.
@@ -73,11 +65,8 @@ pub fn paste_image(
 	if !musubi_core::is_image(&name) {
 		return Err(not_an_image(&name));
 	}
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.add_asset(&note, &NewAsset { name: &name, bytes })
-		.map_err(|error| error.to_string())
+	let asset = NewAsset { name: &name, bytes };
+	state.with_open(|open| open.vault.add_asset(&note, &asset).message())
 }
 
 /// Files of the `.assets` folder of `note`, relative to it.
@@ -86,7 +75,5 @@ pub fn note_assets(
 	note: &str,
 	state: State<'_, AppState>,
 ) -> Result<Vec<String>, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault.assets(note).map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.assets(note).message())
 }

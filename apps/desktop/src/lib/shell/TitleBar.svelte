@@ -5,9 +5,9 @@
 <script lang="ts">
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 
-	import Icon from './Icon.svelte';
+	import type { ShellAction } from '../shortcuts/shortcuts.ts';
+	import Icon from '../ui/Icon.svelte';
 	import ShellToolbar from './ShellToolbar.svelte';
-	import type { ShellAction } from './shortcuts.ts';
 
 	interface Props {
 		title: string;

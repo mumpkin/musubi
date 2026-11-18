@@ -9,8 +9,9 @@
 	import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
 	import TreeChangesDialog from '../tree-edit/TreeChangesDialog.svelte';
 	import TreeEditor from '../tree-edit/TreeEditor.svelte';
+	import type { TrashActions } from '../ui/actions.ts';
+	import { focusFirst, listKeydown } from '../ui/list-keys.ts';
 	import type { FolderNode } from '../vault/tree.ts';
-	import type { TrashActions } from './actions.ts';
 	import ConflictSection from './ConflictSection.svelte';
 	import ContextMenu from './ContextMenu.svelte';
 	import {
@@ -23,7 +24,6 @@
 	import ExplorerHeader from './ExplorerHeader.svelte';
 	import ExplorerSection from './ExplorerSection.svelte';
 	import { focusedEntry, restoreFocus } from './keep-focus.ts';
-	import { focusFirst, listKeydown } from './list-keys.ts';
 	import TrashSection from './TrashSection.svelte';
 
 	interface Props {

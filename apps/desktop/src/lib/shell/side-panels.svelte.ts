@@ -3,9 +3,9 @@
 // move the keyboard focus across every panel with `Space h` / `Space l`.
 import type { PaneAPI } from 'paneforge';
 
-import { toggle } from './layout.ts';
-import type { ListPanel } from './list-keys.ts';
-import type { PaneManager } from './pane-manager.svelte.ts';
+import type { PaneManager } from '../panes/pane-manager.svelte.ts';
+import { toggle } from '../ui/layout.ts';
+import type { ListPanel } from '../ui/list-keys.ts';
 import {
 	neighbourPanel,
 	type Panel,

@@ -2,12 +2,12 @@
 <!-- Notes linking to the current one, from the index, with the sentence
      around each link. -->
 <script lang="ts">
+	import { focusFirst, listKeydown } from '../ui/list-keys.ts';
 	import {
 		type BacklinkGroup,
 		backlinks,
 		groupBacklinks,
 	} from '../vault/links.ts';
-	import { focusFirst, listKeydown } from './list-keys.ts';
 
 	interface Props {
 		// Path of the current note.

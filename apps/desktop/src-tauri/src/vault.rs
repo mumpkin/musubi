@@ -9,7 +9,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 use ts_rs::TS;
 
 use crate::preferences::StartScreen;
-use crate::state::{AppState, DeviceSettings, OpenVault};
+use crate::state::{AppState, DeviceSettings, Message as _, OpenVault};
 
 /// The open vault, as the interface sees it.
 #[derive(Serialize, TS)]
@@ -28,8 +28,6 @@ pub struct VaultInfo {
 	/// screen.
 	pub first_note: Option<String>,
 }
-
-const NO_VAULT: &str = "no vault is open";
 
 /// The note a vault opens on, as the preferences of the device ask: the
 /// note modified last, or none for the home screen.
@@ -50,15 +48,13 @@ fn info(open: &OpenVault) -> Result<VaultInfo, String> {
 			.unwrap_or_default(),
 		read_only: open.vault.read_only,
 		trash_retention_days: open.vault.trash_retention_days,
-		tree: open.vault.tree().map_err(|error| error.to_string())?,
+		tree: open.vault.tree().message()?,
 		first_note: None,
 	})
 }
 
 pub fn config_dir(app: &AppHandle) -> Result<PathBuf, String> {
-	app.path()
-		.app_config_dir()
-		.map_err(|error| error.to_string())
+	app.path().app_config_dir().message()
 }
 
 /// Event telling the interface how far the indexing of a vault being
@@ -77,9 +73,7 @@ fn reporter(app: &AppHandle) -> impl FnMut(usize, usize) + '_ {
 
 /// Where the indexes of vaults are kept: data of this device only.
 fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {
-	app.path()
-		.app_local_data_dir()
-		.map_err(|error| error.to_string())
+	app.path().app_local_data_dir().message()
 }
 
 /// Opens the vault at `root` and remembers it for the next launch.
@@ -116,14 +110,11 @@ pub fn open_vault(
 /// A new vault, without any note, starts with the tutorial. Returns its
 /// first note.
 fn welcome(open: &mut OpenVault) -> Result<Option<String>, String> {
-	let tree = open.vault.tree().map_err(|error| error.to_string())?;
+	let tree = open.vault.tree().message()?;
 	if !tree.notes.is_empty() || open.vault.read_only {
 		return Ok(None);
 	}
-	let start = open
-		.vault
-		.install_tutorial()
-		.map_err(|error| error.to_string())?;
+	let start = open.vault.install_tutorial().message()?;
 	open.refresh_index()?;
 	Ok(Some(start.to_owned()))
 }
@@ -132,14 +123,10 @@ fn welcome(open: &mut OpenVault) -> Result<Option<String>, String> {
 /// its first note.
 #[tauri::command(async)]
 pub fn open_tutorial(state: State<'_, AppState>) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let start = open
-		.vault
-		.install_tutorial()
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(start.to_owned())
+	state.change(|open| {
+		let start = open.vault.install_tutorial().message()?;
+		Ok(start.to_owned())
+	})
 }
 
 /// The vault already open, or the one of the last session if it still
@@ -175,10 +162,10 @@ pub fn current_vault(
 /// the index is brought up to date first.
 #[tauri::command(async)]
 pub fn vault_tree(state: State<'_, AppState>) -> Result<VaultTree, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	open.refresh_index()?;
-	open.vault.tree().map_err(|error| error.to_string())
+	state.with_open(|open| {
+		open.refresh_index()?;
+		open.vault.tree().message()
+	})
 }
 
 #[tauri::command(async)]
@@ -186,11 +173,7 @@ pub fn read_note(
 	path: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.read_note(path)
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.read_note(path).message())
 }
 
 /// Saves a note; renames it if its title changed. Returns its path after
@@ -201,12 +184,9 @@ pub fn write_note(
 	content: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let saved = musubi_core::save_note(&open.vault, path, content)
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(saved)
+	state.change(|open| {
+		musubi_core::save_note(&open.vault, path, content).message()
+	})
 }
 
 /// The vaults opened on this device that still exist, the last one first.
@@ -239,11 +219,7 @@ pub fn create_note(
 	title: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.create_note(folder, title)
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.create_note(folder, title).message())
 }
 
 /// Creates a folder in `parent`; returns its path.
@@ -253,11 +229,7 @@ pub fn create_folder(
 	name: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.create_folder(parent, name)
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.create_folder(parent, name).message())
 }
 
 /// The demo vault of the repository, for development builds.

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // What each shortcut of the shell does (`shortcuts.ts` names them).
+import type { ShellDialogs } from '../dialogs/dialogs.svelte.ts';
+import type { PaneManager } from '../panes/pane-manager.svelte.ts';
+import { showHome } from '../panes/pane-modes.ts';
+import type { NoteActions } from '../shell/note-actions.ts';
+import type { SidePanels } from '../shell/side-panels.svelte.ts';
 import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
 import { parentOf } from '../vault/tree.ts';
 import { openTutorial } from '../vault/vault.ts';
-import type { ShellDialogs } from './dialogs.svelte.ts';
-import type { NoteActions } from './note-actions.ts';
-import type { PaneManager } from './pane-manager.svelte.ts';
-import { showHome } from './pane-modes.ts';
 import type { ShellAction } from './shortcuts.ts';
-import type { SidePanels } from './side-panels.svelte.ts';
 
 interface ShellParts {
 	manager: PaneManager;

@@ -11,10 +11,9 @@ use musubi_core::trash::now;
 use musubi_core::{DueCard, DueRequest, ReviewClock};
 use tauri::{AppHandle, Manager, State};
 
-use crate::state::{AppState, DeviceSettings};
+use crate::state::{AppState, DeviceSettings, Message as _};
 use crate::vault::config_dir;
 
-const NO_VAULT: &str = "no vault is open";
 const DEVICE_FILE: &str = "device-id";
 
 /// The id of this installation: 16 random hex digits, made once and kept
@@ -52,11 +51,11 @@ pub fn due_cards(
 		day_start: local_day_start(time),
 		new_per_day: settings.new_cards_per_day as usize,
 	};
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.due_cards(&open.index, DueRequest { scope, clock })
-		.map_err(|error| error.to_string())
+	state.with_open(|open| {
+		open.vault
+			.due_cards(&open.index, DueRequest { scope, clock })
+			.message()
+	})
 }
 
 /// Records the review of card `key` with `rating` (1 again to 4 easy).
@@ -67,15 +66,11 @@ pub fn review_card(
 	app: AppHandle,
 ) -> Result<(), String> {
 	let device = device_id(&app)?;
-	let state = app.state::<AppState>();
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
 	let review = Review {
 		card: key,
 		at: now(),
 		rating,
 	};
-	open.vault
-		.record_review(&device, &review)
-		.map_err(|error| error.to_string())
+	app.state::<AppState>()
+		.with_open(|open| open.vault.record_review(&device, &review).message())
 }

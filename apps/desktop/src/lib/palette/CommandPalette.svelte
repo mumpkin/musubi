@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { Command, Dialog } from 'bits-ui';
 
-	import type { PaletteCommand } from './actions.ts';
+	import type { PaletteCommand } from '../ui/actions.ts';
 
 	interface Props {
 		open: boolean;

@@ -6,12 +6,12 @@
 	import type { SvelteSet } from 'svelte/reactivity';
 
 	import type { TrashEntry } from '../bindings/TrashEntry.ts';
+	import type { TrashActions } from '../ui/actions.ts';
 	import {
 		deleteForGood,
 		restoreNote,
 		trashEntries,
 	} from '../vault/trash.ts';
-	import type { TrashActions } from './actions.ts';
 	import { isMenuKey, type MenuItem } from './explorer-menu.ts';
 	import ExplorerSection from './ExplorerSection.svelte';
 

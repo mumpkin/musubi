@@ -4,9 +4,9 @@
      the vault actions (tree as text, new note, new folder, review). -->
 <script lang="ts">
 	import type { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
+	import Icon from '../ui/Icon.svelte';
+	import ModeBadge from '../ui/ModeBadge.svelte';
 	import { headerMenu, type MenuItem } from './explorer-menu.ts';
-	import Icon from './Icon.svelte';
-	import ModeBadge from './ModeBadge.svelte';
 
 	interface Props {
 		vaultName: string;
