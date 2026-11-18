@@ -74,6 +74,13 @@ export const MAX_PANES = 2;
 
 // Reading and editing switch to each other; the graph and a review go
 // back to reading.
+export type SplitDirection = 'horizontal' | 'vertical';
+
+// Where a pane goes back to: its note, read, or the home screen without one.
+export function restingMode(pane: PaneState): PaneMode {
+	return pane.path === '' ? 'home' : 'reading';
+}
+
 export function otherMode(mode: PaneMode): PaneMode {
 	return mode === 'reading' ? 'editing' : 'reading';
 }

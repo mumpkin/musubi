@@ -31,6 +31,16 @@ describe('PaneManager', () => {
 		expect(manager.panes.map((pane) => pane.mode)).toEqual(['home', 'home']);
 	});
 
+	it('goes back to the home screen, not to an empty note', () => {
+		const manager = new PaneManager('');
+		manager.review(0, '');
+		manager.read(0);
+		expect(manager.panes[0]?.mode).toBe('home');
+		manager.toggleGraph(0);
+		manager.toggleGraph(0);
+		expect(manager.panes[0]?.mode).toBe('home');
+	});
+
 	it('renders a note again after a save', () => {
 		const manager = new PaneManager('Note.typ');
 		manager.saved('Note.typ');

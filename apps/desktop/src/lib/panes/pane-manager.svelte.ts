@@ -1,20 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// The panes of the main area and what happens to them: open a note, switch
-// mode, split, close, save, reload. Reactive through Svelte runes.
+// The panes of the main area: open, switch mode, split, close, save, reload.
 import { type EditorMode } from '@musubi/editor';
 import { tick } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 
 import type { PaneAction } from '../ui/actions.ts';
 import { modeEvents } from './pane-modes.ts';
-
-export type SplitDirection = 'horizontal' | 'vertical';
 import {
 	MAX_PANES,
 	otherMode,
 	paneActions,
 	type PaneEvents,
 	type PaneState,
+	restingMode,
+	type SplitDirection,
 } from './panes.ts';
 import { taskEvents } from './task-events.ts';
 
@@ -126,7 +125,7 @@ export class PaneManager {
 	read(index: number): void {
 		const pane = this.panes[index];
 		if (pane) {
-			pane.mode = 'reading';
+			pane.mode = restingMode(pane);
 			this.focusAfterRender(index);
 		}
 	}
@@ -135,7 +134,7 @@ export class PaneManager {
 	toggleGraph(index: number): void {
 		const pane = this.panes[index];
 		if (pane && pane.draft === undefined) {
-			pane.mode = pane.mode === 'graph' ? 'reading' : 'graph';
+			pane.mode = pane.mode === 'graph' ? restingMode(pane) : 'graph';
 			this.focusAfterRender(index);
 		} else if (pane) {
 			this.message = 'Save the note before showing the graph';
