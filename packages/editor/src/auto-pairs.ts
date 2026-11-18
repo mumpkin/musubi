@@ -6,6 +6,7 @@
 // - typing the closing character in front of it steps over it;
 // - `Backspace` between an empty pair deletes both.
 import {
+	type ChangeSet,
 	EditorSelection,
 	type EditorState,
 	findClusterBreak,
@@ -149,7 +150,7 @@ function isInPair(state: EditorState, range: SelectionRange): boolean {
 // both characters of an empty pair.
 export function deleteBackward(state: EditorState): TransactionSpec {
 	const { ranges } = state.selection;
-	const changes = state.changes(ranges.map((range) => {
+	return deletion(state, state.changes(ranges.map((range) => {
 		if (!range.empty) {
 			return { from: range.from, to: range.to };
 		}
@@ -162,7 +163,15 @@ export function deleteBackward(state: EditorState): TransactionSpec {
 			? Math.max(0, range.head - 1)
 			: line.from + findClusterBreak(line.text, column, false);
 		return { from, to: range.head };
-	}));
+	})));
+}
+
+// A deletion in insert mode: the cursors stay where the text was, and the
+// selections to restore on leaving insert mode follow.
+export function deletion(
+	state: EditorState,
+	changes: ChangeSet,
+): TransactionSpec {
 	const length = changes.newLength;
 	const origins = originsOf(state)?.map((origin) => {
 		const from = changes.mapPos(origin.from, origin.side === 'after' ? -1 : 1);
@@ -171,7 +180,7 @@ export function deleteBackward(state: EditorState): TransactionSpec {
 	});
 	return {
 		changes,
-		selection: EditorSelection.create(ranges.map((range) =>
+		selection: EditorSelection.create(state.selection.ranges.map((range) =>
 			EditorSelection.cursor(changes.mapPos(range.head, -1)))),
 		effects: origins ? startInsert.of(origins) : [],
 		userEvent: 'delete.backward',

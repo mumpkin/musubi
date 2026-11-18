@@ -52,8 +52,12 @@ export function byLine(step: number): Motion {
 	};
 }
 
-function byWord(move: (text: string, cursor: number) => Span): Motion {
-	return (state, range) => move(state.doc.toString(), cursorOf(range));
+type WordMove = (text: string, cursor: number, isLong: boolean) => Span;
+
+// A word motion; `isLong` for the long words of `W`, `B`, `E`.
+function byWord(move: WordMove, isLong = false): Motion {
+	return (state, range) =>
+		move(state.doc.toString(), cursorOf(range), isLong);
 }
 
 function coversWholeLines(state: EditorState, range: SelectionRange): boolean {
@@ -101,6 +105,9 @@ export const motionCommands = {
 	moveNextWordStart: motion(byWord(nextWordStart)),
 	moveNextWordEnd: motion(byWord(nextWordEnd)),
 	movePreviousWordStart: motion(byWord(previousWordStart)),
+	moveNextLongWordStart: motion(byWord(nextWordStart, true)),
+	moveNextLongWordEnd: motion(byWord(nextWordEnd, true)),
+	movePreviousLongWordStart: motion(byWord(previousWordStart, true)),
 	extendLineBelow: ({ target }) => {
 		const { state } = target;
 		const selection = mapRanges(

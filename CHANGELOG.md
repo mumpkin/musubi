@@ -10,6 +10,12 @@ and this project adheres to
 
 ### Added
 
+- More Helix keys in the editor: `A` and `I` (insert at the end or the
+  start of the line), `r` (replace), `~` (switch case), `J` (join lines),
+  `%` (select all), `,` (keep the main selection), `f` `t` `F` `T` (select
+  up to a character), `W` `B` `E` (long words), and `Ctrl-w` / `Ctrl-u`
+  in insert mode, all checked against the real Helix.
+
 - The home screen of an empty vault offers to create a note or open the
   tutorial.
 - A link to a missing note that names an existing note almost exactly

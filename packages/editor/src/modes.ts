@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Commands that switch modes or open the command line.
-import { EditorSelection } from '@codemirror/state';
+import { EditorSelection, type Line } from '@codemirror/state';
 
 import { changeMode, type Command, type CommandTarget } from './context.ts';
 import {
@@ -30,6 +30,21 @@ export function enterInsertMode(target: CommandTarget, side: InsertSide): void {
 		effects: startInsert.of(origins),
 	});
 	changeMode(target, 'insert');
+}
+
+// `I` and `A`: insert at the first character that is not a space, or at
+// the end, of the line of each cursor.
+function insertAtLine(position: (line: Line) => number): Command {
+	return ({ target }) => {
+		const { state } = target;
+		target.dispatch({
+			selection: mapRanges(state, (range) => {
+				const line = state.doc.lineAt(cursorOf(range));
+				return toRange(characterAt(state, position(line)));
+			}),
+		});
+		enterInsertMode(target, 'before');
+	};
 }
 
 function insertAt(side: InsertSide): Command {
@@ -82,6 +97,9 @@ export const modeCommands = {
 	openAbove: openLine('above'),
 	insertMode: insertAt('before'),
 	appendMode: insertAt('after'),
+	insertAtLineStart: insertAtLine((line) =>
+		line.from + line.length - line.text.trimStart().length),
+	appendAtLineEnd: insertAtLine((line) => line.to),
 	selectMode: ({ target }) => {
 		changeMode(target, 'select');
 	},
