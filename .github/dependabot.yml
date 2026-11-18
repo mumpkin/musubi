@@ -22,6 +22,13 @@ updates:
     schedule:
       interval: weekly
     labels: [no-changelog]
+    ignore:
+      # ecow must stay on the version typst uses: musubi-typst hands
+      # EcoVec values to the typst API
+      - dependency-name: ecow
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
     groups:
       minor-and-patch:
         update-types: [minor, patch]
