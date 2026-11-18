@@ -1,6 +1,6 @@
 pkgbase = musubi-bin
 	pkgdesc = Local-first notes written in Typst, edited the Helix way
-	pkgver = 0.5.0
+	pkgver = 0.6.0
 	pkgrel = 1
 	url = https://github.com/mumpkin/musubi
 	arch = x86_64
@@ -12,9 +12,9 @@ pkgbase = musubi-bin
 	conflicts = musubi
 	options = !debug
 	options = !strip
-	source = https://github.com/mumpkin/musubi/releases/download/v0.5.0/Musubi_0.5.0_amd64.deb
-	source = LICENSE-0.5.0::https://raw.githubusercontent.com/mumpkin/musubi/v0.5.0/LICENSE
-	sha256sums = 4e076928d5264b6ac9f1a1af17ab69efdcd79491f2d668d4bd3a29c986faca47
+	source = https://github.com/mumpkin/musubi/releases/download/v0.6.0/Musubi_0.6.0_amd64.deb
+	source = LICENSE-0.6.0::https://raw.githubusercontent.com/mumpkin/musubi/v0.6.0/LICENSE
+	sha256sums = 560ea65e1ba38eb9d5f6f15bcbbba539fba6b350b8511ddc46bed5fe2dfe3237
 	sha256sums = fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0
 
 pkgname = musubi-bin
