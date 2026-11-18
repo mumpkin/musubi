@@ -4,7 +4,10 @@
 import { pairCommands } from './auto-pairs.ts';
 import type { Command, CommandContext } from './context.ts';
 import { editingCommands } from './editing.ts';
+import { editCommands } from './edits.ts';
+import { findCommands } from './find-char.ts';
 import { indentCommands } from './indent.ts';
+import { insertDeleteCommands } from './insert-deletes.ts';
 import { showJumpLabels } from './jump-labels.ts';
 import { modeCommands } from './modes.ts';
 import { motionCommands } from './motions.ts';
@@ -15,6 +18,9 @@ import { commandTarget } from './undo-history.ts';
 
 export const commands = {
 	...motionCommands,
+	...editCommands,
+	...findCommands,
+	...insertDeleteCommands,
 	...editingCommands,
 	...indentCommands,
 	...modeCommands,

@@ -23,6 +23,10 @@ The header of the pane shows the mode:
 - `h`, `j`, `k`, `l`: left, down, up, right (the arrows work too).
 - `w`: select to the start of the next word, `e` to its end, `b` back to the
   start of the previous one.
+- `W`, `B`, `E`: as `w`, `b`, `e`, on long words (anything but spaces, so
+  `delta-epsilon,` is one).
+- `f` then a character: select up to the next one, `t`: up to just before
+  it; `F` and `T` go backward, across lines.
 - `gh` and `gl`: start and end of the line; `gs`: first character that is not
   a space.
 - `gg`: first line, `ge`: last line, `12G`: line 12.
@@ -40,7 +44,13 @@ one two three four five
 - `x`: select the whole line; again to add the next one.
 - `d`: delete the selection. `c`: delete it and type instead (insert mode).
 - `y`: copy the selection, `p` and `P`: paste after or before it.
-- `u`: undo, `U`: redo.
+- `u`: undo, `U`: redo. A whole insert session undoes at once.
+- `r` then a character: replace every selected character with it; `~`:
+  switch the case of the selection; `J`: join the selected lines.
+- `I` and `A`: insert at the start of the line (after its indentation) or
+  at its end. In insert mode, `Ctrl-w` deletes the word before the cursor,
+  `Ctrl-u` the line up to the cursor.
+- `%`: select the whole note; `,`: keep only the main selection.
 - `>` and `<`: indent or unindent the selected lines; in insert mode,
   `Tab` at the start of a line indents it.
 - `;`: reduce the selection to the cursor.

@@ -14,6 +14,11 @@ const shared: [string, CommandName][] = [
 	['ArrowUp', 'moveLineUp'],
 	['w', 'moveNextWordStart'],
 	['e', 'moveNextWordEnd'],
+	['W', 'moveNextLongWordStart'],
+	['E', 'moveNextLongWordEnd'],
+	['B', 'movePreviousLongWordStart'],
+	['%', 'selectAll'],
+	[',', 'keepPrimarySelection'],
 	['b', 'movePreviousWordStart'],
 	['x', 'extendLineBelow'],
 	['d', 'delete'],
@@ -56,7 +61,14 @@ const shared: [string, CommandName][] = [
 ];
 
 export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
-	normal: new Map([...shared, ['v', 'selectMode']]),
+	normal: new Map([
+		...shared,
+		['v', 'selectMode'],
+		['I', 'insertAtLineStart'],
+		['A', 'appendAtLineEnd'],
+		['~', 'switchCase'],
+		['J', 'joinLines'],
+	]),
 	select: new Map([
 		...shared,
 		['v', 'normalMode'],
@@ -66,6 +78,8 @@ export const keymaps: Record<EditorMode, Map<string, CommandName>> = {
 		['Escape', 'normalMode'],
 		['Backspace', 'deleteCharBackward'],
 		['Tab', 'insertTab'],
+		['C-w', 'deleteWordBackward'],
+		['C-u', 'deleteToLineStart'],
 	]),
 };
 
@@ -82,6 +96,11 @@ const WITH_ARGUMENT = new Map<string, ArgumentCommand>([
 	['ms', { command: 'surroundAdd', length: 1 }],
 	['md', { command: 'surroundDelete', length: 1 }],
 	['mr', { command: 'surroundReplace', length: 2 }],
+	['f', { command: 'findNextCharacter', length: 1 }],
+	['t', { command: 'tillNextCharacter', length: 1 }],
+	['F', { command: 'findPreviousCharacter', length: 1 }],
+	['T', { command: 'tillPreviousCharacter', length: 1 }],
+	['r', { command: 'replaceCharacters', length: 1 }],
 ]);
 
 export interface KeyResolution {
