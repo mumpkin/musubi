@@ -132,6 +132,7 @@ fn reviews_in(order: &[usize]) -> Vec<Review> {
 fn gives_the_same_schedule_whatever_the_device_files() {
 	let card = musubi_core::IndexedCard {
 		note: "A.typ".into(),
+		note_title: "A".into(),
 		position: 0,
 		hash: "k".into(),
 		question: "q".into(),

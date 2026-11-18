@@ -9,9 +9,10 @@ export type DueCard = {
  */
 key: string, 
 /**
- * Note of the card, and its rank among the cards of the note.
+ * Note of the card, its title, and the rank of the card among the
+ * cards of the note.
  */
-note: string, position: number, 
+note: string, noteTitle: string, position: number, 
 /**
  * Reviewed from the answer to the question.
  */

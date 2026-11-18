@@ -97,9 +97,11 @@
 				<div class="face">{@html session.sides.back}</div>
 			{/if}
 		</div>
+		{@const card = session.current}
 		<p class="source">
-			{session.current.note}{session.current.isReverse ? ' · reverse' : ''}
-			{session.current.isNew ? ' · new' : ''}
+			<span title={card.note}>{card.noteTitle}</span>
+			{card.isReverse ? ' · reverse' : ''}
+			{card.isNew ? ' · new' : ''}
 		</p>
 		{#if session.isRevealed}
 			<div class="ratings">

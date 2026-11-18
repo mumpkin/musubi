@@ -8,6 +8,8 @@ use crate::error::VaultError;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IndexedCard {
 	pub note: String,
+	/// Title of the note, as the index knows it.
+	pub note_title: String,
 	/// Rank of the card among those of its note, from 0.
 	pub position: i64,
 	/// Hash of the Typst source of the question: the key without direction.
@@ -27,7 +29,9 @@ impl VaultIndex {
 	/// A SQLite error.
 	pub fn cards(&self, scope: &str) -> Result<Vec<IndexedCard>, VaultError> {
 		let mut statement = self.connection.prepare_cached(
-			"SELECT note, position, key, question, answer, reverse FROM cards
+			"SELECT note, position, key, question, answer, reverse,
+				coalesce(notes.title, note)
+			FROM cards LEFT JOIN notes ON notes.path = cards.note
 			WHERE ?1 = '' OR note = ?1 OR substr(note, 1, length(?2)) = ?2
 			ORDER BY note, position",
 		)?;
@@ -40,6 +44,7 @@ impl VaultIndex {
 				question: row.get(3)?,
 				answer: row.get(4)?,
 				reverse: row.get(5)?,
+				note_title: row.get(6)?,
 			})
 		})?;
 		Ok(rows.collect::<Result<_, _>>()?)

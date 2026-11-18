@@ -20,8 +20,10 @@ use crate::index::IndexedCard;
 pub struct DueCard {
 	/// Key of the card with its direction, for the review log.
 	pub key: String,
-	/// Note of the card, and its rank among the cards of the note.
+	/// Note of the card, its title, and the rank of the card among the
+	/// cards of the note.
 	pub note: String,
+	pub note_title: String,
 	#[ts(type = "number")]
 	pub position: i64,
 	/// Reviewed from the answer to the question.
@@ -193,6 +195,7 @@ fn due_card(
 	DueCard {
 		key,
 		note: card.note.clone(),
+		note_title: card.note_title.clone(),
 		position: card.position,
 		is_reverse: direction == Direction::Reverse,
 		question: card.question.clone(),

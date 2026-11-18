@@ -172,9 +172,11 @@
 		font-weight: 600;
 	}
 
+	/* The same in every entry, the bold review one included. */
 	kbd {
 		color: var(--muted);
 		font-family: ui-monospace, monospace;
 		font-size: 0.75rem;
+		font-weight: normal;
 	}
 </style>

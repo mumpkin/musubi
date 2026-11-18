@@ -15,7 +15,6 @@ and this project adheres to
   `%` (select all), `,` (keep the main selection), `f` `t` `F` `T` (select
   up to a character), `W` `B` `E` (long words), and `Ctrl-w` / `Ctrl-u`
   in insert mode, all checked against the real Helix.
-
 - The home screen of an empty vault offers to create a note or open the
   tutorial.
 - A link to a missing note that names an existing note almost exactly
@@ -36,6 +35,8 @@ and this project adheres to
 
 ### Changed
 
+- A flashcard under review shows the title of its note instead of its
+  path.
 - Error messages say what went wrong and what to do (a missing file, a
   permission, a full disk…) instead of the raw message of the system, and
   long ones stay longer on screen.
@@ -59,6 +60,8 @@ and this project adheres to
 
 ### Fixed
 
+- Leaving a review or the graph opened from the home screen goes back to
+  the home screen instead of an empty pane with an error.
 - Splitting the home screen opens a second home screen instead of an
   empty pane with an error.
 - The explorer sorts names naturally: "Note 2" comes before "Note 10",
