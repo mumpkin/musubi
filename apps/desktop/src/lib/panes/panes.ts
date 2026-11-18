@@ -8,13 +8,13 @@ import type { PaneAction } from '../ui/actions.ts';
 // Each shows any note, in reading or editing mode, or the graph of the
 // notes around its note.
 
-export type PaneMode
-	= | 'reading'
-		| 'editing'
-		| 'graph'
-		| 'review'
-		| 'conflict'
-		| 'home';
+export type PaneMode =
+	| 'reading'
+	| 'editing'
+	| 'graph'
+	| 'review'
+	| 'conflict'
+	| 'home';
 
 // What the header and the status bar show for a mode of a pane, the
 // editor showing its own mode.

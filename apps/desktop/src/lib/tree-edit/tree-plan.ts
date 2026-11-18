@@ -9,8 +9,8 @@ import type { TreeEntry } from './tree-text.ts';
 // new line (by line index), or the vault root.
 export type Place = { entry: number } | { line: number } | 'root';
 
-export type Operation
-	= | {
+export type Operation =
+	| {
 		kind: 'create';
 		line: number;
 		parent: Place;

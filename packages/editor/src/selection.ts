@@ -34,8 +34,7 @@ export function characterAt(state: EditorState, position: number): Span {
 // Empty selections become one-character selections, as normal mode needs.
 export function withCharacters(state: EditorState): EditorSelection {
 	return mapRanges(state, (range) =>
-		range.empty ? toRange(characterAt(state, range.head)) : range,
-	);
+		range.empty ? toRange(characterAt(state, range.head)) : range);
 }
 
 // `range`, widened to one character if it is empty.
