@@ -4,6 +4,8 @@ Specifications and architecture decisions.
 
 - [Vault format](./vault-format.md): how notes, images, the trash and the
   review log are stored on disk.
+- [Architecture](./architecture.md): how the code fits together, and where
+  to change what.
 - [Performance](./performance.md): budget, benchmark of large vaults and
   results.
 - [Color themes](./themes.md): choosing, importing and writing a theme.
