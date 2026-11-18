@@ -5,7 +5,7 @@ import { type EditorMode } from '@musubi/editor';
 import { tick } from 'svelte';
 import { SvelteMap } from 'svelte/reactivity';
 
-import type { PaneAction } from './actions.ts';
+import type { PaneAction } from '../ui/actions.ts';
 import { modeEvents } from './pane-modes.ts';
 
 export type SplitDirection = 'horizontal' | 'vertical';

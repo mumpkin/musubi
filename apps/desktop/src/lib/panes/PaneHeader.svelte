@@ -3,10 +3,10 @@
 <script lang="ts">
 	import { Tooltip } from 'bits-ui';
 
-	import type { PaneAction } from './actions.ts';
-	import Icon from './Icon.svelte';
-	import { TOOLTIP_OFFSET_PIXELS } from './layout.ts';
-	import ModeBadge from './ModeBadge.svelte';
+	import type { PaneAction } from '../ui/actions.ts';
+	import Icon from '../ui/Icon.svelte';
+	import { TOOLTIP_OFFSET_PIXELS } from '../ui/layout.ts';
+	import ModeBadge from '../ui/ModeBadge.svelte';
 
 	interface Props {
 		title: string;

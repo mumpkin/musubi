@@ -66,9 +66,56 @@ pub struct AppState {
 	open: Mutex<Option<OpenVault>>,
 }
 
+/// What a command run without an open vault answers.
+pub const NO_VAULT: &str = "no vault is open";
+
 impl AppState {
 	pub fn lock(&self) -> MutexGuard<'_, Option<OpenVault>> {
 		self.open.lock().unwrap_or_else(PoisonError::into_inner)
+	}
+
+	/// Runs `action` on the open vault.
+	///
+	/// # Errors
+	///
+	/// [`NO_VAULT`], or the error of `action`.
+	pub fn with_open<T>(
+		&self,
+		action: impl FnOnce(&mut OpenVault) -> Result<T, String>,
+	) -> Result<T, String> {
+		let mut open = self.lock();
+		action(open.as_mut().ok_or(NO_VAULT)?)
+	}
+
+	/// Runs `action`, which changes files of the open vault, then brings
+	/// the index up to date.
+	///
+	/// # Errors
+	///
+	/// [`NO_VAULT`], the error of `action`, or one of the index.
+	pub fn change<T>(
+		&self,
+		action: impl FnOnce(&mut OpenVault) -> Result<T, String>,
+	) -> Result<T, String> {
+		self.with_open(|open| {
+			let value = action(open)?;
+			open.refresh_index()?;
+			Ok(value)
+		})
+	}
+}
+
+/// Errors as the message a command sends to the interface.
+pub trait Message<T> {
+	/// # Errors
+	///
+	/// The error, as its message.
+	fn message(self) -> Result<T, String>;
+}
+
+impl<T, E: std::fmt::Display> Message<T> for Result<T, E> {
+	fn message(self) -> Result<T, String> {
+		self.map_err(|error| error.to_string())
 	}
 }
 

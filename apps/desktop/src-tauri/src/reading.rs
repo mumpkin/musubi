@@ -9,7 +9,7 @@ use serde::Serialize;
 use tauri::State;
 use ts_rs::TS;
 
-use crate::state::AppState;
+use crate::state::{AppState, Message as _};
 
 const MILLISECONDS_PER_SECOND: f64 = 1000.0;
 
@@ -29,14 +29,14 @@ pub fn render_note(
 	path: &str,
 	state: State<'_, AppState>,
 ) -> Result<NoteView, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or("no vault is open")?;
-	let start = Instant::now();
-	let note = open.compiler.render(path);
-	Ok(NoteView {
-		note,
-		compile_milliseconds: start.elapsed().as_secs_f64()
-			* MILLISECONDS_PER_SECOND,
+	state.with_open(|open| {
+		let start = Instant::now();
+		let note = open.compiler.render(path);
+		Ok(NoteView {
+			note,
+			compile_milliseconds: start.elapsed().as_secs_f64()
+				* MILLISECONDS_PER_SECOND,
+		})
 	})
 }
 
@@ -48,16 +48,10 @@ pub fn toggle_task(
 	offset: usize,
 	state: State<'_, AppState>,
 ) -> Result<(), String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or("no vault is open")?;
-	let text = open
-		.vault
-		.read_note(path)
-		.map_err(|error| error.to_string())?;
-	let toggled = musubi_core::toggle_task(&text, offset)
-		.ok_or("the task is no longer there: the note changed")?;
-	open.vault
-		.write_note(path, &toggled)
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()
+	state.change(|open| {
+		let text = open.vault.read_note(path).message()?;
+		let toggled = musubi_core::toggle_task(&text, offset)
+			.ok_or("the task is no longer there: the note changed")?;
+		open.vault.write_note(path, &toggled).message()
+	})
 }

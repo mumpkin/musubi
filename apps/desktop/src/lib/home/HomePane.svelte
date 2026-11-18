@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { listKeydown } from '../shell/list-keys.ts';
+	import { listKeydown } from '../ui/list-keys.ts';
 	import type { HomeData } from './home-data.ts';
 
 	interface Props {

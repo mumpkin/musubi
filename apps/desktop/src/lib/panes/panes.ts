@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import type { EditorMode } from '@musubi/editor';
 
-import type { PaneAction } from './actions.ts';
-import { shortcutLabel } from './shortcuts.ts';
+import { shortcutLabel } from '../shortcuts/shortcuts.ts';
+import type { PaneAction } from '../ui/actions.ts';
 
 // The panes of the main area: one by default, two side by side when split.
 // Each shows any note, in reading or editing mode, or the graph of the

@@ -5,9 +5,7 @@ use musubi_core::TrashEntry;
 use musubi_core::trash::now;
 use tauri::State;
 
-use crate::state::AppState;
-
-const NO_VAULT: &str = "no vault is open";
+use crate::state::{AppState, Message as _};
 
 /// Moves the note at `path` and its images to the trash.
 #[tauri::command(async)]
@@ -15,14 +13,7 @@ pub fn trash_note(
 	path: &str,
 	state: State<'_, AppState>,
 ) -> Result<TrashEntry, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let entry = open
-		.vault
-		.trash_note(path, now())
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(entry)
+	state.change(|open| open.vault.trash_note(path, now()).message())
 }
 
 /// Moves the folder at `path` and everything in it to the trash.
@@ -31,14 +22,7 @@ pub fn trash_folder(
 	path: &str,
 	state: State<'_, AppState>,
 ) -> Result<TrashEntry, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let entry = open
-		.vault
-		.trash_folder(path, now())
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(entry)
+	state.change(|open| open.vault.trash_folder(path, now()).message())
 }
 
 /// Entries of the trash, newest first.
@@ -46,11 +30,7 @@ pub fn trash_folder(
 pub fn trash_entries(
 	state: State<'_, AppState>,
 ) -> Result<Vec<TrashEntry>, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.trash_entries()
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.trash_entries().message())
 }
 
 /// Restores entry `id`; returns the path of the note.
@@ -59,11 +39,7 @@ pub fn restore_note(
 	id: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let path = open.vault.restore(id).map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(path)
+	state.change(|open| open.vault.restore(id).message())
 }
 
 /// Deletes entry `id` for good, or every entry without `id`.
@@ -72,11 +48,11 @@ pub fn delete_trash_entries(
 	id: Option<&str>,
 	state: State<'_, AppState>,
 ) -> Result<(), String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	match id {
-		Some(id) => open.vault.delete_trash_entry(id),
-		None => open.vault.empty_trash(),
-	}
-	.map_err(|error| error.to_string())
+	state.with_open(|open| {
+		match id {
+			Some(id) => open.vault.delete_trash_entry(id),
+			None => open.vault.empty_trash(),
+		}
+		.message()
+	})
 }

@@ -5,9 +5,9 @@
 	import type { Snippet } from 'svelte';
 	import type { SvelteSet } from 'svelte/reactivity';
 
-	import type { IconName } from './actions.ts';
+	import type { IconName } from '../ui/actions.ts';
+	import Icon from '../ui/Icon.svelte';
 	import { type DropFolder, dropFolder } from './drag-drop.ts';
-	import Icon from './Icon.svelte';
 
 	interface Props {
 		name: string;

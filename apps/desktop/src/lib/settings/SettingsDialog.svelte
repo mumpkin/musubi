@@ -7,7 +7,7 @@
 	import { Dialog, Tabs } from 'bits-ui';
 
 	import type { DeviceSettings } from '../bindings/DeviceSettings.ts';
-	import Icon from '../shell/Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 	import CardSetting from './CardSetting.svelte';
 	import EditorSettings from './EditorSettings.svelte';
 	import EditorTextSettings from './EditorTextSettings.svelte';

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Commands of the palette that choose, import and remove themes, until the
 // settings screen (#36) offers the same.
-import type { PaletteCommand } from '../shell/actions.ts';
+import type { PaletteCommand } from '../ui/actions.ts';
 import type { ThemeState } from './theme-state.svelte.ts';
 
 const GROUP = 'Theme';

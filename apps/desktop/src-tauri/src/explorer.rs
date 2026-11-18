@@ -5,9 +5,8 @@
 use musubi_core::VaultTree;
 use tauri::State;
 
-use crate::state::AppState;
+use crate::state::{AppState, Message as _};
 
-const NO_VAULT: &str = "no vault is open";
 /// Notes listed in the "Recent" section.
 const RECENT_LIMIT: usize = 4;
 
@@ -18,22 +17,18 @@ pub fn pin_note(
 	pinned: bool,
 	state: State<'_, AppState>,
 ) -> Result<VaultTree, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.pin(path, pinned)
-		.and_then(|()| open.vault.tree())
-		.map_err(|error| error.to_string())
+	state.with_open(|open| {
+		open.vault
+			.pin(path, pinned)
+			.and_then(|()| open.vault.tree())
+			.message()
+	})
 }
 
 /// The notes of the open vault modified last, newest first.
 #[tauri::command(async)]
 pub fn recent_notes(state: State<'_, AppState>) -> Result<Vec<String>, String> {
-	let open = state.lock();
-	let open = open.as_ref().ok_or(NO_VAULT)?;
-	open.vault
-		.recently_modified(RECENT_LIMIT)
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.recently_modified(RECENT_LIMIT).message())
 }
 
 /// Archives the note or folder at `path` (`unarchive`: puts it back).
@@ -44,16 +39,14 @@ pub fn archive_entry(
 	unarchive: bool,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let moved = if unarchive {
-		open.vault.unarchive(path)
-	} else {
-		open.vault.archive(path)
-	}
-	.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(moved)
+	state.change(|open| {
+		if unarchive {
+			open.vault.unarchive(path)
+		} else {
+			open.vault.archive(path)
+		}
+		.message()
+	})
 }
 
 /// Gives the note at `path` a new title (heading and file name); returns
@@ -64,14 +57,7 @@ pub fn retitle_note(
 	title: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let renamed = open
-		.vault
-		.retitle_note(path, title)
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(renamed)
+	state.change(|open| open.vault.retitle_note(path, title).message())
 }
 
 /// Moves the note or folder at `path` to `to` (a note keeps its file
@@ -82,12 +68,5 @@ pub fn move_entry(
 	to: &str,
 	state: State<'_, AppState>,
 ) -> Result<String, String> {
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	let moved = open
-		.vault
-		.move_entry(path, to)
-		.map_err(|error| error.to_string())?;
-	open.refresh_index()?;
-	Ok(moved)
+	state.change(|open| open.vault.move_entry(path, to).message())
 }

@@ -3,13 +3,13 @@
      mouse: each one names its action and its shortcut on hover. The rest
      is in the command palette, its last button. -->
 <script lang="ts">
-	import type { IconName } from './actions.ts';
 	import {
 		ACTION_LABELS,
 		type ShellAction,
 		shortcutLabel,
-	} from './shortcuts.ts';
-	import ToolbarButton from './ToolbarButton.svelte';
+	} from '../shortcuts/shortcuts.ts';
+	import type { IconName } from '../ui/actions.ts';
+	import ToolbarButton from '../ui/ToolbarButton.svelte';
 
 	interface Props {
 		side: 'start' | 'end';

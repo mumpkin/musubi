@@ -6,7 +6,7 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 
-	import Icon from '../shell/Icon.svelte';
+	import Icon from '../ui/Icon.svelte';
 	import { folderPalette } from '../vault/folder-palette.svelte.ts';
 	import ChoiceRow from './ChoiceRow.svelte';
 	import FolderList from './FolderList.svelte';

@@ -2,8 +2,8 @@
 // What the context menu of the explorer offers for a note, a folder or
 // the empty space: the mouse way to the actions that the keyboard reaches
 // with `Space` shortcuts and the tree editor.
+import type { IconName } from '../ui/actions.ts';
 import { isArchived } from '../vault/tree.ts';
-import type { IconName } from './actions.ts';
 
 export interface MenuItem {
 	label: string;

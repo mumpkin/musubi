@@ -5,10 +5,9 @@
 
 use tauri::{AppHandle, State};
 
-use crate::state::{AppState, DeviceSettings};
+use crate::state::{AppState, DeviceSettings, Message as _};
 use crate::vault::config_dir;
 
-const NO_VAULT: &str = "no vault is open";
 /// Bounds of the autosave delay, in seconds.
 const AUTOSAVE_DELAYS: std::ops::RangeInclusive<u32> = 1..=60;
 /// Longest trash retention, in days: ten years.
@@ -92,9 +91,5 @@ pub fn set_trash_retention(
 	if days > MAX_RETENTION_DAYS {
 		return Err(format!("at most {MAX_RETENTION_DAYS} days"));
 	}
-	let mut open = state.lock();
-	let open = open.as_mut().ok_or(NO_VAULT)?;
-	open.vault
-		.set_trash_retention(days)
-		.map_err(|error| error.to_string())
+	state.with_open(|open| open.vault.set_trash_retention(days).message())
 }

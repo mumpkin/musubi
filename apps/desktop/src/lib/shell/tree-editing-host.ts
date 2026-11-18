@@ -3,9 +3,9 @@
 // notes it moves or trashes, and the tree is read again.
 import { tick } from 'svelte';
 
+import type { PaneManager } from '../panes/pane-manager.svelte.ts';
 import type { AppliedTree } from '../tree-edit/tree-apply.ts';
 import { TreeEditing } from '../tree-edit/tree-editing.svelte.ts';
-import type { PaneManager } from './pane-manager.svelte.ts';
 import type { SidePanels } from './side-panels.svelte.ts';
 import type { VaultState } from './vault-state.svelte.ts';
 
